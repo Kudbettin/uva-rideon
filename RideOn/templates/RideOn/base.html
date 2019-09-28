@@ -36,12 +36,16 @@
 					<ul class="nav-item dropdown my-2 my-lg-0">
 						<a class="nav-link text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						  <img src="{% static 'RideOn/profile.png' %}" width="30" height="30" alt="" class="mr-2">
-						  My Profile
+						  {% if user.is_authenticated %}
+							  My Profile
+							{% else %}
+							  <a href="{% url 'login' %}">login</a>
+							{% endif %}
 						</a>
 						<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 						  <a class="dropdown-item" href="#">Action</a>
 						  <a class="dropdown-item" href="#">Another action</a>
-						  <a class="dropdown-item" href="#">Something else here</a>
+						  <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
 						</div>
 					</ul>
 				</div>
