@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'RideOn',
+	'rideAuth',
+	'drives',
+	'profiles',
+	'rides'
 ]
 
 MIDDLEWARE = [
@@ -68,6 +73,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'RideOn.wsgi.application'
+
+STATIC_URL = '/static/'
 
 
 # Database
