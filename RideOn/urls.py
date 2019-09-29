@@ -18,8 +18,8 @@ from django.urls import path, include
 import RideOn.views as views
 
 urlpatterns = [
-	path('', views.index, name="index"),
+    path('', views.index, name="index"),
     path('admin/', admin.site.urls),
-    path('rideAuth/', include('rideAuth.urls')),
-    path('rideAuth/', include('django.contrib.auth.urls'))
+    path('users/', include('users.urls')),
+    path('users/', include('django.contrib.auth.urls'))
 ]

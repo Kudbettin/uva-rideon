@@ -1,0 +1,15 @@
+<!-- templates/profile.html -->
+{% extends 'RideOn/base.html' %}
+
+{% block title %}Profile Page{% endblock %}
+
+{% block content %}
+
+{% if customuser.id == user.id %}
+Welcome to your profile page
+{% else %}
+Welcome to the profile page of {{ customuser.username }}
+{% endif %}
+
+
+{% endblock %}
