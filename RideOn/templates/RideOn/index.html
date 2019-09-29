@@ -2,15 +2,6 @@
 {% block content %}
 {% load static %}
 
-{% if user.is_authenticated %}
-	Hi {{ user.username }}!
-	<p><a href="{% url 'logout' %}">logout</a></p>
-{% else %}
-	<p>You are not logged in</p>
-	<a href="{% url 'login' %}">login</a>
-	<a href="{% url 'register' %}">register</a>
-{% endif %}
-
 <section class="jumbotron text-center jumbotron-fluid h-100 bg-white" style="background-image: url({% static 'RideOn/bg.jpg' %}); background-repeat: no-repeat; background-size: cover; background-position: center center;">
 <div class="container">
 
