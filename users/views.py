@@ -15,3 +15,7 @@ class RegisterView(CreateView):
 class ProfileView(generic.DetailView):
     model = CustomUser
     template_name = 'users/profile.html'
+
+class EditProfileView(generic.DetailView):
+    model = CustomUser
+    template_name = 'users/editprofile.html'
