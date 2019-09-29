@@ -40,7 +40,6 @@ INSTALLED_APPS = [
 	'RideOn',
 	'rideAuth',
 	'drives',
-	'profiles',
 	'rides'
 ]
 
