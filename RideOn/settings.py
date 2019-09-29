@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'RideOn',
-	'rideAuth',
+	'users',
 	'drives',
 	'rides'
 ]
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'RideOn.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'RideOn/templates'), os.path.join(BASE_DIR, 'rideAuth/templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'RideOn/templates'), os.path.join(BASE_DIR, 'users/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,4 +128,4 @@ STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
 
-AUTH_USER_MODEL = 'rideAuth.CustomUser'
+AUTH_USER_MODEL = 'users.CustomUser'

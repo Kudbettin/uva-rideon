@@ -40,7 +40,7 @@
 								<img src="{% static 'RideOn/profile.png' %}" width="30" height="30" alt="" class="mr-2">
 							</a>
 							<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-								<a class="dropdown-item" href="/rideAuth/profile/{{ user.id }}/">My Profile</a>
+								<a class="dropdown-item" href="/users/{{ user.id }}/">My Profile</a>
 							  <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
 							</div>
 						{% else %}

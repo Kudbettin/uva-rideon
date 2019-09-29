@@ -10,8 +10,8 @@ from .forms import CustomUserCreationForm
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')
-    template_name = 'rideAuth/register.html'
+    template_name = 'users/register.html'
 
 class ProfileView(generic.DetailView):
     model = CustomUser
-    template_name = 'rideAuth/profile.html'
+    template_name = 'users/profile.html'
