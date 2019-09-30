@@ -1,0 +1,79 @@
+{% load static %}
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+	</head>
+	
+	<body>
+		<div class="cover-container d-flex h-100 mx-auto flex-column">
+			<nav class="navbar navbar-expand-lg px-5 navbar-dark bg-dark">
+				<!-- Logo -->
+				<a class="navbar-brand" href="#">
+					<img src="{% static 'RideOn/logo.png' %}" width="30" height="30" alt="">
+				</a>
+				
+				<!-- RideOn home text -->
+				<a class="navbar-brand" href="#">RideOn</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<!-- Elements that will turn into a drop-down on small screens -->
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item">
+						<a class="nav-link" href="#">Drive</a>
+						</li>
+						<li class="nav-item">
+						<a class="nav-link" href="#">Ride</a>
+						</li>
+					</ul>
+
+					<!-- Profile page drop down -->
+					<ul class="nav-item dropdown my-2 my-lg-0">
+						{% if user.is_authenticated %}
+							<a class="nav-link text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								My Profile
+								<img src="{% static 'RideOn/profile.png' %}" width="30" height="30" alt="" class="mr-2">
+							</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+								<a class="dropdown-item" href="/users/{{ user.id }}/">My Profile</a>
+							  <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+							</div>
+						{% else %}
+							<div class="row">
+								<a class="btn btn-outline-light mr-2" role="button" href="{% url 'login' %}">
+									Login
+								</a>
+								<a class="btn btn-outline-light" role="button" href="{% url 'register' %}">
+									Register
+								</a>
+								<a class="nav-link text-white" href="{% url 'login' %}">
+									<img src="{% static 'RideOn/profile.png' %}" width="30" height="30" alt="">
+								</a>
+							</div>
+						{% endif %}
+					</ul>
+				</div>
+				
+			</nav>
+		
+			<main role="main" class="pt-3">
+				{% block content %}
+				{% endblock %}
+			</main>
+
+			<footer class="mastfoot mt-auto">
+				<div class="container">
+					<p>RideOn Footer</p>
+				</div>
+			</footer>
+		</div>
+
+		
+	</body>
+	
+</html>
