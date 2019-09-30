@@ -10,6 +10,7 @@ python:
 install:
 - pip install -r requirements.txt
 script:
+- python manage.py migrate
 - python manage.py test
 deploy:
   api_key:
