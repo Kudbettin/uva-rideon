@@ -1,7 +1,8 @@
 # drives/urls.py
 from django.urls import path
-from .views import DriveView
+from .views import *
 
 urlpatterns = [
-    path('<pk>/', DriveView.as_view())
+	path('', base, name="base"),
+    path('<pk>/', DriveView.as_view())    
 ]
