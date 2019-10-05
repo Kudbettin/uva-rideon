@@ -8,14 +8,32 @@
                 {{drive.title}}
         </div>
         <div class="row">
-            <div class="col-4">
-                <div class="map-img">
-                    {{drive.start_location}}
-                    {{drive.end_location}}
-                </div>
+            <div class="col-6">
+                <p>Route {{drive.start_location}} {{drive.end_location}}</p>
+                <div id="map" style="height: 100%; width: 300px;"></div>
+                <script>
+
+                    function initMap() {
+                        var myLatLng = { lat: 38.0293, lng: -78.4767 };
+
+                        var map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 10,
+                            center: myLatLng
+                        });
+
+                        var marker = new google.maps.Marker({
+                            position: myLatLng,
+                            map: map,
+                            title: 'To Be Improved'
+                        });
+                    }
+                </script>
+                <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY7BlSzTYJKwTNrObrU7so714CJgF3Uhc&callback=initMap">
+                </script>
+
                 <p>passengers: {{drive.passengers.objects}}</p>
             </div>
-            <div class="col-8">
+            <div class="col-6">
                 <p>Driver: {{drive.driver}}</p>
                 <p>Date: {{drive.date_time}}</p>
                 <p>Cost: {{drive.min_cost}}$ - {{drive.max_cost}}$</p>

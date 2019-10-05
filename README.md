@@ -45,3 +45,8 @@ Create a skeleton view for drives
 ### Make it look not bad
 
 ### Add map
+
+pin a location to the map
+
+make coordinates part of the location
+pin both start and end location on to map
