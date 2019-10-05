@@ -11,25 +11,7 @@ Add simple stuff to it. (e.g. title and description)
 
 Create a drive model. Add simple fields to it.
 Add urls
-Create a super base view and template
-
-add a base view
-
-
-
-models
-- the database layout of ride
-- add models to admin
-
-urls
-
-views
-- interact with the database as necessary
-- render the page using templates
-
-templates
-- html of the webpage
-
+Create a super base view and template (drive listings)
 
 
 
@@ -44,9 +26,12 @@ Create a skeleton view for drives
 
 ### Make it look not bad
 
+
 ### Add map
 
 pin a location to the map
 
+## TODO
 make coordinates part of the location
 pin both start and end location on to map
+fix the navbar links
