@@ -1,0 +1,31 @@
+#sidebar {
+    position: absolute;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#drive-listing #drive-title{
+    color: black !important;
+	font-size: 150%;
+	display: block;
+}
+
+#drive-listing #drive-title:hover{
+    color: #A2A2A2 !important;
+}
+
+#drive-listing #drive-title:active{
+    color: #515151 !important;
+}
+
+#drive-listing a {
+	text-decoration: none;
+}
+
+.pretty {
+	display: block;
+}
