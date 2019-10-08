@@ -62,8 +62,5 @@ def create_drive(username_str, start_location_str="Start Location", end_location
 										max_cost=10, payment_method="payment", max_passengers=4, car_description="mycar")
 										
 	dropoff = Location.objects.create(location = "dropoff", dropoff_in_drive=drive)
-	start_location.save()
-	end_location.save()
-	drive.save()
-	drive.save()
-	dropoff.save()
+	
+	return start_location, end_location, driver, drive, dropoff
