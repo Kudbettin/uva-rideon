@@ -2,21 +2,15 @@ from django.test import TestCase
 from drives.models import *
 from users.models import CustomUser
 from django.utils import timezone
+from drives.views import *
 
 class DriveModelTester(TestCase):
 	# Setup for all tests
 	# Creates a sample drive with default values and none of the optional values
-	def setUp(self):
-		self.start_location = Location.objects.create(location = "Start Location")
-		self.end_location   = Location.objects.create(location = "End Location")
-		
-		self.driver = CustomUser.objects.create(username="Name")
-		
-		self.drive = Drive.objects.create(start_location=self.start_location, end_location=self.end_location, title="Title", 
-											driver=self.driver, date_time=timezone.now(), description="Description", min_cost=2,
-											max_cost=10, payment_method="payment", max_passengers=4, car_description="mycar")
-											
-		self.dropoff = Location.objects.create(location = "dropoff", dropoff_in_drive=self.drive)
+	def setUp(self):		
+		self.start_location, self.end_location, self.driver, self.drive, self.dropoff = create_drive(
+			"Name", start_location_str = "Start Location", end_location_str = "End Location", 
+			title_str = "Drive Title", description_str = "Drive Description")
 		
 	# Verifies that when the drive is deleted, the associated location
 	# objects get deleted as well
@@ -93,3 +87,28 @@ class DriveModelTester(TestCase):
 		
 		self.assertEqual(result, False)
 		self.assertEqual(self.drive.passengers.count(), self.drive.max_passengers)
+		
+class DriveListingTester(TestCase):
+		# Setup for all tests
+	# Creates a sample drive with default values and none of the optional values
+	def setUp(self):		
+		self.start_location, self.end_location, self.driver, self.drive, self.dropoff = create_drive(
+			"Name", start_location_str = "Start Location", end_location_str = "End Location", 
+			title_str = "Drive Title", description_str = "Drive Description")
+		self.start_location2, self.end_location2, self.driver2, self.drive2, self.dropoff2 = create_drive(
+			"Name2", start_location_str = "Start Location2", end_location_str = "End Location2", 
+			title_str = "Drive Title2", description_str = "Drive Description2")
+		
+	# Ensures that the create button brings us to the create drive page
+	# TODO
+	def testCreateButton(self):
+		pass
+		
+	# Asserts that the default queryset returns all drives
+	def testDefaultQuery(self):
+		ridelist = RideList()
+		queryset = ridelist.get_queryset()
+		
+		self.assertEqual(queryset.count(), 2)
+		self.assertEqual(queryset[0].driver.username, "Name")
+		self.assertEqual(queryset[1].driver.username, "Name2")

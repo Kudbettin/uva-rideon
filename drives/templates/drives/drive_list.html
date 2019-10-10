@@ -1,0 +1,109 @@
+<!-- templates/register.html -->
+{% extends 'RideOn/base.html' %}
+
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
+<link rel="stylesheet" href="{% static 'drives/drive_list.css' %}">
+	
+<!-- Sidebar for search filtering -->
+<div id="sidebar" class="mx-3 mt-5">
+  <ul class="list-unstyled components">
+		<h5>Cost</h5>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" />
+			<div class="state">
+				<label>$0 - $5</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" />
+			<div class="state">
+				<label>$6 - $10</label>
+			</div>
+		</div>
+		<div class="pretty p-default">
+			<input type="checkbox" />
+			<div class="state">
+				<label>$11 - $25</label>
+			</div>
+		</div>
+		
+		<br>
+		<h5>Gender</h5>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" />
+			<div class="state">
+				<label>Male</label>
+			</div>
+		</div>
+		<div class="pretty p-default">
+			<input type="checkbox" />
+			<div class="state">
+				<label>Female</label>
+			</div>
+		</div>
+		
+		<br>
+		<h5>Rating</h5>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" />
+			<div class="state">
+				<label>5</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" />
+			<div class="state">
+				<label>4+</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" />
+			<div class="state">
+				<label>3+</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" />
+			<div class="state">
+				<label>2+</label>
+			</div>
+		</div>
+	</ul>
+</div>
+
+<!-- Main Content -- search results, search bar -->
+<div class="container mt-5">
+	
+	<h1>Drives</h1>
+	
+	<div class="wrapper mb-4">
+		<div class="input-group md-form form-sm form-2 pl-0">
+			<input class="form-control my-0 py-1 red-border" type="text" placeholder="Search" aria-label="Search">
+			<div class="input-group-append">
+				<span class="input-group-btn">
+                    <button class="btn btn-default" type="button"><i class="material-icons">search</i></button>
+                </span>
+			</div>
+		</div>
+		<button type="button" class="btn btn-success ml-1">Create</button>
+	</div>
+		
+	{% if drive_list %}
+		{% for drive in drive_list %}
+			<div class="container mt-2 border rounded" id="drive-listing">
+				<a href="{{ drive.get_absolute_url }}" id="drive-title">{{ drive.title }}</a>
+				<a href="{% url 'profile' drive.driver.id %}">{{ drive.driver.username }}</a>
+				<br>
+				{{ drive.description }}
+			</div>
+		{% endfor %}
+	{% else %}
+		<p>There are no drives currently listed.</p>
+	{% endif %} 
+	
+</div>
+
+{% endblock %}
