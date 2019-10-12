@@ -35,7 +35,9 @@ pin a location to the map
 
 add navbar links
 
+
 make coordinates part of the location
+
 pin both start and end location on to map
 fix the navbar links
 tests and stuff

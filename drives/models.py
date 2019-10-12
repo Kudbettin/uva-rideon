@@ -5,16 +5,23 @@ from users.models import CustomUser
 A map location, likely pulled from Google APIs
 '''
 class Location(models.Model):
-    location = models.TextField()
-    dropoff_in_drive = models.ForeignKey('Drive', null=True, blank=True, on_delete=models.CASCADE)
+    location = models.TextField(primary_key=True)
+    coordinates_x = models.FloatField(default=0)
+    coordinates_y = models.FloatField(default=0)
+    # dropoff_in_drive = models.ForeignKey('Drive', null=True, blank=True, on_delete=models.CASCADE)
 
 '''
 A trip that will be undertaken at a concrete point in time.
 Differs from a 'ride' in that a 'ride' is a request for a drive.
 '''
 class Drive(models.Model):
-    start_location  = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="start_location")
-    end_location    = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="end_location")
+    # Why is this one to one?
+    # start_location  = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="start_location")
+    # end_location    = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="end_location")
+    # start_location = models.ManyToOneRel(Location, related_name="start_location")
+    # end_location = models.ManyToOneRel(Location, related_name="end_location")
+    start_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="start_location")
+    end_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="end_location")
     title           = models.CharField(max_length=100)
     driver          = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name="driver", null=True)
     date_time       = models.DateTimeField()
