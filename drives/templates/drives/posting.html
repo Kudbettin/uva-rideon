@@ -12,11 +12,11 @@
             <div class="col-6">
                 <p>Route {{drive.start_location}} {{drive.end_location}}</p>
                 <div id="map" style="height: 100%; width: 300px;"></div>
-                <div id="startx">{{drive.start_location.coordinates_x}}</div>
-                <div id="starty">{{drive.start_location.coordinates_y}}</div>
-                <div id="endx">{{drive.end_location.coordinates_x}}</div>
-                <div id="endy">{{drive.end_location.coordinates_y}}</div>
-                <div id="travel_time">{{drive.time}}</div>
+                <div id="startx" style="display: none;">{{drive.start_location.coordinates_x}}</div>
+                <div id="starty" style="display: none;">{{drive.start_location.coordinates_y}}</div>
+                <div id="endx" style="display: none;">{{drive.end_location.coordinates_x}}</div>
+                <div id="endy" style="display: none;">{{drive.end_location.coordinates_y}}</div>
+                <div id="travel_time" style="display: none;">{{drive.time}}</div>
                 <script>
 
                     function initMap() {
