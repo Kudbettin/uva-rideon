@@ -1,3 +1,4 @@
+<!-- https://developers.google.com/maps/documentation/directions/intro#DirectionsResponses -->
 {% extends 'RideOn/base.html' %}
 
 {% block title %} Ride Posting {% endblock %}
@@ -11,21 +12,52 @@
             <div class="col-6">
                 <p>Route {{drive.start_location}} {{drive.end_location}}</p>
                 <div id="map" style="height: 100%; width: 300px;"></div>
+                <div id="startx">{{drive.start_location.coordinates_x}}</div>
+                <div id="starty">{{drive.start_location.coordinates_y}}</div>
+                <div id="endx">{{drive.end_location.coordinates_x}}</div>
+                <div id="endy">{{drive.end_location.coordinates_y}}</div>
+                <div id="travel_time">{{drive.time}}</div>
                 <script>
 
                     function initMap() {
-                        var myLatLng = { lat: {{drive.start_location.coordinates_y}}, lng: {{drive.end_location.coordinates_x}} };
+                        var start_coordinates = { lat: parseFloat(document.getElementById('starty').innerText), lng: parseFloat(document.getElementById('startx').innerText) };
+                        var end_coordinates = { lat: parseFloat(document.getElementById('endy').innerText), lng: parseFloat(document.getElementById('endx').innerText) };
 
                         var map = new google.maps.Map(document.getElementById('map'), {
                             zoom: 10,
-                            center: myLatLng
+                            center: start_coordinates
                         });
 
-                        var marker = new google.maps.Marker({
-                            position: myLatLng,
+                        var marker_start = new google.maps.Marker({
+                            position: start_coordinates,
                             map: map,
                             title: 'To Be Improved'
                         });
+
+                        var marker_end = new google.maps.Marker({
+                            position: end_coordinates,
+                            map: map,
+                            title: 'To Be Improved'
+                        });
+
+                        var directionsDisplay = new google.maps.DirectionsRenderer();
+                        var directionsService = new google.maps.DirectionsService();
+
+                        directionsDisplay.setMap(map)
+                        // can also add waypoits here
+                        // can also add duration information if add the travel time. but it sounds boring atm.
+                        var request = {
+                            origin: start_coordinates,
+                            destination: end_coordinates,
+                            travelMode: 'DRIVING'
+                        };
+
+                        directionsService.route(request, function(result, status){
+                            if (status == "OK"){
+                                directionsDisplay.setDirections(result);
+                            }
+                        });
+                        
                     }
                 </script>
                 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY7BlSzTYJKwTNrObrU7so714CJgF3Uhc&callback=initMap">

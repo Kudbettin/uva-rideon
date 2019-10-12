@@ -34,10 +34,10 @@ pin a location to the map
 ## TODO
 
 add navbar links
-
-
 make coordinates part of the location
-
 pin both start and end location on to map
 fix the navbar links
+
+directions
+
 tests and stuff
