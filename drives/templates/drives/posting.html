@@ -14,7 +14,7 @@
                 <script>
 
                     function initMap() {
-                        var myLatLng = { lat: {{drive.location.coordinates_y}}, lng: {{drive.location.coordinates_x}} };
+                        var myLatLng = { lat: {{drive.start_location.coordinates_y}}, lng: {{drive.end_location.coordinates_x}} };
 
                         var map = new google.maps.Map(document.getElementById('map'), {
                             zoom: 10,
@@ -42,7 +42,7 @@
                 <p>Vehicle: {{drive.car_description}}</p>
                 <p>Luggage Capacity: {{drive.luggage_description}}</p>
                 <p>Description: {{drive.description}}</p>
-                <p>Location: {{location}}</p>
+                <p>Location: {{drive.start_location.coordinates_x}}</p>
 
             </div>
         </div>
