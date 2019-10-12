@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import CustomUser
+from django.utils import timezone
 
 '''
 A map location, likely pulled from Google APIs
@@ -56,3 +57,17 @@ class Drive(models.Model):
 			
 	    self.passengers.add(passenger)
 	    return True
+		
+def create_drive(username_str, start_location_str="Start Location", end_location_str="End Location", title_str="Title", description_str="Description"):
+	start_location = Location.objects.create(location = start_location_str)
+	end_location   = Location.objects.create(location = end_location_str)
+	
+	driver = CustomUser.objects.create(username=username_str)
+	
+	drive = Drive.objects.create(start_location=start_location, end_location=end_location, title=title_str, 
+										driver=driver, date_time=timezone.now(), description=description_str, min_cost=2,
+										max_cost=10, payment_method="payment", max_passengers=4, car_description="mycar")
+										
+	dropoff = Location.objects.create(location = "dropoff", dropoff_in_drive=drive)
+	
+	return start_location, end_location, driver, drive, dropoff
