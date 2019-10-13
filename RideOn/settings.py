@@ -142,4 +142,5 @@ except ImportError:
     found = False
 
 # workaround to avoid using SSL locally
-del DATABASES['default']['OPTIONS']['sslmode']
+if os.path.isfile(dotenv_file):
+	del DATABASES['default']['OPTIONS']['sslmode']
