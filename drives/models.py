@@ -44,7 +44,7 @@ class Drive(models.Model):
         return super(self.__class__, self).delete(*args, **kwargs)
 	
     def get_dropoffs(self):
-	    return Location
+	    return Location.objects.filter()
     '''
     Adds a passenger to the drive if there is space, otherwise does not
 	
