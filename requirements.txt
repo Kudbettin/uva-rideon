@@ -1,5 +1,3 @@
 gunicorn
 django-heroku
 django-bootstrap4
-python-dotenv
-dj-database-url
