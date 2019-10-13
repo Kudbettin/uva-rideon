@@ -104,6 +104,9 @@ venv.bak/
 .mypy_cache/
 .DS_Store
 
+.vscode
+
+
 ### Emacs junk
 *~
 \#*\#
@@ -113,3 +116,4 @@ venv.bak/
 auto-save-list
 tramp
 .\#*
+
