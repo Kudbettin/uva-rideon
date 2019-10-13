@@ -103,4 +103,17 @@ venv.bak/
 # mypy
 .mypy_cache/
 .DS_Store
+
 .vscode
+
+
+### Emacs junk
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
