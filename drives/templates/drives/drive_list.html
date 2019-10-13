@@ -88,7 +88,9 @@
                 </span>
 			</div>
 		</div>
-		<button type="button" class="btn btn-success ml-1">Create</button>
+		<form action="/drives/new">
+			<input class="btn btn-success ml-1" type="submit" value="Create" />
+		</form>
 	</div>
 		
 	{% if drive_list %}
