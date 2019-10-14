@@ -26,7 +26,7 @@ class Drive(models.Model):
     end_location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="end_location")
     title           = models.CharField(max_length=100)
     driver          = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name="driver", null=True)
-    date_time       = models.DateTimeField(default=timezone.now())
+    date_time       = models.DateTimeField()
     description     = models.TextField()
     passengers      = models.ManyToManyField(CustomUser, related_name="passengers", blank=True)
     min_cost        = models.DecimalField(max_digits=5, decimal_places=2)
