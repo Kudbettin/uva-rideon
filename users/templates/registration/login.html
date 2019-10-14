@@ -7,10 +7,15 @@
 
 <div class="container mt-5">
 	<h2>Login</h2>
-	<form method="post">
+	{% if request.GET.error == '1' %}
+	<div class="alert alert-danger" role="alert">Login failed! Please sign-in with a <code>@virginia.edu</code> email address.</div>
+	{% endif %}
+
+	<a href="{% url 'social:begin' 'google-oauth2' %}?next=/">Login with Google</a>
+	<!--<form method="post">
 	  {% csrf_token %}
 	  {{ form.as_p }}
 	  <button type="submit">Login</button>
-	</form>
+	</form>-->
 </div>
 {% endblock %}
