@@ -2,6 +2,8 @@ from django.db import models
 from users.models import CustomUser
 from django.utils import timezone
 
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 '''
 A map location, likely pulled from Google APIs
 '''
@@ -71,3 +73,20 @@ def create_drive(username_str, start_location_str="Start Location", end_location
 	dropoff = Location.objects.create(location = "dropoff", dropoff_in_drive=drive)
 	
 	return start_location, end_location, driver, drive, dropoff
+class DriverReview(models.Model):
+    by = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="driver_by", null=True)
+    of = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="driver_of", null=True)
+    created_at = models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=150)
+    description = models.TextField()
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    drive = models.OneToOneField(Drive, on_delete = models.CASCADE)
+
+class RiderReview(models.Model):
+    by = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="rider_by", null=True)
+    of = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="rider_of", null=True)
+    created_at = models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=150)
+    description = models.TextField()
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    drive = models.OneToOneField(Drive, on_delete = models.CASCADE)
