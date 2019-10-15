@@ -7,8 +7,8 @@ A map location, likely pulled from Google APIs
 '''
 class Location(models.Model):
     location = models.TextField()
-    coordinates_x = models.FloatField()
-    coordinates_y = models.FloatField()
+    coordinates_x = models.FloatField(default=0)
+    coordinates_y = models.FloatField(default=0)
     dropoff_in_drive = models.ForeignKey('Drive', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
