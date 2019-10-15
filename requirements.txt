@@ -1,5 +1,5 @@
 gunicorn
-django-heroku
+django
 django-bootstrap4
-social-auth-core
-social-auth-app-django
+dj-database-url
+psycopg2
