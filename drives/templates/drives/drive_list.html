@@ -88,13 +88,13 @@
                 </span>
 			</div>
 		</div>
-		<button type="button" class="btn btn-success ml-1">Create</button>
+		<a href="new" class="btn btn-success ml-1" role="button">Create</a>
 	</div>
 		
 	{% if drive_list %}
 		{% for drive in drive_list %}
 			<div class="container mt-2 border rounded" id="drive-listing">
-				<a href="{{ drive.get_absolute_url }}" id="drive-title">{{ drive.title }}</a>
+				<a href="{% url 'drives:post_details' drive.id %}" id="drive-title">{{ drive.title }}</a>
 				<a href="{% url 'profile' drive.driver.id %}">{{ drive.driver.username }}</a>
 				<br>
 				{{ drive.description }}

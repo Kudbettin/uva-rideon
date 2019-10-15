@@ -21,11 +21,8 @@ A trip that will be undertaken at a concrete point in time.
 Differs from a 'ride' in that a 'ride' is a request for a drive.
 '''
 class Drive(models.Model):
-    # Why is this one to one?
-    # start_location  = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="start_location")
-    # end_location    = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="end_location")    
-    start_location  = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="start_location")
-    end_location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="end_location")
+    start_location  = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="start_location")
+    end_location    = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="end_location")
     title           = models.CharField(max_length=100)
     driver          = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name="driver", null=True)
     date_time       = models.DateTimeField()
