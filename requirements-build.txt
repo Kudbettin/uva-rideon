@@ -1,5 +1,7 @@
 gunicorn
 django
 django-bootstrap4
+dj-database-url
+psycopg2
 social-auth-core
 social-auth-app-django
