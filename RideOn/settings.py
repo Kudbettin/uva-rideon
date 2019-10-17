@@ -89,6 +89,12 @@ DATABASES = {
     }
 }
 
+if os.environ.get('DATABASE_URL') is not None:
+    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600)
+
+
+
+
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
