@@ -19,6 +19,8 @@ install:
 - export CHROME_BIN=/usr/bin/google-chrome
 - pip install -r requirements-build.txt
 script:
+- find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+- find . -path "*/migrations/*.pyc"  -delete
 - python manage.py makemigrations
 - python manage.py migrate
 - python manage.py test
