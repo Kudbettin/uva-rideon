@@ -15,7 +15,7 @@ install:
 #- sudo apt-get update
 #- sudo apt-get install -y chromium-browser unzip
 - wget https://chromedriver.storage.googleapis.com/77.0.3865.40/chromedriver_linux64.zip
-- unzip chromedriver_linux64 -d /usr/bin
+- sudo unzip chromedriver_linux64 -d /usr/bin
 - export CHROME_BIN=/usr/bin/google-chrome
 - pip install -r requirements-build.txt
 script:
