@@ -1,3 +1,5 @@
+addons:
+  chrome: stable
 branches:
   only:
   - master
@@ -7,7 +9,14 @@ notifications:
 language: python
 python:
 - '3.6'
+before_install:
+- google-chrome-stable --headless --disable-gpu http://localhost & 
 install:
+#- sudo apt-get update
+#- sudo apt-get install -y chromium-browser unzip
+- wget https://chromedriver.storage.googleapis.com/77.0.3865.40/chromedriver_linux64.zip
+- unzip chromedriver_linux64 -d /usr/bin
+- export CHROME_BIN=/usr/bin/google-chrome
 - pip install -r requirements-build.txt
 script:
 - python manage.py makemigrations
