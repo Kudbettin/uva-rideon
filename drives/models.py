@@ -28,6 +28,7 @@ class Drive(models.Model):
     date_time       = models.DateTimeField()
     description     = models.TextField()
     passengers      = models.ManyToManyField(CustomUser, related_name="passengers", blank=True)
+    requestList     = models.ManyToManyField(CustomUser, related_name="requestList", blank=True)
     min_cost        = models.DecimalField(max_digits=5, decimal_places=2)
     max_cost        = models.DecimalField(max_digits=5, decimal_places=2)
     payment_method  = models.CharField(max_length=100)
