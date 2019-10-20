@@ -17,7 +17,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=100)),
-                ('date_time', models.DateTimeField()),
+                ('date', models.DateField()),
+                ('time', models.TimeField()),
                 ('description', models.TextField()),
                 ('min_cost', models.DecimalField(decimal_places=2, max_digits=5)),
                 ('max_cost', models.DecimalField(decimal_places=2, max_digits=5)),
@@ -38,6 +39,19 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='RiderReview',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now=True)),
+                ('title', models.CharField(max_length=150)),
+                ('description', models.TextField()),
+                ('rating', models.PositiveIntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
+                ('by', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='rider_by', to=settings.AUTH_USER_MODEL)),
+                ('drive', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='drives.Drive')),
+                ('of', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='rider_of', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Location',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -54,6 +68,24 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=150)),
                 ('description', models.TextField()),
                 ('rating', models.PositiveIntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
+                ('by', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='driver_by', to=settings.AUTH_USER_MODEL)),
+                ('drive', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='drives.Drive')),
+                ('of', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='driver_of', to=settings.AUTH_USER_MODEL)),
             ],
+        ),
+        migrations.AddField(
+            model_name='drive',
+            name='end_location',
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='end_location', to='drives.Location'),
+        ),
+        migrations.AddField(
+            model_name='drive',
+            name='passengers',
+            field=models.ManyToManyField(blank=True, related_name='passengers', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='drive',
+            name='start_location',
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='start_location', to='drives.Location'),
         ),
     ]
