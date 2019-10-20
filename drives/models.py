@@ -35,7 +35,6 @@ class Drive(models.Model):
     end_postal_code = models.TextField(null=True, blank=True)
     title           = models.CharField(max_length=100)
     driver          = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name="driver", null=True)
-    # date_time       = models.DateTimeField()
     date            = models.DateField()
     time            = models.TimeField()
     description     = models.TextField()

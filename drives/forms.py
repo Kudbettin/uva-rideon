@@ -14,8 +14,6 @@ class DriveCreationForm(forms.ModelForm):
                     "title", "driver", "date", "time", "description", "passengers", "min_cost",
                     "max_cost", "payment_method", "max_passengers", "car_description",
                     "luggage_description")
-        date_time = forms.DateField(label='date_time', input_formats=['%Y-%m-%d'], initial=timezone.now())
-
 
 # class DriveChangeForm():
 #     pass

@@ -140,6 +140,16 @@ class RideList(ListView):
 
 def post_new(request):
     if request.method == "POST":
+	    # re-format time data to use 24 hour scale for Django
+        if request.POST['time']:
+            request.POST = request.POST.copy()
+            if 'am' in request.POST['time']:
+                request.POST['time'] = request.POST['time'].replace('am', '')
+            elif 'pm' in request.POST['time']:
+                request.POST['time'] = request.POST['time'].replace('pm', '')
+                hours,minutes = request.POST['time'].split(":")
+                request.POST['time'] = str(int(hours) + 12) + ":" + minutes
+				
         form = DriveCreationForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
@@ -149,5 +159,7 @@ def post_new(request):
 
     else:
         form = DriveCreationForm()
-        
+    print("invalid model form")
+    print(form.errors)
+    print(request.POST)
     return render(request, 'drives/new_drive.html', {'form': form})
