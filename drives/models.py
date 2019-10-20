@@ -21,13 +21,25 @@ A trip that will be undertaken at a concrete point in time.
 Differs from a 'ride' in that a 'ride' is a request for a drive.
 '''
 class Drive(models.Model):
-    start_location  = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="start_location")
-    end_location    = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="end_location")
+    start_street_number = models.TextField(null=True, blank=True)
+    start_route     = models.TextField(null=True, blank=True) 
+    start_locality  = models.TextField(null=True, blank=True)
+    start_administrative_area_level_1 = models.TextField(null=True, blank=True)
+    start_country   = models.TextField(null=True, blank=True)
+    start_postal_code = models.TextField(null=True, blank=True)
+    end_street_number = models.TextField(null=True, blank=True)
+    end_route     = models.TextField(null=True, blank=True) 
+    end_locality  = models.TextField(null=True, blank=True)
+    end_administrative_area_level_1 = models.TextField(null=True, blank=True)
+    end_country   = models.TextField(null=True, blank=True)
+    end_postal_code = models.TextField(null=True, blank=True)
     title           = models.CharField(max_length=100)
     driver          = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name="driver", null=True)
-    date_time       = models.DateTimeField()
+    date            = models.DateField()
+    time            = models.TimeField()
     description     = models.TextField()
     passengers      = models.ManyToManyField(CustomUser, related_name="passengers", blank=True)
+    requestList     = models.ManyToManyField(CustomUser, related_name="requestList", blank=True)
     min_cost        = models.DecimalField(max_digits=5, decimal_places=2)
     max_cost        = models.DecimalField(max_digits=5, decimal_places=2)
     payment_method  = models.CharField(max_length=100)
@@ -57,6 +69,18 @@ class Drive(models.Model):
 	    self.passengers.add(passenger)
 	    return True
 		
+    '''
+    Adds a passenger to the drive requestlist if they are
+	not already on it
+	'''
+    def add_passenger_to_requestlist(self, passenger):
+        if self.requestList.filter(id=passenger.id).count() == 0:
+	        self.requestList.add(passenger)
+		
+'''
+Used to easily create a drive with custom data
+Intended to be used by testinf functions
+'''
 def create_drive(username_str, start_location_str="Start Location", end_location_str="End Location", title_str="Title", description_str="Description"):
 	start_location = Location.objects.create(location = start_location_str)
 	end_location   = Location.objects.create(location = end_location_str)
