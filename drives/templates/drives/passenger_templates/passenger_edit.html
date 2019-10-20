@@ -1,0 +1,66 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'drives/passenger_list.css' %}">
+
+<h4>Passengers:</h4>
+
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Rider Rating</th>
+		<th></th>
+	  </tr>
+	{% for passenger in drive.passengers.all %}
+	<tr>
+		<td>
+			<a href="{% url 'profile' passenger.id %}">{{ passenger.username }}</a>
+		</td>
+		<td>
+			3
+		</td>
+		<td>
+		    {% if passenger.id != drive.driver.id %}
+				<form method="post" action="passenger_remove">
+					{% csrf_token %}
+					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
+					<button type="submit" class="btn btn-outline-danger btn-sm float-right">Remove</button>
+				</form>
+			{% endif %}
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+<br>
+<h4>Rider Requests:</h4>
+
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Rider Rating</th>
+		<th></th>
+	  </tr>
+	{% for passenger in drive.requestList.all %}
+	<tr>
+		<td>
+			<a href="{% url 'profile' passenger.id %}">{{ passenger.username }}</a>
+		</td>
+		<td>
+			3
+		</td>
+		<td>
+		    {% if passenger.id != drive.driver.id %}
+				<form method="post" action="request_reject">
+					{% csrf_token %}
+					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
+					<button type="submit" class="btn btn-outline-danger btn-sm float-right">Reject</button>
+				</form>
+				<form method="post" action="request_approve">
+					{% csrf_token %}
+					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
+					<button type="submit" class="btn btn-outline-success btn-sm float-left">Approve</button>
+				</form>
+			{% endif %}
+		</td>
+	</tr>
+	{% endfor %}
+</table>
