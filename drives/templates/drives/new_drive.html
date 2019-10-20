@@ -96,8 +96,8 @@
             var place = autocomplete_start.getPlace();
 
             for (var component in componentForm) {
-                document.getElementById("start_" + component).value = '';
-                document.getElementById("start_" + component).disabled = false;
+                document.getElementById("id_start_" + component).value = '';
+                document.getElementById("id_start_" + component).disabled = false;
             }
 
             // Get each component of the address from the place details,
@@ -106,7 +106,7 @@
                 var addressType = place.address_components[i].types[0];
                 if (componentForm[addressType]) {
                     var val = place.address_components[i][componentForm[addressType]];
-                    document.getElementById("start_" + addressType).value = val;
+                    document.getElementById("id_start_" + addressType).value = val;
                 }
             }
         }
@@ -116,8 +116,8 @@
             var place = autocomplete_end.getPlace();
 
             for (var component in componentForm) {
-                document.getElementById("end_" + component).value = '';
-                document.getElementById("end_" + component).disabled = false;
+                document.getElementById("id_end_" + component).value = '';
+                document.getElementById("id_end_" + component).disabled = false;
             }
 
             // Get each component of the address from the place details,
@@ -126,7 +126,7 @@
                 var addressType = place.address_components[i].types[0];
                 if (componentForm[addressType]) {
                     var val = place.address_components[i][componentForm[addressType]];
-                    document.getElementById("end_"+ addressType).value = val;
+                    document.getElementById("id_end_"+ addressType).value = val;
                 }
             }
         }
@@ -234,8 +234,8 @@
                 {{ field.label_tag }} {{ field }}                
             </div>
         {% endif %}
-    {% endfor %}
-    <button type="submit" class="save btn btn-default">Save</button> -->
+    {% endfor %} --->
+    <button type="submit" class="save btn btn-default">Save</button>
 </form>
 
 
