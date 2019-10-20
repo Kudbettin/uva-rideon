@@ -21,20 +21,6 @@ A trip that will be undertaken at a concrete point in time.
 Differs from a 'ride' in that a 'ride' is a request for a drive.
 '''
 class Drive(models.Model):
-    # start_location  = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="start_location")
-    # end_location    = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="end_location")
-    # start_location  = models.TextField(null=True, blank=True)
-    # start_id        = models.TextField(null=True, blank=True)
-    # start_street    = models.TextField(null=True, blank=True)
-    # start_city      = models.TextField(null=True, blank=True)
-    # start_state     = models.TextField(null=True, blank=True)
-    # start_zip       = models.TextField(null=True, blank=True)
-    # end_location    = models.TextField(null=True, blank=True)
-    # end_id          = models.TextField(null=True, blank=True)
-    # end_street      = models.TextField(null=True, blank=True)
-    # end_city        = models.TextField(null=True, blank=True)
-    # end_state       = models.TextField(null=True, blank=True)
-    # end_zip         = models.TextField(null=True, blank=True)
     start_street_number = models.TextField(null=True, blank=True)
     start_route     = models.TextField(null=True, blank=True) 
     start_locality  = models.TextField(null=True, blank=True)
