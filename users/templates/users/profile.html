@@ -9,7 +9,7 @@
 	<div class="row">
 		<div class="col-4">
 			<div class="profile-img">
-				<img src=https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog alt=""/>
+				<img src="{{ customuser.profile_pic }}" alt="" style="width: 80%; height: auto;" />
 			</div>
 		</div>
 		<div class="col-6">
@@ -20,8 +20,8 @@
 			</div>
 		</div>
 		{% if customuser.id == user.id %}
-		<div class="col-2">
-			<input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile"/>
+		<div class="col-2"> 
+			<button onclick="window.location.href = '/users/{{ customuser.id }}/edit/';">Edit Profile </button>
 		</div>
 		{% else %}
 		{% endif %}
@@ -68,7 +68,15 @@
 							<label>Email</label>
 						</div>
 						<div class="col-6">
-							<p>{{ customuser.email }}</p>
+							<p>{{ customuser.username }}</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-6">
+							<label>Phone Number</label>
+						</div>
+						<div class="col-6">
+							<p>{{ customuser.phone }}</p>
 						</div>
 					</div>
 					<div class="row">
@@ -96,44 +104,6 @@
 						</div>
 						<div class="col-6">
 							<p>Expert</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>Hourly Rate</label>
-						</div>
-						<div class="col-6">
-							<p>10$/hr</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>Total Projects</label>
-						</div>
-						<div class="col-6">
-							<p>230</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>English Level</label>
-						</div>
-						<div class="col-6">
-							<p>Expert</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>Availability</label>
-						</div>
-						<div class="col-6">
-							<p>6 months</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-12">
-							<label>Your Bio</label><br/>
-							<p>Your detail description</p>
 						</div>
 					</div>
 				</div>
