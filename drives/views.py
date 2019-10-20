@@ -18,7 +18,16 @@ driver can decide to let them join or not
 '''
 def passenger_request(request, driveId):
     if request.method == "POST":
-        id = request.POST['userId']
+        # Make sure the user being added is the logged in user
+        id = request.POST['userId']		
+        logged_in_user = request.user.id
+        if int(id) != int(logged_in_user):
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+			
+		# Make sure the user isn't already on the requestlist or the passenger list
+        if Drive.objects.get(id=driveId).passengers.filter(id=id).count() != 0 or Drive.objects.get(id=driveId).requestList.filter(id=id).count() != 0:
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+
         Drive.objects.get(id=driveId).add_passenger_to_requestlist(CustomUser.objects.get(id=id))
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
 		
@@ -27,7 +36,16 @@ Called when a Passenger leaves a ride
 '''
 def leave_ride(request, driveId):
     if request.method == "POST":
-        id = request.POST['passengerId']
+	    # Make sure the user leaving is the logged in user
+        id = request.POST['passengerId']		
+        logged_in_user = request.user.id
+        if int(id) != int(logged_in_user):
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+			
+		# Make sure the user is actually on the passenger list
+        if Drive.objects.get(id=driveId).passengers.filter(id=id).count() != 1:
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+	
         Drive.objects.get(id=driveId).passengers.remove(CustomUser.objects.get(id=id))
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
 		
@@ -36,7 +54,17 @@ Called when a Driver removes a passenger
 '''
 def passenger_remove(request, driveId):
     if request.method == "POST":
+        # Make sure the logged in user is the drive owner
         id = request.POST['passengerId']
+        owner_id = Drive.objects.get(id=driveId).driver.id		
+        logged_in_user = request.user.id
+        if int(owner_id) != int(logged_in_user):
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+			
+		# Make sure the user is actually on the passenger list
+        if Drive.objects.get(id=driveId).passengers.filter(id=id).count() != 1:
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+	
         Drive.objects.get(id=driveId).passengers.remove(CustomUser.objects.get(id=id))
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
 		
@@ -45,7 +73,17 @@ Called when a Driver approves a passenger request
 '''
 def approve_request(request, driveId):
     if request.method == "POST":
+        # Make sure the logged in user is the drive owner
         id = request.POST['passengerId']
+        owner_id = Drive.objects.get(id=driveId).driver.id		
+        logged_in_user = request.user.id
+        if int(owner_id) != int(logged_in_user):
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+			
+		# Make sure the user is on the requestList and not on the passengerList
+        if Drive.objects.get(id=driveId).passengers.filter(id=id).count() != 0 and Drive.objects.get(id=driveId).requestList.filter(id=id).count() != 1:
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+			
         Drive.objects.get(id=driveId).passengers.add(CustomUser.objects.get(id=id))
         Drive.objects.get(id=driveId).requestList.remove(CustomUser.objects.get(id=id))
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
@@ -55,6 +93,17 @@ Called when a Driver rejects a passenger request
 '''
 def reject_request(request, driveId):
     if request.method == "POST":
+        # Make sure the logged in user is the drive owner
+        id = request.POST['passengerId']
+        owner_id = Drive.objects.get(id=driveId).driver.id		
+        logged_in_user = request.user.id
+        if int(owner_id) != int(logged_in_user):
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+			
+		# Make sure the user is on the requestList
+        if not Drive.objects.get(id=driveId).requestList.get(id=id):
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+			
         id = request.POST['passengerId']
         Drive.objects.get(id=driveId).requestList.remove(CustomUser.objects.get(id=id))
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
