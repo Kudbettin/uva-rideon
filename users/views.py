@@ -1,9 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.views import generic
 
-from .models import CustomUser
+from .models import CustomUser, UserFriends
 from drives.models import DriverReview, RiderReview
 
 from .forms import CustomUserCreationForm
@@ -27,3 +27,11 @@ class ProfileView(generic.DetailView):
 class EditProfileView(generic.DetailView):
     model = CustomUser
     template_name = 'users/editprofile.html'
+
+def change_friends(request, operation, pk):
+    new_friend = CustomUser.objects.get(pk=pk)
+    if operation == 'add':
+        UserFriends.add_friend(request.user, new_friend)
+    elif operation == 'remove':
+        UserFriends.remove_friend(request.user, new_friend)
+    return redirect()
