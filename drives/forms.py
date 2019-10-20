@@ -9,8 +9,9 @@ class DriveCreationForm(forms.ModelForm):
 
     class Meta:
         model = Drive
-        fields = ("start_location", "end_location", "title", "driver",
-                    "date_time", "description", "passengers", "min_cost",
+        fields = ("start_location", "start_id", "start_street", "start_city", "start_state", "start_zip", 
+                    "end_location", "end_id", "end_street", "end_city", "end_state", "end_zip",
+                    "title", "driver", "date_time", "description", "passengers", "min_cost",
                     "max_cost", "payment_method", "max_passengers", "car_description",
                     "luggage_description")
         date_time = forms.DateField(label='date_time', input_formats=['%Y-%m-%d'], initial=timezone.now())

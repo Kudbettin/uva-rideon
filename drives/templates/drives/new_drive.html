@@ -9,7 +9,11 @@
 <h2>New post</h2>
 
     <div id="locationField">
-        <input id="autocomplete" placeholder="Enter your address" onFocus="geolocate()" type="text" />
+        <input id="autocomplete_start" placeholder="Enter your address" onFocus="geolocate_start()" type="text" />
+    </div>
+
+    <div id="locationField">
+        <input id="autocomplete_end" placeholder="Enter your address" onFocus="geolocate_end()" type="text" />
     </div>
 
     <!-- Note: The address components in this sample are typical. You might need to adjust them for
@@ -17,7 +21,7 @@
          https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete-addressform
     -->
 
-    <table id="address">
+    <!-- <table id="address">
         <tr>
             <td class="label">Street address</td>
             <td class="slimField"><input class="field" id="street_number" disabled="true" /></td>
@@ -37,7 +41,7 @@
             <td class="label">Country</td>
             <td class="wideField" colspan="3"><input class="field" id="country" disabled="true" /></td>
         </tr>
-    </table>
+    </table> -->
 
     <script>
         // This sample uses the Autocomplete widget to help the user select a
@@ -59,28 +63,41 @@
             postal_code: 'short_name'
         };
 
+        var componentFormStart = {
+                start_street_number: 'short_name',
+                start_route: 'long_name',
+                start_locality: 'long_name',
+                start_administrative_area_level_1: 'short_name',
+                start_country: 'long_name',
+                start_postal_code: 'short_name'
+        };
+
         function initAutocomplete() {
             // Create the autocomplete object, restricting the search predictions to
             // geographical location types.
-            autocomplete = new google.maps.places.Autocomplete(
-                document.getElementById('autocomplete'), { types: ['geocode'] });
+            autocomplete_start = new google.maps.places.Autocomplete(
+                document.getElementById('autocomplete_start'), { types: ['geocode'] });
 
+            autocomplete_end = new google.maps.places.Autocomplete(
+                document.getElementById('autocomplete_end'), { types: ['geocode'] });
             // Avoid paying for data that you don't need by restricting the set of
             // place fields that are returned to just the address components.
-            autocomplete.setFields(['address_component']);
+            autocomplete_start.setFields(['address_component']);
+            autocomplete_end.setFields(['address_component']);
 
             // When the user selects an address from the drop-down, populate the
             // address fields in the form.
-            autocomplete.addListener('place_changed', fillInAddress);
+            autocomplete_start.addListener('place_changed', fillInAddress_start);
+            autocomplete_end.addListener('place_changed', fillInAddress_end);
         }
 
-        function fillInAddress() {
+        function fillInAddress_start() {
             // Get the place details from the autocomplete object.
-            var place = autocomplete.getPlace();
+            var place = autocomplete_start.getPlace();
 
             for (var component in componentForm) {
-                document.getElementById(component).value = '';
-                document.getElementById(component).disabled = false;
+                document.getElementById("start_" + component).value = '';
+                document.getElementById("start_" + component).disabled = false;
             }
 
             // Get each component of the address from the place details,
@@ -89,7 +106,27 @@
                 var addressType = place.address_components[i].types[0];
                 if (componentForm[addressType]) {
                     var val = place.address_components[i][componentForm[addressType]];
-                    document.getElementById(addressType).value = val;
+                    document.getElementById("start_" + addressType).value = val;
+                }
+            }
+        }
+
+        function fillInAddress_end() {
+            // Get the place details from the autocomplete object.
+            var place = autocomplete_end.getPlace();
+
+            for (var component in componentForm) {
+                document.getElementById("end_" + component).value = '';
+                document.getElementById("end_" + component).disabled = false;
+            }
+
+            // Get each component of the address from the place details,
+            // and then fill-in the corresponding field on the form.
+            for (var i = 0; i < place.address_components.length; i++) {
+                var addressType = place.address_components[i].types[0];
+                if (componentForm[addressType]) {
+                    var val = place.address_components[i][componentForm[addressType]];
+                    document.getElementById("end_"+ addressType).value = val;
                 }
             }
         }
@@ -98,7 +135,7 @@
 
         // Bias the autocomplete object to the user's geographical location,
         // as supplied by the browser's 'navigator.geolocation' object.
-        function geolocate() {
+        function geolocate_start() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var geolocation = {
@@ -107,7 +144,24 @@
                     };
                     var circle = new google.maps.Circle(
                         { center: geolocation, radius: position.coords.accuracy });
-                    autocomplete.setBounds(circle.getBounds());
+                    autocomplete_start.setBounds(circle.getBounds());
+                });
+            }
+        }
+
+
+        // Bias the autocomplete object to the user's geographical location,
+        // as supplied by the browser's 'navigator.geolocation' object.
+        function geolocate_end() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var geolocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    var circle = new google.maps.Circle(
+                        { center: geolocation, radius: position.coords.accuracy });
+                    autocomplete_end.setBounds(circle.getBounds());
                 });
             }
         }
@@ -126,20 +180,62 @@
 
 
 <form method="POST" class="post-form">{% csrf_token %}
-    <!-- {{ form.as_p }} -->
+    {{ form.as_p}}
 
-    {% for field in form %}
-    {% if field.name == "start_location" or field.name == "end_location"%}
+    <!-- {% for field in form %}
+        {% if "start" in field.name%}
+            <table id="address">
+                <tr>
+                    <td class="label">Street address</td>
+                    <td class="slimField"><input class="field" id="start_street_number" disabled="true" /></td>
+                    <td class="wideField" colspan="2"><input class="field" id="start_route" disabled="true" /></td>
+                </tr>
+                <tr>
+                    <td class="label">City</td>
+                    <td class="wideField" colspan="3"><input class="field" id="start_locality" disabled="true" /></td>
+                </tr>
+                <tr>
+                    <td class="label">State</td>
+                    <td class="slimField"><input class="field" id="start_administrative_area_level_1" disabled="true" /></td>
+                    <td class="label">Zip code</td>
+                    <td class="wideField"><input class="field" id="start_postal_code" disabled="true" /></td>
+                </tr>
+                <tr>
+                    <td class="label">Country</td>
+                    <td class="wideField" colspan="3"><input class="field" id="start_country" disabled="true" /></td>
+                </tr>
+            </table>
 
-    {{ field.errors }}
-    {{ field.label_tag }} {{ field }}
-    {% else %}
-    <div class="fieldWrapper">
-        {{ field.errors }}
-        {{ field.label_tag }} {{ field }}
+        {% elif "end" in field.name %}
+            <table id="address">
+                <tr>
+                    <td class="label">Street address</td>
+                    <td class="slimField"><input class="field" id="end_street_number" disabled="true" /></td>
+                    <td class="wideField" colspan="2"><input class="field" id="end_route" disabled="true" /></td>
+                </tr>
+                <tr>
+                    <td class="label">City</td>
+                    <td class="wideField" colspan="3"><input class="field" id="end_locality" disabled="true" /></td>
+                </tr>
+                <tr>
+                    <td class="label">State</td>
+                    <td class="slimField"><input class="field" id="end_administrative_area_level_1" disabled="true" /></td>
+                    <td class="label">Zip code</td>
+                    <td class="wideField"><input class="field" id="end_postal_code" disabled="true" /></td>
+                </tr>
+                <tr>
+                    <td class="label">Country</td>
+                    <td class="wideField" colspan="3"><input class="field" id="end_country" disabled="true" /></td>
+                </tr>
+            </table>
+        {% else %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}                
+            </div>
         {% endif %}
-        <button type="submit" class="save btn btn-default">Save</button>
-        {% endfor %}
+    {% endfor %}
+    <button type="submit" class="save btn btn-default">Save</button> -->
 </form>
 
 
