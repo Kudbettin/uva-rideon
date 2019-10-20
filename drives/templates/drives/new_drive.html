@@ -183,6 +183,19 @@
 <form method="POST" class="post-form">
     {% csrf_token %}
     {{ form.as_p}}
+    <input type="hidden" id="id_start_country" name="start_country" value="">
+	<input type="hidden" id="id_start_street_number" name="start_street_number" value="">
+	<input type="hidden" id="id_start_route" name="start_route" value="">
+	<input type="hidden" id="id_start_locality" name="start_locality" value="">start_postal_code
+	<input type="hidden" id="id_start_administrative_area_level_1" name="start_administrative_area_level_1" value="">
+	<input type="hidden" id="id_start_postal_code" name="start_postal_code" value="">
+	
+	<input type="hidden" id="id_end_country" name="end_country" value="">
+	<input type="hidden" id="id_end_street_number" name="end_street_number" value="">
+	<input type="hidden" id="id_end_route" name="end_route" value="">
+	<input type="hidden" id="id_end_locality" name="end_locality" value="">end_postal_code
+	<input type="hidden" id="id_end_administrative_area_level_1" name="end_administrative_area_level_1" value="">
+	<input type="hidden" id="id_end_postal_code" name="end_postal_code" value="">
     <button type="submit" class="save btn btn-default">Save</button>
 </form>
 

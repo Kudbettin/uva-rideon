@@ -9,9 +9,7 @@ class DriveCreationForm(forms.ModelForm):
 
     class Meta:
         model = Drive
-        fields = ("start_street_number", "start_route", "start_locality", "start_administrative_area_level_1", "start_country", "start_postal_code", 
-                    "end_street_number", "end_route", "end_locality", "end_administrative_area_level_1", "end_country", "end_postal_code",
-                    "title", "driver", "date", "time", "description", "passengers", "min_cost",
+        fields = ( "title", "driver", "date", "time", "description", "passengers", "min_cost",
                     "max_cost", "payment_method", "max_passengers", "car_description",
                     "luggage_description")
 
