@@ -38,11 +38,12 @@
 					<ul class="nav-item dropdown my-2 my-lg-0">
 						{% if user.is_authenticated %}
 							<a class="nav-link text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								My Profile
+								{{ user.username }}
 								<img src="{% static 'RideOn/profile.png' %}" width="30" height="30" alt="" class="mr-2">
 							</a>
 							<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 								<a class="dropdown-item" href="/users/{{ user.id }}/">My Profile</a>
+								<a class="dropdown-item" href="/users/{{ user.id }}/myrides">My Rides</a>
 							  <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
 							</div>
 						{% else %}
