@@ -7,8 +7,9 @@
 
 {% block title %} Ride Creation {% endblock %}
 
-{% block content %}
+{% load crispy_forms_tags %}
 
+{% block content %}
 
 <head>
     <!-- Style of the date time. We can make our own if needed -->
@@ -18,11 +19,9 @@
     
     <link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
     <script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script>
-    
-
 
     <script>
-        $(function () {
+        $ (function () {
             $("#id_date").datepicker({format: 'yy-mm-dd'});
         });
     </script>
@@ -33,159 +32,201 @@
     </script>
 </head>
 
+<div class="container mt-5">
+	<h2>Create a Drive</h2>
 
-<h2>New post</h2>
+	<script>
+		// This sample uses the Autocomplete widget to help the user select a
+		// place, then it retrieves the address components associated with that
+		// place, and then it populates the form fields with those details.
+		// This sample requires the Places library. Include the libraries=places
+		// parameter when you first load the API. For example:
+		// <script
+		// src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
-    <div id="locationField">
-        <input id="autocomplete_start" placeholder="Enter your address" onFocus="geolocate_start()" type="text" />
-    </div>
+		var placeSearch, autocomplete;
 
-    <div id="locationField">
-        <input id="autocomplete_end" placeholder="Enter your address" onFocus="geolocate_end()" type="text" />
-    </div>
+		var componentForm = {
+			street_number: 'short_name',
+			route: 'long_name',
+			locality: 'long_name',
+			administrative_area_level_1: 'short_name',
+			country: 'long_name',
+			postal_code: 'short_name'
+		};
 
-    <script>
-        // This sample uses the Autocomplete widget to help the user select a
-        // place, then it retrieves the address components associated with that
-        // place, and then it populates the form fields with those details.
-        // This sample requires the Places library. Include the libraries=places
-        // parameter when you first load the API. For example:
-        // <script
-        // src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+		var componentFormStart = {
+				start_street_number: 'short_name',
+				start_route: 'long_name',
+				start_locality: 'long_name',
+				start_administrative_area_level_1: 'short_name',
+				start_country: 'long_name',
+				start_postal_code: 'short_name'
+		};
 
-        var placeSearch, autocomplete;
+		function initAutocomplete() {
+			// Create the autocomplete object, restricting the search predictions to
+			// geographical location types.
+			autocomplete_start = new google.maps.places.Autocomplete(
+				document.getElementById('autocomplete_start'), { types: ['geocode'] });
 
-        var componentForm = {
-            street_number: 'short_name',
-            route: 'long_name',
-            locality: 'long_name',
-            administrative_area_level_1: 'short_name',
-            country: 'long_name',
-            postal_code: 'short_name'
-        };
+			autocomplete_end = new google.maps.places.Autocomplete(
+				document.getElementById('autocomplete_end'), { types: ['geocode'] });
+			// Avoid paying for data that you don't need by restricting the set of
+			// place fields that are returned to just the address components.
+			autocomplete_start.setFields(['address_component']);
+			autocomplete_end.setFields(['address_component']);
 
-        var componentFormStart = {
-                start_street_number: 'short_name',
-                start_route: 'long_name',
-                start_locality: 'long_name',
-                start_administrative_area_level_1: 'short_name',
-                start_country: 'long_name',
-                start_postal_code: 'short_name'
-        };
+			// When the user selects an address from the drop-down, populate the
+			// address fields in the form.
+			autocomplete_start.addListener('place_changed', fillInAddress_start);
+			autocomplete_end.addListener('place_changed', fillInAddress_end);
+		}
 
-        function initAutocomplete() {
-            // Create the autocomplete object, restricting the search predictions to
-            // geographical location types.
-            autocomplete_start = new google.maps.places.Autocomplete(
-                document.getElementById('autocomplete_start'), { types: ['geocode'] });
+		function fillInAddress_start() {
+			// Get the place details from the autocomplete object.
+			var place = autocomplete_start.getPlace();
 
-            autocomplete_end = new google.maps.places.Autocomplete(
-                document.getElementById('autocomplete_end'), { types: ['geocode'] });
-            // Avoid paying for data that you don't need by restricting the set of
-            // place fields that are returned to just the address components.
-            autocomplete_start.setFields(['address_component']);
-            autocomplete_end.setFields(['address_component']);
+			for (var component in componentForm) {
+				document.getElementById("id_start_" + component).value = '';
+				document.getElementById("id_start_" + component).disabled = false;
+			}
 
-            // When the user selects an address from the drop-down, populate the
-            // address fields in the form.
-            autocomplete_start.addListener('place_changed', fillInAddress_start);
-            autocomplete_end.addListener('place_changed', fillInAddress_end);
-        }
+			// Get each component of the address from the place details,
+			// and then fill-in the corresponding field on the form.
+			for (var i = 0; i < place.address_components.length; i++) {
+				var addressType = place.address_components[i].types[0];
+				if (componentForm[addressType]) {
+					var val = place.address_components[i][componentForm[addressType]];
+					document.getElementById("id_start_" + addressType).value = val;
+				}
+			}
+		}
 
-        function fillInAddress_start() {
-            // Get the place details from the autocomplete object.
-            var place = autocomplete_start.getPlace();
+		function fillInAddress_end() {
+			// Get the place details from the autocomplete object.
+			var place = autocomplete_end.getPlace();
 
-            for (var component in componentForm) {
-                document.getElementById("id_start_" + component).value = '';
-                document.getElementById("id_start_" + component).disabled = false;
-            }
+			for (var component in componentForm) {
+				document.getElementById("id_end_" + component).value = '';
+				document.getElementById("id_end_" + component).disabled = false;
+			}
 
-            // Get each component of the address from the place details,
-            // and then fill-in the corresponding field on the form.
-            for (var i = 0; i < place.address_components.length; i++) {
-                var addressType = place.address_components[i].types[0];
-                if (componentForm[addressType]) {
-                    var val = place.address_components[i][componentForm[addressType]];
-                    document.getElementById("id_start_" + addressType).value = val;
-                }
-            }
-        }
-
-        function fillInAddress_end() {
-            // Get the place details from the autocomplete object.
-            var place = autocomplete_end.getPlace();
-
-            for (var component in componentForm) {
-                document.getElementById("id_end_" + component).value = '';
-                document.getElementById("id_end_" + component).disabled = false;
-            }
-
-            // Get each component of the address from the place details,
-            // and then fill-in the corresponding field on the form.
-            for (var i = 0; i < place.address_components.length; i++) {
-                var addressType = place.address_components[i].types[0];
-                if (componentForm[addressType]) {
-                    var val = place.address_components[i][componentForm[addressType]];
-                    document.getElementById("id_end_"+ addressType).value = val;
-                }
-            }
-        }
+			// Get each component of the address from the place details,
+			// and then fill-in the corresponding field on the form.
+			for (var i = 0; i < place.address_components.length; i++) {
+				var addressType = place.address_components[i].types[0];
+				if (componentForm[addressType]) {
+					var val = place.address_components[i][componentForm[addressType]];
+					document.getElementById("id_end_"+ addressType).value = val;
+				}
+			}
+		}
 
 
 
-        // Bias the autocomplete object to the user's geographical location,
-        // as supplied by the browser's 'navigator.geolocation' object.
-        function geolocate_start() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    var geolocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-                    var circle = new google.maps.Circle(
-                        { center: geolocation, radius: position.coords.accuracy });
-                    autocomplete_start.setBounds(circle.getBounds());
-                });
-            }
-        }
+		// Bias the autocomplete object to the user's geographical location,
+		// as supplied by the browser's 'navigator.geolocation' object.
+		function geolocate_start() {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function (position) {
+					var geolocation = {
+						lat: position.coords.latitude,
+						lng: position.coords.longitude
+					};
+					var circle = new google.maps.Circle(
+						{ center: geolocation, radius: position.coords.accuracy });
+					autocomplete_start.setBounds(circle.getBounds());
+				});
+			}
+		}
 
 
-        // Bias the autocomplete object to the user's geographical location,
-        // as supplied by the browser's 'navigator.geolocation' object.
-        function geolocate_end() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    var geolocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-                    var circle = new google.maps.Circle(
-                        { center: geolocation, radius: position.coords.accuracy });
-                    autocomplete_end.setBounds(circle.getBounds());
-                });
-            }
-        }
-    </script>
-    <!-- &location=38.0293, -78.4767 -->
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY7BlSzTYJKwTNrObrU7so714CJgF3Uhc&libraries=places&location=38.0293, -78.4767&callback=initAutocomplete"
-        async defer></script>
+		// Bias the autocomplete object to the user's geographical location,
+		// as supplied by the browser's 'navigator.geolocation' object.
+		function geolocate_end() {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function (position) {
+					var geolocation = {
+						lat: position.coords.latitude,
+						lng: position.coords.longitude
+					};
+					var circle = new google.maps.Circle(
+						{ center: geolocation, radius: position.coords.accuracy });
+					autocomplete_end.setBounds(circle.getBounds());
+				});
+			}
+		}
+	</script>
+	<!-- &location=38.0293, -78.4767 -->
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY7BlSzTYJKwTNrObrU7so714CJgF3Uhc&libraries=places&location=38.0293, -78.4767&callback=initAutocomplete"
+		async defer>
+	</script>
 
-
-
-
-
-
-
-
-
-<form method="POST" class="post-form">
-    {% csrf_token %}
-    {{ form.as_p}}
-    <button type="submit" class="save btn btn-default">Save</button>
-</form>
-
+	<form method="POST" class="post-form">
+		{% csrf_token %}
+		
+		{{ form.title|as_crispy_field }}
+		{{ form.description|as_crispy_field }}
+		
+		<!-- Render Start and End location selector fields -->
+		<div class="form-row">
+			<div class="form-group col-md-6 mb-0">
+				<div id="locationField">
+					<label for="autocomplete_start">Start Location</label>
+					<input id="autocomplete_start" placeholder="Enter starting address" onFocus="geolocate_start()" type="text" class="form-control mb-2" />
+				</div>
+			</div>
+			<div class="form-group col-md-6 mb-0">
+				<div id="locationField" class="mb-2">
+					<label for="autocomplete_end">End Location</label>
+					<input id="autocomplete_end" placeholder="Enter ending address" onFocus="geolocate_end()" type="text" class="form-control" />
+				</div>
+			</div>
+		</div>
+		
+		<!-- Render form using django-crispy-forms with Bootstrap -->
+		<div class="form-row">
+			<div class="form-group col-md-6 mb-0">
+				{{ form.date|as_crispy_field }}
+			</div>
+			<div class="form-group col-md-6 mb-0">
+				{{ form.time|as_crispy_field }}
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="form-group col-md-6 mb-0">
+				{{ form.min_cost|as_crispy_field }}
+			</div>
+			<div class="form-group col-md-6 mb-0">
+				{{ form.max_cost|as_crispy_field }}
+			</div>
+		</div>
+		{{ form.payment_method|as_crispy_field }}
+		{{ form.max_passengers|as_crispy_field }}
+		{{ form.car_description|as_crispy_field }}
+		{{ form.luggage_description|as_crispy_field }}
+		
+		<!-- These hidden input values will be set by JavaScript when adresses are selected -->
+		<input type="hidden" id="id_start_country" name="start_country" value="">
+		<input type="hidden" id="id_start_street_number" name="start_street_number" value="">
+		<input type="hidden" id="id_start_route" name="start_route" value="">
+		<input type="hidden" id="id_start_locality" name="start_locality" value="">
+		<input type="hidden" id="id_start_administrative_area_level_1" name="start_administrative_area_level_1" value="">
+		<input type="hidden" id="id_start_postal_code" name="start_postal_code" value="">
+		<input type="hidden" id="id_end_country" name="end_country" value="">
+		<input type="hidden" id="id_end_street_number" name="end_street_number" value="">
+		<input type="hidden" id="id_end_route" name="end_route" value="">
+		<input type="hidden" id="id_end_locality" name="end_locality" value="">
+		<input type="hidden" id="id_end_administrative_area_level_1" name="end_administrative_area_level_1" value="">
+		<input type="hidden" id="id_end_postal_code" name="end_postal_code" value="">
+		
+		<input type="hidden" id="driver" name="driver" value="{{user.id}}">
+		
+		<button type="submit" class="btn btn-primary">Save</button>
+	</form>
+</div>
 
 
 <!-- <p>Date: <input type="text" id="id_date"></p> -->

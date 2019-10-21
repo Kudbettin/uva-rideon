@@ -43,8 +43,11 @@ INSTALLED_APPS = [
 	'RideOn',
 	'users',
 	'drives',
-	'rides'
+	'rides',
+	'crispy_forms'
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

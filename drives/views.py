@@ -151,15 +151,18 @@ def post_new(request):
                 request.POST['time'] = str(int(hours) + 12) + ":" + minutes
 				
         form = DriveCreationForm(request.POST)
+        print(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
-            # post.date_time = timezone.now()
             post.save()
             return HttpResponseRedirect(reverse('drives:post_details', args=(post.pk,)))
+        else:
+            # Append css class to every field that contains errors.
+            for field in form.errors:
+                print("adding class stuff to " + field)
+                form[field].field.widget.attrs['class'] += ' formError'
 
     else:
         form = DriveCreationForm()
-    print("invalid model form")
-    print(form.errors)
-    print(request.POST)
+
     return render(request, 'drives/new_drive.html', {'form': form})
