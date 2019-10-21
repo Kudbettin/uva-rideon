@@ -24,6 +24,12 @@ class ProfileView(generic.DetailView):
         context['rider_avg_rating'] = 4
         return context
 
+    def get_friends(self, request):
+        users = CustomUser.objects.exclude(id=request.user)
+        friend = UserFriends.objects.get(current_user=request.user)
+        friends = friend.users.all()
+
+
 class EditProfileView(generic.DetailView):
     model = CustomUser
     template_name = 'users/editprofile.html'

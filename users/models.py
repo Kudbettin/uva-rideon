@@ -9,7 +9,7 @@ class CustomUser(AbstractUser):
 
 class UserFriends(models.Model):
     current_user = models.ForeignKey(CustomUser, related_name='owner', null=True, on_delete=models.CASCADE)
-    friends = models.ManyToManyField(CustomUser, blank=True)
+    users = models.ManyToManyField(CustomUser, blank=True)
 
     def add_friend(cls, current_user, new_friend):
         friend, created = cls.objects.get_or_create(current_user=current_user)

@@ -136,8 +136,12 @@
 						<div class="col-6">
 							<label>Friends</label>
 							<div class="col-6">
-								<p>test1</p>
-								<p>test2</p>
+								{% for friend in friends %}
+								<p>{{ user.username }}</p>
+								{% endfor %}
+								<p>Need to get friends from UserFriends</p>
+								<p>John Smith</p>
+								<p>Jon Snow</p>
 							</div>
 						</div>
 					</div>
