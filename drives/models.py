@@ -13,26 +13,32 @@ class Location(models.Model):
     coordinates_y = models.FloatField(default=0)
     dropoff_in_drive = models.ForeignKey('Drive', null=True, blank=True, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.location
+    # def __str__(self):
+    #     return self.location
 
 '''
 A trip that will be undertaken at a concrete point in time.
 Differs from a 'ride' in that a 'ride' is a request for a drive.
 '''
 class Drive(models.Model):
-    start_street_number = models.TextField(null=True, blank=True)
-    start_route     = models.TextField(null=True, blank=True) 
-    start_locality  = models.TextField(null=True, blank=True)
-    start_administrative_area_level_1 = models.TextField(null=True, blank=True)
-    start_country   = models.TextField(null=True, blank=True)
-    start_postal_code = models.TextField(null=True, blank=True)
-    end_street_number = models.TextField(null=True, blank=True)
-    end_route     = models.TextField(null=True, blank=True) 
-    end_locality  = models.TextField(null=True, blank=True)
-    end_administrative_area_level_1 = models.TextField(null=True, blank=True)
-    end_country   = models.TextField(null=True, blank=True)
-    end_postal_code = models.TextField(null=True, blank=True)
+    # start_coordinates_y = models.FloatField(null=True, blank=True)
+    # start_coordinates_x = models.FloatField(null=True, blank=True)
+    # end_coordinates_y = models.FloatField(null=True, blank=True)
+    # end_coordinates_x = models.FloatField(null=True, blank=True)
+    start_location = models.ForeignKey(Location, on_delete=models.SET_NULL, related_name="start_location", null=True, blank=True)
+    end_location = models.ForeignKey(Location, on_delete=models.SET_NULL, related_name="end_location", null=True, blank=True)
+    # start_street_number = models.TextField(null=True, blank=True)
+    # start_route     = models.TextField(null=True, blank=True) 
+    # start_locality  = models.TextField(null=True, blank=True)
+    # start_administrative_area_level_1 = models.TextField(null=True, blank=True)
+    # start_country   = models.TextField(null=True, blank=True)
+    # start_postal_code = models.TextField(null=True, blank=True)
+    # end_street_number = models.TextField(null=True, blank=True)
+    # end_route     = models.TextField(null=True, blank=True) 
+    # end_locality  = models.TextField(null=True, blank=True)
+    # end_administrative_area_level_1 = models.TextField(null=True, blank=True)
+    # end_country   = models.TextField(null=True, blank=True)
+    # end_postal_code = models.TextField(null=True, blank=True)
     title           = models.CharField(max_length=100)
     driver          = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name="driver", null=True)
     date            = models.DateField()

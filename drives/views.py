@@ -7,7 +7,7 @@ from django.views.generic.list import ListView
 from django.urls import reverse
 from django.utils import timezone
 
-from drives.models import Drive, create_drive
+from drives.models import Drive, create_drive, Location
 from drives.forms import DriveCreationForm
 from users.models import CustomUser
 
@@ -150,10 +150,27 @@ def post_new(request):
                 hours,minutes = request.POST['time'].split(":")
                 request.POST['time'] = str(int(hours) + 12) + ":" + minutes
 				
+        
+
         form = DriveCreationForm(request.POST)
         print(request.POST)
+
         if form.is_valid():
+
+            start_location = Location.objects.create(
+                coordinates_x=request.POST["start_coordinates_x"],
+                coordinates_y=request.POST["start_coordinates_y"])
+
+            end_location = Location.objects.create(
+                coordinates_x=request.POST["end_coordinates_x"],
+                coordinates_y=request.POST["end_coordinates_y"])
+
+            start_location.save()
+            end_location.save()
+
             post = form.save(commit=False)
+            post.start_location = start_location
+            post.end_location = end_location
             post.save()
             return HttpResponseRedirect(reverse('drives:post_details', args=(post.pk,)))
         else:

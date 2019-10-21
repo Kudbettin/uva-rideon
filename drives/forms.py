@@ -10,12 +10,14 @@ class DriveCreationForm(forms.ModelForm):
         error_css_class = 'error'
         fields = ( "title", "driver", "description", "date", "time", "min_cost",
                     "max_cost", "payment_method", "max_passengers", "car_description",
-                    "luggage_description")
+                    "luggage_description", "start_location", "end_location")
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
         
 		# Remove driver and time widgets
         self.fields['driver'].widget = forms.HiddenInput()
+        self.fields['start_location'].widget = forms.HiddenInput()
+        self.fields['end_location'].widget = forms.HiddenInput()
 		
 		# Modify widget types and HTML attributes where sufficient
         self.fields['title'].widget           = forms.TextInput(attrs={'placeholder': 'My Awesome Trip'})
