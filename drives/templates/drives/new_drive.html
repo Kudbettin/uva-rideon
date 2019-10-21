@@ -53,6 +53,7 @@
 			administrative_area_level_1: 'short_name',
 			country: 'long_name',
 			postal_code: 'short_name'
+
 		};
 
 		var componentFormStart = {
@@ -74,8 +75,8 @@
 				document.getElementById('autocomplete_end'), { types: ['geocode'] });
 			// Avoid paying for data that you don't need by restricting the set of
 			// place fields that are returned to just the address components.
-			autocomplete_start.setFields(['address_component']);
-			autocomplete_end.setFields(['address_component']);
+			autocomplete_start.setFields(['address_component', 'geometry']);
+			autocomplete_end.setFields(['address_component', 'geometry']);
 
 			// When the user selects an address from the drop-down, populate the
 			// address fields in the form.
@@ -101,6 +102,9 @@
 					document.getElementById("id_start_" + addressType).value = val;
 				}
 			}
+
+            document.getElementById("id_start_coordinates_x").value = place.geometry.location.lng();
+            document.getElementById("id_start_coordinates_y").value = place.geometry.location.lat();
 		}
 
 		function fillInAddress_end() {
@@ -121,6 +125,9 @@
 					document.getElementById("id_end_"+ addressType).value = val;
 				}
 			}
+
+            document.getElementById("id_end_coordinates_x").value = place.geometry.location.lng();
+            document.getElementById("id_end_coordinates_y").value = place.geometry.location.lat();
 		}
 
 
@@ -215,12 +222,17 @@
 		<input type="hidden" id="id_start_locality" name="start_locality" value="">
 		<input type="hidden" id="id_start_administrative_area_level_1" name="start_administrative_area_level_1" value="">
 		<input type="hidden" id="id_start_postal_code" name="start_postal_code" value="">
-		<input type="hidden" id="id_end_country" name="end_country" value="">
+        <input type="hidden" id="id_start_coordinates_x" name="start_coordinates_x" value="">
+        <input type="hidden" id="id_start_coordinates_y" name="start_coordinates_y" value="">
+        <input type="hidden" id="id_end_country" name="end_country" value="">
 		<input type="hidden" id="id_end_street_number" name="end_street_number" value="">
 		<input type="hidden" id="id_end_route" name="end_route" value="">
 		<input type="hidden" id="id_end_locality" name="end_locality" value="">
 		<input type="hidden" id="id_end_administrative_area_level_1" name="end_administrative_area_level_1" value="">
-		<input type="hidden" id="id_end_postal_code" name="end_postal_code" value="">
+        <input type="hidden" id="id_end_postal_code" name="end_postal_code" value="">
+        <input type="hidden" id="id_end_coordinates_x" name="end_coordinates_x" value="">
+        <input type="hidden" id="id_end_coordinates_y" name="end_coordinates_y" value="">
+        
 		
 		<input type="hidden" id="driver" name="driver" value="{{user.id}}">
 		
