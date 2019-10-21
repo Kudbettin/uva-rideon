@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
@@ -27,11 +27,20 @@ class ProfileView(generic.DetailView):
 
 class EditProfileView(generic.UpdateView):
     model = CustomUser
-    fields = ['name', 'gender', 'phone','home_town', 'about']
+    fields = ['username', 'name', 'gender', 'phone','home_town', 'about']
     template_name = 'users/editprofile.html'
-    template_name_suffix = '/edit/'
 
 def get_fields(request,pk):
+    
+    instance = CustomUser.objects.get(id=pk)
+    form = CustomUserChangeForm(request.POST or None, instance=instance)
+    #instance.profile_pic = request.FILES['profile_pic']
+    if form.is_valid():
+          form.save()
+          return redirect('/users/'+ pk + '/edit')
+    return render(request, '/users/'+ pk + '/edit', {'form': form})  
+
+    '''
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -43,11 +52,12 @@ def get_fields(request,pk):
             # redirect to a new URL:
             print(pk)
             form.save(commit=False).save()
-            return HttpResponseRedirect('/users/' + pk + '/' )
+            return HttpResponseRedirect('users/editprofile.html' )
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = CustomUserChangeForm()
-
-    return render(request, 'users/profile.html')
+    print(form)
+    return render(request, 'users/editprofile.html', {'form' : form})
     #render(request, , {'CustomUser': CustomUser})
+    '''
