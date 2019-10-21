@@ -43,7 +43,8 @@ INSTALLED_APPS = [
 	'RideOn',
 	'users',
 	'drives',
-	'rides'
+	'rides',
+    'bootstrap4'
 ]
 
 MIDDLEWARE = [
