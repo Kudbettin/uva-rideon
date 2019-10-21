@@ -27,14 +27,14 @@ class ProfileView(generic.DetailView):
 
 class EditProfileView(generic.UpdateView):
     model = CustomUser
-    fields = ['username', 'name', 'gender', 'phone','home_town', 'about']
+    fields = [ 'name', 'gender', 'phone','home_town', 'about']
     template_name = 'users/editprofile.html'
 
 def get_fields(request,pk):
     
     instance = CustomUser.objects.get(id=pk)
     form = CustomUserChangeForm(request.POST or None, instance=instance)
-    #instance.profile_pic = request.FILES['profile_pic']
+    form.profile_pic = request.FILES.get('profile_pic', None)
     if form.is_valid():
           form.save()
           return redirect('/users/'+ pk + '/edit')

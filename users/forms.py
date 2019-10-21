@@ -12,7 +12,7 @@ class CustomUserChangeForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('name', 'gender', 'phone', 'home_town', 'about')
+        fields = ('name', 'gender', 'phone', 'home_town', 'about', 'profile_pic')
     
 
 
