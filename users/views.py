@@ -7,7 +7,7 @@ from django.views import generic
 from .models import CustomUser
 from drives.models import Drive, DriverReview, RiderReview
 
-from .forms import CustomUserCreationForm, RideReviewForm
+from .forms import CustomUserCreationForm, DriverReviewForm, RiderReviewForm
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
@@ -43,13 +43,22 @@ class MyRidesView(generic.DetailView):
 def post_new_review(request, pk):
     if request.method == "POST":
         request.POST = request.POST.copy()
+
         request.POST["by"] = request.user.id
-        request.POST["of"] = 1
-        form = RideReviewForm(request.POST)
+        
+        # Driver Review
+        print(Drive.objects.filter(id=request.POST["drive"])[0].driver.id)
+
+        # Rider Review
+        request.POST["of"] = 2
+        form = DriverReviewForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.save()
             return HttpResponseRedirect(reverse_lazy('myrides', args=(pk,)))
+        else:
+            print(form.errors)
+            print("error adding review")
     else:
         form = RideReviewForm()
         

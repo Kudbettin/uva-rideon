@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
 
-from drives.models import DriverReview
+from drives.models import DriverReview, RiderReview
 
 class CustomUserCreationForm(UserCreationForm):
 
@@ -16,8 +16,14 @@ class CustomUserChangeForm(UserChangeForm):
         model = CustomUser
         fields = ('username', 'email')
 
-class RideReviewForm(forms.ModelForm):
+class DriverReviewForm(forms.ModelForm):
 
     class Meta:
         model = DriverReview
+        fields = ("by", "of", "title", "description", "rating", "drive")
+
+class RiderReviewForm(forms.ModelForm):
+
+    class Meta:
+        model = RiderReview
         fields = ("by", "of", "title", "description", "rating", "drive")

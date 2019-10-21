@@ -84,11 +84,19 @@
 							<p><small>3 days ago</small></p>
 						</div>
 						<div class="ml-auto p-2">
-							<span><button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}">Review</button></span>
 						</div>
 					</div>
 					<p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-					<small>Donec id elit non mi porta.</small>
+					<div>
+						{% if user.id != ride.driver.id %}
+							<span><button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}">Review {{ ride.driver.email }}</button></span>
+						{% endif %}
+						{% for person in ride.passengers.all %}
+							{% if user.id != person.id %}
+								<span><button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}">Review {{ person.email }}</button></span>
+							{% endif %}
+						{% endfor %}
+					</div>
 				</a>
 			{% endfor %}
 			</div>

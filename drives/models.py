@@ -73,8 +73,8 @@ def create_drive(username_str, start_location_str="Start Location", end_location
 	return start_location, end_location, driver, drive, dropoff
 
 class DriverReview(models.Model):
-    by = models.ManyToManyField(CustomUser, related_name="driver_by")
-    of = models.ManyToManyField(CustomUser, related_name="driver_of")
+    by = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="driver_by")
+    of = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="driver_of")
     created_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=150)
     description = models.TextField()
@@ -82,8 +82,8 @@ class DriverReview(models.Model):
     drive = models.OneToOneField(Drive, on_delete = models.CASCADE)
 
 class RiderReview(models.Model):
-    by = models.ManyToManyField(CustomUser, related_name="rider_by")
-    of = models.ManyToManyField(CustomUser, related_name="rider_of")
+    by = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="rider_by")
+    of = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="rider_of")
     created_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=150)
     description = models.TextField()
