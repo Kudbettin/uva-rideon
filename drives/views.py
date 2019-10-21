@@ -156,6 +156,11 @@ def post_new(request):
             post = form.save(commit=False)
             post.save()
             return HttpResponseRedirect(reverse('drives:post_details', args=(post.pk,)))
+        else:
+            # Append css class to every field that contains errors.
+            for field in form.errors:
+                print("adding class stuff to " + field)
+                form[field].field.widget.attrs['class'] += ' formError'
 
     else:
         form = DriveCreationForm()
