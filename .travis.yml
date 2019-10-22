@@ -18,11 +18,20 @@ install:
 - sudo unzip chromedriver_linux64 -d /usr/bin
 - export CHROME_BIN=/usr/bin/google-chrome
 - pip install -r requirements-build.txt
+- sudo apt-get update
+- sudo apt-get install -y xvfb libappindicator1 fonts-liberation
+- wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+- sudo dpkg -i google-chrome*.deb
+- "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen scn 1600x1200x16"
 script:
 - find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
 - find . -path "*/migrations/*.pyc"  -delete
 - python manage.py makemigrations
 - python manage.py migrate
+- 
+- export CHROME_PATH="/usr/bin/google-chrome"
+- export DRIVER_PATH="/usr/bin/chromedriver"
+- export HEADLESS="True"
 - python manage.py test
 deploy:
   provider: heroku

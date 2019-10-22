@@ -3,6 +3,7 @@ from drives.models import *
 from users.models import CustomUser
 from django.utils import timezone
 from drives.views import *
+from RideOn.SeleniumTester import *
 
 class DriveModelTester(TestCase):
 	# Setup for all tests
@@ -89,7 +90,7 @@ class DriveModelTester(TestCase):
 		self.assertEqual(self.drive.passengers.count(), self.drive.max_passengers)
 		
 class DriveListingTester(TestCase):
-		# Setup for all tests
+	# Setup for all tests
 	# Creates a sample drive with default values and none of the optional values
 	def setUp(self):		
 		self.start_location, self.end_location, self.driver, self.drive, self.dropoff = create_drive(
@@ -112,3 +113,8 @@ class DriveListingTester(TestCase):
 		self.assertEqual(queryset.count(), 2)
 		self.assertEqual(queryset[0].driver.username, "Name")
 		self.assertEqual(queryset[1].driver.username, "Name2")
+
+	def test_selenium(self):
+		browser = get_chrome_driver()
+		browser.get('https://duckduckgo.com')
+		print(browser.page_source)
