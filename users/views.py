@@ -27,37 +27,15 @@ class ProfileView(generic.DetailView):
 
 class EditProfileView(generic.UpdateView):
     model = CustomUser
-    fields = [ 'name', 'gender', 'phone','home_town', 'about']
+    fields = [ 'name', 'gender', 'phone','home_town', 'about', 'profile_pic']
     template_name = 'users/editprofile.html'
 
 def get_fields(request,pk):
     
     instance = CustomUser.objects.get(id=pk)
-    form = CustomUserChangeForm(request.POST or None, instance=instance)
-    form.profile_pic = request.FILES.get('profile_pic', None)
+    form = CustomUserChangeForm(request.POST or None, request.FILES, instance=instance)
     if form.is_valid():
-          form.save()
-          return redirect('/users/'+ pk + '/edit')
+        #form.profile_pic = request.FILES.get('profile_pic', None)
+        form.save()
+        return redirect('/users/'+ pk + '/edit') # should update these to use reverse
     return render(request, '/users/'+ pk + '/edit', {'form': form})  
-
-    '''
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = CustomUserChangeForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            print(pk)
-            form.save(commit=False).save()
-            return HttpResponseRedirect('users/editprofile.html' )
-
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = CustomUserChangeForm()
-    print(form)
-    return render(request, 'users/editprofile.html', {'form' : form})
-    #render(request, , {'CustomUser': CustomUser})
-    '''
