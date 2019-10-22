@@ -53,15 +53,7 @@
 			administrative_area_level_1: 'short_name',
 			country: 'long_name',
 			postal_code: 'short_name'
-		};
 
-		var componentFormStart = {
-				start_street_number: 'short_name',
-				start_route: 'long_name',
-				start_locality: 'long_name',
-				start_administrative_area_level_1: 'short_name',
-				start_country: 'long_name',
-				start_postal_code: 'short_name'
 		};
 
 		function initAutocomplete() {
@@ -74,8 +66,8 @@
 				document.getElementById('autocomplete_end'), { types: ['geocode'] });
 			// Avoid paying for data that you don't need by restricting the set of
 			// place fields that are returned to just the address components.
-			autocomplete_start.setFields(['address_component']);
-			autocomplete_end.setFields(['address_component']);
+			autocomplete_start.setFields(['address_component', 'geometry']);
+			autocomplete_end.setFields(['address_component', 'geometry']);
 
 			// When the user selects an address from the drop-down, populate the
 			// address fields in the form.
@@ -87,40 +79,16 @@
 			// Get the place details from the autocomplete object.
 			var place = autocomplete_start.getPlace();
 
-			for (var component in componentForm) {
-				document.getElementById("id_start_" + component).value = '';
-				document.getElementById("id_start_" + component).disabled = false;
-			}
-
-			// Get each component of the address from the place details,
-			// and then fill-in the corresponding field on the form.
-			for (var i = 0; i < place.address_components.length; i++) {
-				var addressType = place.address_components[i].types[0];
-				if (componentForm[addressType]) {
-					var val = place.address_components[i][componentForm[addressType]];
-					document.getElementById("id_start_" + addressType).value = val;
-				}
-			}
+            document.getElementById("id_start_coordinates_x").value = place.geometry.location.lng();
+            document.getElementById("id_start_coordinates_y").value = place.geometry.location.lat();
 		}
 
 		function fillInAddress_end() {
 			// Get the place details from the autocomplete object.
 			var place = autocomplete_end.getPlace();
 
-			for (var component in componentForm) {
-				document.getElementById("id_end_" + component).value = '';
-				document.getElementById("id_end_" + component).disabled = false;
-			}
-
-			// Get each component of the address from the place details,
-			// and then fill-in the corresponding field on the form.
-			for (var i = 0; i < place.address_components.length; i++) {
-				var addressType = place.address_components[i].types[0];
-				if (componentForm[addressType]) {
-					var val = place.address_components[i][componentForm[addressType]];
-					document.getElementById("id_end_"+ addressType).value = val;
-				}
-			}
+            document.getElementById("id_end_coordinates_x").value = place.geometry.location.lng();
+            document.getElementById("id_end_coordinates_y").value = place.geometry.location.lat();
 		}
 
 
@@ -208,30 +176,19 @@
 		{{ form.car_description|as_crispy_field }}
 		{{ form.luggage_description|as_crispy_field }}
 		
-		<!-- These hidden input values will be set by JavaScript when adresses are selected -->
-		<input type="hidden" id="id_start_country" name="start_country" value="">
-		<input type="hidden" id="id_start_street_number" name="start_street_number" value="">
-		<input type="hidden" id="id_start_route" name="start_route" value="">
-		<input type="hidden" id="id_start_locality" name="start_locality" value="">
-		<input type="hidden" id="id_start_administrative_area_level_1" name="start_administrative_area_level_1" value="">
-		<input type="hidden" id="id_start_postal_code" name="start_postal_code" value="">
-		<input type="hidden" id="id_end_country" name="end_country" value="">
-		<input type="hidden" id="id_end_street_number" name="end_street_number" value="">
-		<input type="hidden" id="id_end_route" name="end_route" value="">
-		<input type="hidden" id="id_end_locality" name="end_locality" value="">
-		<input type="hidden" id="id_end_administrative_area_level_1" name="end_administrative_area_level_1" value="">
-		<input type="hidden" id="id_end_postal_code" name="end_postal_code" value="">
+
+        <input type="hidden" id="id_start_coordinates_x" name="start_coordinates_x" value="">
+        <input type="hidden" id="id_start_coordinates_y" name="start_coordinates_y" value="">
+
+        <input type="hidden" id="id_end_coordinates_x" name="end_coordinates_x" value="">
+        <input type="hidden" id="id_end_coordinates_y" name="end_coordinates_y" value="">
+        
 		
-		<input type="hidden" id="driver" name="driver" value="{{user.id}}">
+        <input type="hidden" id="driver" name="driver" value="{{user.id}}">
 		
 		<button type="submit" class="btn btn-primary">Save</button>
 	</form>
 </div>
-
-
-<!-- <p>Date: <input type="text" id="id_date"></p> -->
-
-
 
 
 {% endblock %}

@@ -13,16 +13,14 @@ class DriveCreationForm(forms.ModelForm):
                     "luggage_description")
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
-        
-		# Remove driver and time widgets
-        self.fields['driver'].widget = forms.HiddenInput()
-		
-		# Modify widget types and HTML attributes where sufficient
+
         self.fields['title'].widget           = forms.TextInput(attrs={'placeholder': 'My Awesome Trip'})
         self.fields['payment_method'].widget  = forms.TextInput(attrs={'placeholder': 'Venmo, when trip ends'})
         self.fields['description'].widget     = forms.Textarea(attrs={'rows': 2})
         self.fields['car_description'].widget = forms.Textarea(attrs={'rows': 2})
         self.fields['luggage_description'].widget = forms.Textarea(attrs={'rows': 2, 'placeholder': 'Space for 1 small suitcase per person'})
+        self.fields['date'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
+        self.fields['time'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
 
 # class DriveChangeForm():
 #     pass
