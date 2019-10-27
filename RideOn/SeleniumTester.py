@@ -28,6 +28,7 @@ def create_chrome_driver():
 	chrome_options = webdriver.ChromeOptions()
 	chrome_options.add_argument('--ignore-certificate-errors')
 	chrome_options.add_argument("--test-type")
+	chrome_options.add_argument("--log-level=3")
 	chrome_options.headless = headless
 
 	# Set binary location if on Windows
@@ -41,7 +42,12 @@ def login_as(browser, user):
 	client.force_login(user)
 	sessionid_cookie = client.cookies.get("sessionid").output(attrs=["sessionid"], header='').strip()
 	sessionid = sessionid_cookie.split("=")[1]
-	print("sessionid: " + str(sessionid))
 	
 	browser.add_cookie({'name': 'sessionid', 'value': sessionid})
 	browser.refresh()
+	
+def safe_find_element_by_id(browser, id):
+	try:
+		return browser.find_element_by_id(id)
+	except:
+		return None
