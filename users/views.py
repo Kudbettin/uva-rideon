@@ -39,9 +39,11 @@ class MyRidesView(generic.DetailView):
         context['upcoming_rides'] = Drive.objects.filter(status="Listed")
         context['cancelled_rides'] = Drive.objects.filter(status="Cancelled")
         context['completed_rides'] = Drive.objects.filter(status="Completed")
-        context['riders_to_review_per_drive'] = {}
+        context['riders_to_review_per_drive'] = []
         for drive in context['completed_rides']:
-            context['riders_to_review_per_drive'][drive.id] = Drive.objects.filter(id=drive.id)[0].passengers.all()
+            query = Drive.objects.filter(id=drive.id)[0].passengers.all()
+
+            context['riders_to_review_per_drive'].append( {"id":drive.id, "query":query})
             print(context['riders_to_review_per_drive'])
         return context
 

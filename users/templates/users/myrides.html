@@ -3,8 +3,6 @@
 
 {% block title %}My Rides{% endblock %}
 
-{% load users_lookup %}
-
 {% block content %}
 
 <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -104,15 +102,18 @@
 							</span>
 					{% else %}
 						<!-- Driver reviewing passengers -->
-						{% with rideid=ride.id %}
-						{% for person in riders_to_review_per_drive|lookup:rideid %}
+						{% for entry in riders_to_review_per_drive %}
+						{% if entry.id == ride.id %}
+						
+						{% for person in entry.query %}
 							{% if user.id != person.id %}
 								<span>
 									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}" data-email="{{ person.email }}">Review {{ person.email }}</button>
 								</span>
 							{% endif %}
 						{% endfor %}
-						{% endwith %}
+												{%endif %}
+						{% endfor %}
 					{% endif %}
 					</div>
 				</a>
