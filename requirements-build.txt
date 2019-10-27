@@ -7,3 +7,4 @@ social-auth-core
 social-auth-app-django
 selenium
 pillow
+django-crispy-forms

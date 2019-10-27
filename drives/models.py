@@ -21,18 +21,8 @@ A trip that will be undertaken at a concrete point in time.
 Differs from a 'ride' in that a 'ride' is a request for a drive.
 '''
 class Drive(models.Model):
-    start_street_number = models.TextField(null=True, blank=True)
-    start_route     = models.TextField(null=True, blank=True) 
-    start_locality  = models.TextField(null=True, blank=True)
-    start_administrative_area_level_1 = models.TextField(null=True, blank=True)
-    start_country   = models.TextField(null=True, blank=True)
-    start_postal_code = models.TextField(null=True, blank=True)
-    end_street_number = models.TextField(null=True, blank=True)
-    end_route     = models.TextField(null=True, blank=True) 
-    end_locality  = models.TextField(null=True, blank=True)
-    end_administrative_area_level_1 = models.TextField(null=True, blank=True)
-    end_country   = models.TextField(null=True, blank=True)
-    end_postal_code = models.TextField(null=True, blank=True)
+    start_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="start_location", null=True, blank=True)
+    end_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="end_location", null=True, blank=True)
     title           = models.CharField(max_length=100)
     driver          = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name="driver", null=True)
     date            = models.DateField()
@@ -89,7 +79,7 @@ def create_drive(username_str, start_location_str="Start Location", end_location
 	driver = CustomUser.objects.create(username=username_str)
 	
 	drive = Drive.objects.create(start_location=start_location, end_location=end_location, title=title_str, 
-										driver=driver, date_time=timezone.now(), description=description_str, min_cost=2,
+										driver=driver, date=timezone.now(), time=timezone.now(), description=description_str, min_cost=2,
 										max_cost=10, payment_method="payment", max_passengers=4, car_description="mycar")
 										
 	dropoff = Location.objects.create(location = "dropoff", dropoff_in_drive=drive)
