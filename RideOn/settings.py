@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 	'users',
 	'drives',
 	'rides',
-  'bootstrap4'
+	'bootstrap4',
 	'crispy_forms'
 ]
 

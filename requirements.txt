@@ -8,3 +8,4 @@ social-auth-app-django
 selenium
 pillow
 django-crispy-forms
+django-bootstrap4

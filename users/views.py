@@ -49,7 +49,7 @@ def get_fields(request,pk):
 
     return render(request, '/users/'+ pk + '/edit', {'form': form})  
 
- class MyRidesView(generic.DetailView):
+class MyRidesView(generic.DetailView):
     model = CustomUser
     template_name = 'users/myrides.html'
 
