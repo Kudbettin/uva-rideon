@@ -3,51 +3,58 @@
 
 {% block title %}My Rides{% endblock %}
 
+{% load users_lookup %}
+
 {% block content %}
 
 <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Review</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form method="post" action="/users/{{ user.id }}/myrides/review">
-      <div class="modal-body">
-		  {% csrf_token %}
-		  <input type="hidden" type="number" name="drive" />
-          <div class="form-group">
-            <label for="title" class="col-form-label">Title:</label>
-            <input type="text" class="form-control" name="title">
-          </div>
-		  <div class="form-group">
-            <label for="rating" class="col-form-label">Rating:</label>
-            <input type="number" class="form-control" name="rating" min="1" max="5">
-          </div>
-          <div class="form-group">
-            <label for="review_description" class="col-form-label">Description:</label>
-            <textarea class="form-control" name="description"></textarea>
-          </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary">Submit Review</button>
-      </div>
-      </form>
-    </div>
-  </div>
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Review</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form method="post" action="/users/{{ user.id }}/myrides/review">
+				<div class="modal-body">
+					{% csrf_token %}
+					<input type="hidden" type="number" name="drive" />
+					<div class="form-group">
+						<label for="of" class="col-form-label">Reviewing:</label>
+						<input type="text" class="form-control reviewee_email" name="of" disabled>
+					</div>
+					<input class="reviewee_id" type="hidden" type="number" name="of" />
+					<div class="form-group">
+						<label for="title" class="col-form-label">Title:</label>
+						<input type="text" class="form-control" name="title">
+					</div>
+					<div class="form-group">
+						<label for="rating" class="col-form-label">Rating:</label>
+						<input type="number" class="form-control" name="rating" min="1" max="5">
+						</div>
+					<div class="form-group">
+						<label for="review_description" class="col-form-label">Description:</label>
+						<textarea class="form-control" name="description"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+					<button type="submit" class="btn btn-primary">Submit Review</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 
 <div class="container">
-	{% if customuser.id != user.id %}
+{% if customuser.id != user.id %}
 	<div class="row">
 		<div class="col-12">
 			<h2>You are not authorized to view this page</h2>
 		</div>
 	</div>
-	{% else %}
+{% else %}
 	<div class="row">
 		<div class="col-12">
 			<h1>My Rides</h1>
@@ -81,21 +88,32 @@
 					<div class="d-flex">
 						<div class="p-2">
 							<h5 class="mb-1">{{ ride.title }}</h5>
-							<p><small>3 days ago</small></p>
+							<p>
+								<small>3 days ago</small>
+							</p>
 						</div>
 						<div class="ml-auto p-2">
 						</div>
 					</div>
 					<p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
 					<div>
-						{% if user.id != ride.driver.id %}
-							<span><button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}">Review {{ ride.driver.email }}</button></span>
-						{% endif %}
-						{% for person in ride.passengers.all %}
+					{% if user.id != ride.driver.id %}
+						<!-- Riders reviewing driver -->
+							<span>
+								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}" data-email="{{ person.email }}">Review {{ ride.driver.email }}</button>
+							</span>
+					{% else %}
+						<!-- Driver reviewing passengers -->
+						{% with rideid=ride.id %}
+						{% for person in riders_to_review_per_drive|lookup:rideid %}
 							{% if user.id != person.id %}
-								<span><button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}">Review {{ person.email }}</button></span>
+								<span>
+									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}" data-email="{{ person.email }}">Review {{ person.email }}</button>
+								</span>
 							{% endif %}
 						{% endfor %}
+						{% endwith %}
+					{% endif %}
 					</div>
 				</a>
 			{% endfor %}
@@ -103,35 +121,41 @@
 		</div>
 	</div>
 	<hr>
-	<div class="row">
-		<div class="col-12">
-			<h2>Cancelled Rides</h2>
-			<div class="list-group">
-			{% for ride in cancelled_rides %}
-				<a href="#" class="list-group-item list-group-item-action">
-					<div class="d-flex w-100 justify-content-between">
-						<h5 class="mb-1">{{ ride.title }}</h5>
-						<small>3 days ago</small>
-					</div>
-					<p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-					<small>Donec id elit non mi porta.</small>
-				</a>
-			{% endfor %}
+		<div class="row">
+			<div class="col-12">
+				<h2>Cancelled Rides</h2>
+				<div class="list-group">
+				{% for ride in cancelled_rides %}
+					<a href="#" class="list-group-item list-group-item-action">
+						<div class="d-flex w-100 justify-content-between">
+							<h5 class="mb-1">{{ ride.title }}</h5>
+							<small>3 days ago</small>
+						</div>
+						<p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+						<small>Donec id elit non mi porta.</small>
+					</a>
+				{% endfor %}
+				</div>
 			</div>
 		</div>
-	</div>
-	{% endif %}
+{% endif %}
 </div>
 
-<script>
-$('#reviewModal').on('show.bs.modal', function (event) {
-  var button = $(event.relatedTarget);
-  var title = button.data('title');
-  var drive_id = button.data('id');
-  var modal = $(this);
-  modal.find('.modal-title').text('Review your trip "' + title + '"');
-  $('input[name="drive"]').val(drive_id);
-});
-</script>
+					<script>
+					$('#reviewModal').on('show.bs.modal', function (event) {
+					  var button = $(event.relatedTarget);
+					  var title = button.data('title');
+					  var drive_id = button.data('id');
+					  var reviewee_id = button.data('userid');
+					  var reviewee_email = button.data('email');
+					  var modal = $(this);
+					  modal.find('.modal-title').text('Review your trip "' + title + '"');
+					  $('input[name="drive"]').val(drive_id);
+					  $('input.reviewee_id[name="of"]').val(reviewee_id);
+					  $('input.reviewee_email[name="of"]').val(reviewee_email);
+					  
+					});
+					</script>
 
 {% endblock %}
+					

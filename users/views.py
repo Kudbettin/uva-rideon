@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView
 from django.views import generic
+from django import template
 
 from .models import CustomUser
 from drives.models import Drive, DriverReview, RiderReview
@@ -32,12 +33,16 @@ class EditProfileView(generic.DetailView):
 class MyRidesView(generic.DetailView):
     model = CustomUser
     template_name = 'users/myrides.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['upcoming_rides'] = Drive.objects.filter(status="Listed")
-        context['completed_rides'] = Drive.objects.filter(status="Completed")
         context['cancelled_rides'] = Drive.objects.filter(status="Cancelled")
+        context['completed_rides'] = Drive.objects.filter(status="Completed")
+        context['riders_to_review_per_drive'] = {}
+        for drive in context['completed_rides']:
+            context['riders_to_review_per_drive'][drive.id] = Drive.objects.filter(id=drive.id)[0].passengers.all()
+            print(context['riders_to_review_per_drive'])
         return context
 
 def post_new_review(request, pk):
@@ -45,20 +50,30 @@ def post_new_review(request, pk):
         request.POST = request.POST.copy()
 
         request.POST["by"] = request.user.id
-        
-        # Driver Review
-        print(Drive.objects.filter(id=request.POST["drive"])[0].driver.id)
-
-        # Rider Review
         request.POST["of"] = 2
-        form = DriverReviewForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.save()
-            return HttpResponseRedirect(reverse_lazy('myrides', args=(pk,)))
+        
+        if(request.user.id == Drive.objects.filter(id=request.POST["drive"])[0].driver.id):
+            # Driver is reviewing passanger
+            
+            form = RiderReviewForm(request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.save()
+                return HttpResponseRedirect(reverse_lazy('myrides', args=(pk,)))
+            else:
+                print(form.errors)
+                print("error adding review")
         else:
-            print(form.errors)
-            print("error adding review")
+            # Rider reviewing driver
+
+            form = DriverReviewForm(request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.save()
+                return HttpResponseRedirect(reverse_lazy('myrides', args=(pk,)))
+            else:
+                print(form.errors)
+                print("error adding review")
     else:
         form = RideReviewForm()
         
