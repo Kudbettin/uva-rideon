@@ -96,10 +96,19 @@
 					<p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
 					<div>
 					{% if user.id != ride.driver.id %}
+						{% for entry in drivers_to_review_per_drive %}
+						{% if entry.id == ride.id %}
+						
+						{% for person in entry.query %}
+							{% if user.id != person.id %}
 						<!-- Riders reviewing driver -->
 							<span>
 								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}" data-email="{{ person.email }}">Review {{ ride.driver.email }}</button>
 							</span>
+						{% endif %}
+						{% endfor %}
+						{% endif %}
+						{% endfor %}
 					{% else %}
 						<!-- Driver reviewing passengers -->
 						{% for entry in riders_to_review_per_drive %}
@@ -112,7 +121,7 @@
 								</span>
 							{% endif %}
 						{% endfor %}
-												{%endif %}
+						{% endif %}
 						{% endfor %}
 					{% endif %}
 					</div>

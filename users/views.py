@@ -40,11 +40,31 @@ class MyRidesView(generic.DetailView):
         context['cancelled_rides'] = Drive.objects.filter(status="Cancelled")
         context['completed_rides'] = Drive.objects.filter(status="Completed")
         context['riders_to_review_per_drive'] = []
+        
         for drive in context['completed_rides']:
             query = Drive.objects.filter(id=drive.id)[0].passengers.all()
+            ridersNeedReviews = []
+            ridersWithReviewsIds = []
+            ridersWithReviews = RiderReview.objects.filter(drive=drive.id, by=self.request.user.id).all()
+            
+            for item in ridersWithReviews:
+                ridersWithReviewsIds.append(item.of)
+            
+            for person in query:
+                if person not in ridersWithReviewsIds:
+                    ridersNeedReviews.append(CustomUser.objects.get(id=person.id))
 
-            context['riders_to_review_per_drive'].append( {"id":drive.id, "query":query})
-            print(context['riders_to_review_per_drive'])
+            context['riders_to_review_per_drive'].append( {"id":drive.id, "query":ridersNeedReviews})
+
+        context['drivers_to_review_per_drive'] = []
+
+        for drive in context['completed_rides']:
+            query = Drive.objects.filter(id=drive.id)[0].driver
+            context['drivers_to_review_per_drive'].append( {"id":drive.id, "query":[]})
+            
+            if DriverReview.objects.filter(drive=drive.id, by=self.request.user.id).count() == 0:
+                context['drivers_to_review_per_drive'][0]['query'].append(query)
+        
         return context
 
 def post_new_review(request, pk):
