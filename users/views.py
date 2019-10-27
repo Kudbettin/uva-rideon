@@ -1,12 +1,11 @@
-from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.edit import CreateView
 from django.views import generic
 from django import template
-
-from .models import CustomUser
 from drives.models import Drive, DriverReview, RiderReview
+from .models import CustomUser, UserFriends
 
 from .forms import CustomUserCreationForm, DriverReviewForm, RiderReviewForm
 
@@ -25,6 +24,12 @@ class ProfileView(generic.DetailView):
         context['driver_avg_rating'] = 3
         context['rider_avg_rating'] = 4
         return context
+
+    def get_friends(self, request):
+        users = CustomUser.objects.exclude(id=request.user)
+        friend = UserFriends.objects.get(current_user=request.user)
+        friends = friend.users.all()
+
 
 class EditProfileView(generic.DetailView):
     model = CustomUser
@@ -99,3 +104,11 @@ def post_new_review(request, pk):
         form = RideReviewForm()
         
     return render(request, 'users/myrides.html')
+
+def change_friends(request, operation, pk):
+    new_friend = CustomUser.objects.get(pk=pk)
+    if operation == 'add':
+        UserFriends.add_friend(request.user, new_friend)
+    elif operation == 'remove':
+        UserFriends.remove_friend(request.user, new_friend)
+    return redirect()
