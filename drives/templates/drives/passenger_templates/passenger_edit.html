@@ -19,10 +19,10 @@
 		</td>
 		<td>
 		    {% if passenger.id != drive.driver.id %}
-				<form method="post" action="passenger_remove" id="passenger_remove">
+				<form method="post" action="passenger_remove" id="passenger_remove_form">
 					{% csrf_token %}
 					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
-					<button type="submit" class="btn btn-outline-danger btn-sm float-right">Remove</button>
+					<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="passenger_remove_btn">Remove</button>
 				</form>
 			{% endif %}
 		</td>
@@ -49,15 +49,15 @@
 		</td>
 		<td>
 		    {% if passenger.id != drive.driver.id %}
-				<form method="post" action="request_reject" id="reject_request">
+				<form method="post" action="request_reject" id="reject_request_form">
 					{% csrf_token %}
 					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
-					<button type="submit" class="btn btn-outline-danger btn-sm float-right">Reject</button>
+					<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="reject_request_btn">Reject</button>
 				</form>
-				<form method="post" action="request_approve" id="accept_request">
+				<form method="post" action="request_approve" id="accept_request_form">
 					{% csrf_token %}
 					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
-					<button type="submit" class="btn btn-outline-success btn-sm float-left">Approve</button>
+					<button type="submit" class="btn btn-outline-success btn-sm float-left" id="accept_request_btn">Approve</button>
 				</form>
 			{% endif %}
 		</td>
