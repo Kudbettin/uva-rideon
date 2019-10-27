@@ -12,6 +12,6 @@ urlpatterns = [
     path('<pk>/', ProfileView.as_view(), name="profile"),
     path('<pk>/edit/', EditProfileView.as_view()),
     path('<pk>/myrides/', MyRidesView.as_view(), name='myrides'),
-    path('<pk>/myrides/review', post_new_review, name='post_new_review')  
+    path('<pk>/myrides/review', post_new_review, name='post_new_review'), 
     url(r'^connect/(?P<operation>.+)/(?P<pk>\d+)/$', views.change_friends, name='change_friends')
 ]
