@@ -72,7 +72,6 @@ def post_new_review(request, pk):
         request.POST = request.POST.copy()
 
         request.POST["by"] = request.user.id
-        request.POST["of"] = 2
         
         if(request.user.id == Drive.objects.filter(id=request.POST["drive"])[0].driver.id):
             # Driver is reviewing passanger
