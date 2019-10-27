@@ -3,7 +3,7 @@
 
 <h4>Passengers:</h4>
 
-<table>
+<table id="current_passengers">
 	<tr>
 		<th>Name</th>
 		<th>Rider Rating</th>
@@ -12,14 +12,14 @@
 	{% for passenger in drive.passengers.all %}
 	<tr>
 		<td>
-			<a href="{% url 'profile' passenger.id %}">{{ passenger.username }}</a>
+			<a href="{% url 'profile' passenger.id %}" id="passenger_entry">{{ passenger.username }}</a>
 		</td>
 		<td>
 			3
 		</td>
 		<td>
 		    {% if passenger.id != drive.driver.id %}
-				<form method="post" action="passenger_remove">
+				<form method="post" action="passenger_remove" id="passenger_remove">
 					{% csrf_token %}
 					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
 					<button type="submit" class="btn btn-outline-danger btn-sm float-right">Remove</button>
@@ -33,7 +33,7 @@
 <br>
 <h4>Rider Requests:</h4>
 
-<table>
+<table id="passenger_requestlist">
 	<tr>
 		<th>Name</th>
 		<th>Rider Rating</th>
@@ -42,19 +42,19 @@
 	{% for passenger in drive.requestList.all %}
 	<tr>
 		<td>
-			<a href="{% url 'profile' passenger.id %}">{{ passenger.username }}</a>
+			<a href="{% url 'profile' passenger.id %}" id="passenger_request">{{ passenger.username }}</a>
 		</td>
 		<td>
 			3
 		</td>
 		<td>
 		    {% if passenger.id != drive.driver.id %}
-				<form method="post" action="request_reject">
+				<form method="post" action="request_reject" id="reject_request">
 					{% csrf_token %}
 					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
 					<button type="submit" class="btn btn-outline-danger btn-sm float-right">Reject</button>
 				</form>
-				<form method="post" action="request_approve">
+				<form method="post" action="request_approve" id="accept_request">
 					{% csrf_token %}
 					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
 					<button type="submit" class="btn btn-outline-success btn-sm float-left">Approve</button>

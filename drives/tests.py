@@ -1,9 +1,11 @@
 from django.test import TestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from drives.models import *
 from users.models import CustomUser
 from django.utils import timezone
 from drives.views import *
-from RideOn.SeleniumTester import *
+import RideOn.SeleniumTester as selenium_tester
+from django.test.utils import override_settings
 
 class DriveModelTester(TestCase):
 	# Setup for all tests
@@ -89,7 +91,8 @@ class DriveModelTester(TestCase):
 		self.assertEqual(result, False)
 		self.assertEqual(self.drive.passengers.count(), self.drive.max_passengers)
 		
-class DriveListingTester(TestCase):
+@override_settings(DEBUG=True)
+class DriveListingTester(StaticLiveServerTestCase):
 	# Setup for all tests
 	# Creates a sample drive with default values and none of the optional values
 	def setUp(self):		
@@ -99,11 +102,20 @@ class DriveListingTester(TestCase):
 		self.start_location2, self.end_location2, self.driver2, self.drive2, self.dropoff2 = create_drive(
 			"Name2", start_location_str = "Start Location2", end_location_str = "End Location2", 
 			title_str = "Drive Title2", description_str = "Drive Description2")
+			
+		self.browser = selenium_tester.create_chrome_driver()
+		
+	def tearDown(self):
+		self.browser.close()
 		
 	# Ensures that the create button brings us to the create drive page
-	# TODO
 	def testCreateButton(self):
-		pass
+		self.browser.get(self.live_server_url + '/drives/')
+		
+		create_button = self.browser.find_element_by_id('create_drive')
+		create_button.click()
+
+		self.assertEqual(self.browser.current_url, self.live_server_url + '/drives/new')
 		
 	# Asserts that the default queryset returns all drives
 	def testDefaultQuery(self):
@@ -113,8 +125,47 @@ class DriveListingTester(TestCase):
 		self.assertEqual(queryset.count(), 2)
 		self.assertEqual(queryset[0].driver.username, "Name")
 		self.assertEqual(queryset[1].driver.username, "Name2")
+		
+'''
+Used to test the passenger sub-system from a GUI perspective.
+Verifies underlying models as well.
+Does not test API endpoints.
+'''
+@override_settings(DEBUG=True)
+class PassengerSystemGUITester(StaticLiveServerTestCase):
+	# Setup for all tests
+	# Creates a sample drive with default values and none of the optional values
+	def setUp(self):		
+		self.start_location, self.end_location, self.driver, self.drive, self.dropoff = create_drive(
+			"Name", start_location_str = "Start Location", end_location_str = "End Location", 
+			title_str = "Drive Title", description_str = "Drive Description")
+		self.start_location2, self.end_location2, self.driver2, self.drive2, self.dropoff2 = create_drive(
+			"Name2", start_location_str = "Start Location2", end_location_str = "End Location2", 
+			title_str = "Drive Title2", description_str = "Drive Description2")
+			
+		self.browser = selenium_tester.create_chrome_driver()
+		
+	def tearDown(self):
+		self.browser.quit()
+	
+	# Ensures a rider and request to join a drive
+	def testSendRequest(self):
+		pass
+	
+	# Ensures that the owner can see requests to join a drive
+	def testRequestAppears(self):
+		# Have user1 join user2's ride
+		self.drive2.requestList.add(self.driver)
+		
+		# View the ride as the owner
+		self.browser.delete_all_cookies()
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		selenium_tester.login_as(self.browser, self.driver2)
 
-	def test_selenium(self):
-		browser = get_chrome_driver()
-		browser.get('https://duckduckgo.com')
-		print(browser.page_source)
+		# Ensure user1's request is visible, the username is displayed, 
+		# and there is a button to accept and one to reject
+		request_entry = self.browser.find_element_by_id('passenger_request')
+		self.assertEqual(request_entry.text, self.driver.username)
+		accept_button = self.browser.find_element_by_id('accept_request')
+		reject_button = self.browser.find_element_by_id('reject_request')
+		
