@@ -19,7 +19,6 @@ class CustomUser(AbstractUser):
     profile_pic = models.ImageField(upload_to=user_directory_path, default='default/default_profile_pic.jpg')
     home_town = models.CharField(max_length=20, default = '')
 
-   
 
     def __str__(self):
          #get_fields gets stuff from AbstractUser that we don't want
@@ -28,3 +27,18 @@ class CustomUser(AbstractUser):
         for field in local_fields:
             field_values.append(getattr(self, field, ''))
         return ' '.join(field_values)
+      
+class UserFriends(models.Model):
+    current_user = models.ForeignKey(CustomUser, related_name='owner', null=True, on_delete=models.CASCADE)
+    users = models.ManyToManyField(CustomUser, blank=True)
+
+    def add_friend(cls, current_user, new_friend):
+        friend, created = cls.objects.get_or_create(current_user=current_user)
+        friend.users.add(new_friend)
+
+    def remove_friend(cls, current_user, new_friend):
+        friend, created = cls.objects.get_or_create(current_user=current_user)
+        friend.users.remove(new_friend)
+
+    def __str__(self):
+        return str(self.current_user)

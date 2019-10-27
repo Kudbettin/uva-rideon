@@ -119,3 +119,5 @@ tramp
 
 #user uploaded profile images
 media/user_media/
+
+.idea/*

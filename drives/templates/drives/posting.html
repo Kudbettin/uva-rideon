@@ -5,13 +5,11 @@
 
 {% block content %}
     <div class="container">
-        <div class="row" style="height: 60px;">
-                {{drive.title}}
-        </div>
+        <h1>{{drive.title}}</h1>
         <div class="row">
             <div class="col-6">
                 <p>Route {{drive.start_location}} {{drive.end_location}}</p>
-                <div id="map" style="height: 100%; width: 300px;"></div>
+                <div id="map" style="height: 25vw; width: 100%;"></div>
                 <div id="startx" style="display: none;">{{drive.start_location.coordinates_x}}</div>
                 <div id="starty" style="display: none;">{{drive.start_location.coordinates_y}}</div>
                 <div id="endx" style="display: none;">{{drive.end_location.coordinates_x}}</div>
@@ -44,7 +42,7 @@
                         var directionsService = new google.maps.DirectionsService();
 
                         directionsDisplay.setMap(map)
-                        // can also add waypoits here
+                        // can also add waypoints here
                         // can also add duration information if add the travel time. but it sounds boring atm.
                         var request = {
                             origin: start_coordinates,
@@ -63,10 +61,20 @@
                 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY7BlSzTYJKwTNrObrU7so714CJgF3Uhc&callback=initMap">
                 </script>
 
-                <p>passengers: {{drive.passengers.objects}}</p>
+				<!-- Show the passenger edit templat if the driver is viewing this -->
+				<!-- Otherwise just show a list of passengers -->
+				{% if user.username == drive.driver.username %}
+					<div class="basic">
+						{% include "drives/passenger_templates/passenger_edit.html" %}    
+					</div>
+				{% else %}
+					<div class="basic">
+						{% include "drives/passenger_templates/passenger_list.html" %}    
+					</div>
+				{% endif %}
             </div>
             <div class="col-6">
-                <p>Driver: {{drive.driver}}</p>
+                <p>Driver: <a href="{% url 'profile' drive.driver.id %}">{{ drive.driver.username }}</a></p>
                 <p>Date: {{drive.date_time}}</p>
                 <p>Cost: {{drive.min_cost}}$ - {{drive.max_cost}}$</p>
                 <p>Payment: {{drive.payment_method}}</p>
