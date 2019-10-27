@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     gender = models.CharField(max_length=10, default = '')
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True)
-    about = models.TextField(max_length=120, default = 'Write a bio to let people know about you!')
+    about = models.TextField(max_length=1000, default = 'Write a bio to let people know about you!')
     profile_pic = models.ImageField(upload_to=user_directory_path, default='default/default_profile_pic.jpg')
     home_town = models.CharField(max_length=20, default = '')
 

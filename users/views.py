@@ -38,4 +38,7 @@ def get_fields(request,pk):
         #form.profile_pic = request.FILES.get('profile_pic', None)
         form.save()
         return redirect('/users/'+ pk + '/edit') # should update these to use reverse
+    else:
+        return redirect('/users/'+ pk + '/edit')
+
     return render(request, '/users/'+ pk + '/edit', {'form': form})  
