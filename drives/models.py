@@ -46,6 +46,7 @@ class Drive(models.Model):
     max_passengers  = models.IntegerField()
     car_description = models.TextField()
     luggage_description = models.TextField(null=True, blank=True)
+    status          = models.CharField(max_length=10, default="Listed") # Listed, Cancelled, Completed
 	
 	# Override the delete method so the start and end locations will be deleted
 	# @Override
@@ -94,9 +95,10 @@ def create_drive(username_str, start_location_str="Start Location", end_location
 	dropoff = Location.objects.create(location = "dropoff", dropoff_in_drive=drive)
 	
 	return start_location, end_location, driver, drive, dropoff
+
 class DriverReview(models.Model):
-    by = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="driver_by", null=True)
-    of = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="driver_of", null=True)
+    by = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="driver_by")
+    of = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="driver_of")
     created_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=150)
     description = models.TextField()
@@ -104,8 +106,8 @@ class DriverReview(models.Model):
     drive = models.OneToOneField(Drive, on_delete = models.CASCADE)
 
 class RiderReview(models.Model):
-    by = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="rider_by", null=True)
-    of = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="rider_of", null=True)
+    by = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="rider_by")
+    of = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="rider_of")
     created_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=150)
     description = models.TextField()
