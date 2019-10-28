@@ -6,8 +6,7 @@ from django.views import generic
 from django import template
 from drives.models import Drive, DriverReview, RiderReview
 from .models import CustomUser, UserFriends
-
-from .forms import CustomUserCreationForm, DriverReviewForm, RiderReviewForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm, DriverReviewForm, RiderReviewForm
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
@@ -25,15 +24,30 @@ class ProfileView(generic.DetailView):
         context['rider_avg_rating'] = 4
         return context
 
+class EditProfileView(generic.UpdateView):
+  
+    model = CustomUser
+    fields = [ 'name', 'gender', 'phone','home_town', 'about', 'profile_pic']
+    template_name = 'users/editprofile.html'
+    
     def get_friends(self, request):
         users = CustomUser.objects.exclude(id=request.user)
         friend = UserFriends.objects.get(current_user=request.user)
         friends = friend.users.all()
 
+ 
+def get_fields(request,pk):
+    
+    instance = CustomUser.objects.get(id=pk)
+    form = CustomUserChangeForm(request.POST or None, request.FILES, instance=instance)
+    if form.is_valid():
+        #form.profile_pic = request.FILES.get('profile_pic', None)
+        form.save()
+        return redirect('/users/'+ pk + '/edit') # should update these to use reverse
+    else:
+        return redirect('/users/'+ pk + '/edit')
 
-class EditProfileView(generic.DetailView):
-    model = CustomUser
-    template_name = 'users/editprofile.html'
+    return render(request, '/users/'+ pk + '/edit', {'form': form})  
 
 class MyRidesView(generic.DetailView):
     model = CustomUser
