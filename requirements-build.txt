@@ -6,4 +6,6 @@ psycopg2
 social-auth-core
 social-auth-app-django
 selenium
+pillow
 django-crispy-forms
+django-bootstrap4

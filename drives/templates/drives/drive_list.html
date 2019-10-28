@@ -95,7 +95,7 @@
 		{% for drive in drive_list %}
 			<div class="container mt-2 border rounded" id="drive-listing">
 				<a href="{% url 'drives:post_details' drive.id %}" id="drive-title">{{ drive.title }}</a>
-				<a href="{% url 'profile' drive.driver.id %}">{{ drive.driver.username }}</a>
+				<a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a>
 				<br>
 				{{ drive.description }}
 			</div>
