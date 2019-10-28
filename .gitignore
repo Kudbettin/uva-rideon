@@ -117,3 +117,4 @@ auto-save-list
 tramp
 .\#*
 
+.idea/*

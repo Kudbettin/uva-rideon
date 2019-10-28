@@ -21,22 +21,22 @@ A trip that will be undertaken at a concrete point in time.
 Differs from a 'ride' in that a 'ride' is a request for a drive.
 '''
 class Drive(models.Model):
-    # Why is this one to one?
-    # start_location  = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="start_location")
-    # end_location    = models.OneToOneField(Location, on_delete = models.CASCADE, related_name="end_location")    
-    start_location  = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="start_location")
-    end_location    = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="end_location")
+    start_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="start_location", null=True, blank=True)
+    end_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="end_location", null=True, blank=True)
     title           = models.CharField(max_length=100)
     driver          = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name="driver", null=True)
-    date_time       = models.DateTimeField()
+    date            = models.DateField()
+    time            = models.TimeField()
     description     = models.TextField()
     passengers      = models.ManyToManyField(CustomUser, related_name="passengers", blank=True)
+    requestList     = models.ManyToManyField(CustomUser, related_name="requestList", blank=True)
     min_cost        = models.DecimalField(max_digits=5, decimal_places=2)
     max_cost        = models.DecimalField(max_digits=5, decimal_places=2)
     payment_method  = models.CharField(max_length=100)
     max_passengers  = models.IntegerField()
     car_description = models.TextField()
     luggage_description = models.TextField(null=True, blank=True)
+    status          = models.CharField(max_length=10, default="Listed") # Listed, Cancelled, Completed
 	
 	# Override the delete method so the start and end locations will be deleted
 	# @Override
@@ -60,6 +60,18 @@ class Drive(models.Model):
 	    self.passengers.add(passenger)
 	    return True
 		
+    '''
+    Adds a passenger to the drive requestlist if they are
+	not already on it
+	'''
+    def add_passenger_to_requestlist(self, passenger):
+        if self.requestList.filter(id=passenger.id).count() == 0:
+	        self.requestList.add(passenger)
+		
+'''
+Used to easily create a drive with custom data
+Intended to be used by testinf functions
+'''
 def create_drive(username_str, start_location_str="Start Location", end_location_str="End Location", title_str="Title", description_str="Description"):
 	start_location = Location.objects.create(location = start_location_str)
 	end_location   = Location.objects.create(location = end_location_str)
@@ -67,15 +79,16 @@ def create_drive(username_str, start_location_str="Start Location", end_location
 	driver = CustomUser.objects.create(username=username_str)
 	
 	drive = Drive.objects.create(start_location=start_location, end_location=end_location, title=title_str, 
-										driver=driver, date_time=timezone.now(), description=description_str, min_cost=2,
+										driver=driver, date=timezone.now(), time=timezone.now(), description=description_str, min_cost=2,
 										max_cost=10, payment_method="payment", max_passengers=4, car_description="mycar")
 										
 	dropoff = Location.objects.create(location = "dropoff", dropoff_in_drive=drive)
 	
 	return start_location, end_location, driver, drive, dropoff
+
 class DriverReview(models.Model):
-    by = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="driver_by", null=True)
-    of = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="driver_of", null=True)
+    by = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="driver_by")
+    of = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="driver_of")
     created_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=150)
     description = models.TextField()
@@ -83,8 +96,8 @@ class DriverReview(models.Model):
     drive = models.OneToOneField(Drive, on_delete = models.CASCADE)
 
 class RiderReview(models.Model):
-    by = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="rider_by", null=True)
-    of = models.OneToOneField(CustomUser, on_delete = models.SET_NULL, related_name="rider_of", null=True)
+    by = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="rider_by")
+    of = models.ForeignKey(CustomUser, on_delete = models.CASCADE, default=-1, related_name="rider_of")
     created_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=150)
     description = models.TextField()

@@ -44,6 +44,9 @@
 				<li class="nav-item">
 					<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false">Friends</a>
+				</li>
 			</ul>
 			<div class="tab-content profile-tab" id="myTabContent">
 				<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -125,6 +128,21 @@
 						<div class="col-12">
 							<label>Your Bio</label><br/>
 							<p>Your detail description</p>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+					<div class="row">
+						<div class="col-6">
+							<label>Friends</label>
+							<div class="col-6">
+								{% for friend in friends %}
+								<p>{{ user.username }}</p>
+								{% endfor %}
+								<p>Need to get friends from UserFriends</p>
+								<p>John Smith</p>
+								<p>Jon Snow</p>
+							</div>
 						</div>
 					</div>
 				</div>

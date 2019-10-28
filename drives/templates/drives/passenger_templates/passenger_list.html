@@ -1,0 +1,46 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'drives/passenger_list.css' %}">
+
+<!-- Show current passengers -->
+<h4>Passengers:</h4>
+
+<table id="current_passengers">
+	<tr>
+		<th>Name</th>
+		<th>Rider Rating</th>
+	  </tr>
+	{% for passenger in drive.passengers.all %}
+	<tr>
+		<td>
+			<a href="{% url 'profile' passenger.id %}" id="passenger_entry">{{ passenger.username }}</a>
+		</td>
+		<td>
+			3
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+<!-- Render either the 'Join Ride' button, 'You're on the waitlist!' message,
+     or the 'Leave Ride' button -->
+{% if user.id in waitlistIds %}
+<div class="text-center mt-3">
+<h4 id="waitlist_message">You're on the waitlist!</h4>
+</div>
+{% elif user.id in passengerIds %}
+<div class="text-center mt-3">
+	<form method="post" action="leave_ride" id="leave_ride_form">
+		{% csrf_token %}
+		<input type="hidden" id="passengerId" name="passengerId" value="{{user.id}}">
+		<button type="submit" class="btn btn-danger ml-1" id="leave_ride_btn">Leave Ride</button>
+	</form>
+</div>
+{% elif empty_passenger_slots %}
+<div class="text-center mt-3">
+	<form method="post" action="passenger_request" id="join_ride_form">
+		{% csrf_token %}
+		<input type="hidden" id="userId" name="userId" value="{{user.id}}">
+		<button type="submit" class="btn btn-success ml-1" id="join_ride_btn">Join Ride</button>
+	</form>
+</div>
+{% endif %}
