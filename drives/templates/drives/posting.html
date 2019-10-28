@@ -74,11 +74,11 @@
 				{% endif %}
             </div>
             <div class="col-6">
-                <p>Driver: <a href="{% url 'profile' drive.driver.id %}">{{ drive.driver.username }}</a></p>
+                <p>Driver: <a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a></p>
                 <p>Date: {{drive.date_time}}</p>
                 <p>Cost: {{drive.min_cost}}$ - {{drive.max_cost}}$</p>
                 <p>Payment: {{drive.payment_method}}</p>
-                <p>Max Passangers: {{drive.max_passengers}}</p>
+                <p>Max Passengers: {{drive.max_passengers}}</p>
                 <p>Vehicle: {{drive.car_description}}</p>
                 <p>Luggage Capacity: {{drive.luggage_description}}</p>
                 <p>Description: {{drive.description}}</p>

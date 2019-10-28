@@ -12,7 +12,7 @@
 	{% for passenger in drive.passengers.all %}
 	<tr>
 		<td>
-			<a href="{% url 'profile' passenger.id %}" id="passenger_entry">{{ passenger.username }}</a>
+			<a href="{% url 'users:profile' passenger.id %}" id="passenger_entry">{{ passenger.username }}</a>
 		</td>
 		<td>
 			3
