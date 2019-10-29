@@ -43,7 +43,6 @@ INSTALLED_APPS = [
 	'RideOn',
 	'users',
 	'drives',
-	'rides',
 	'bootstrap4',
 	'crispy_forms'
 ]
