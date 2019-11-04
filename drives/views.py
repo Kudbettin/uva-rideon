@@ -16,16 +16,6 @@ Called when a waypoint is updated
 '''
 def submit_waypoint(request, driveId):
     if request.method == "POST":
-        # Make sure the user leaving is the logged in user
-        #id = request.POST['passengerId']        
-        #logged_in_user = request.user.id
-        #if int(id) != int(logged_in_user):
-        #    return HttpResponseRedirect(reverse('insuficient_permission'))
-            
-        # Make sure the user is actually on the passenger list
-        #if Drive.objects.get(id=driveId).passengers.filter(id=id).count() != 1:
-        #    return HttpResponseRedirect(reverse('insuficient_permission'))
-    
         waypoint_x = request.POST['waypoint_x'] 
         waypoint_y = request.POST['waypoint_y'] 
         application_id = request.POST['application'] 
@@ -50,7 +40,7 @@ def passenger_request(request, driveId):
             return HttpResponseRedirect(reverse('insuficient_permission'))
             
         # Make sure the user isn't already on the requestlist or the passenger list
-        if Drive.objects.get(id=driveId).passengers.filter(id=id).count() != 0 or Drive.objects.get(id=driveId).requestList.filter(id=id).count() != 0:
+        if Drive.objects.get(id=driveId).passengers.filter(id=id).count() != 0 or Drive.objects.get(id=driveId).requestList.filter(user__id=id).count() != 0:
             return HttpResponseRedirect(reverse('insuficient_permission'))
 
         Drive.objects.get(id=driveId).add_passenger_to_requestlist(CustomUser.objects.get(id=id))
@@ -110,7 +100,14 @@ def approve_request(request, driveId):
             return HttpResponseRedirect(reverse('insuficient_permission'))
             
         Drive.objects.get(id=driveId).passengers.add(CustomUser.objects.get(id=id))
-        Drive.objects.get(id=driveId).requestList.remove(RideApplication.objects.get(user=CustomUser.objects.get(id=id)))
+        requestList = Drive.objects.get(id=driveId).requestList
+        request = requestList.get(user__id=id)
+        
+        # Add waypoint to drive and remove request from list
+        requestList.remove(request)
+        Drive.objects.get(id=driveId).waypointList.add(request.waypoint)
+        request.delete()
+        
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
         
 '''
@@ -130,7 +127,11 @@ def reject_request(request, driveId):
             return HttpResponseRedirect(reverse('insuficient_permission'))
             
         id = request.POST['passengerId']
-        Drive.objects.get(id=driveId).requestList.remove(RideApplication.objects.get(user=CustomUser.objects.get(id=id)))
+        requestList = Drive.objects.get(id=driveId).requestList
+        request = requestList.get(user__id=id)
+        request.waypoint.delete()
+        requestList.remove(request)
+        request.delete()
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
 
 class DriveView(generic.DetailView):
@@ -176,11 +177,8 @@ def post_new(request):
                 request.POST['time'] = request.POST['time'].replace('pm', '')
                 hours,minutes = request.POST['time'].split(":")
                 request.POST['time'] = str(int(hours) + 12) + ":" + minutes
-                
-        
 
         form = DriveCreationForm(request.POST)
-        print(request.POST)
 
         if form.is_valid():
 

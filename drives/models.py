@@ -11,14 +11,13 @@ class Location(models.Model):
     location = models.TextField()
     coordinates_x = models.FloatField(default=0)
     coordinates_y = models.FloatField(default=0)
-    dropoff_in_drive = models.ForeignKey('Drive', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.location
         
 class RideApplication(models.Model):
     user     = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name="user", null=True)
-    waypoint = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="waypoint", null=True, blank=True)
+    waypoint = models.ForeignKey(Location, on_delete=models.SET_NULL, related_name="waypoint", null=True, blank=True)
 
 '''
 A trip that will be undertaken at a concrete point in time.
@@ -34,6 +33,7 @@ class Drive(models.Model):
     description     = models.TextField()
     passengers      = models.ManyToManyField(CustomUser, related_name="passengers", blank=True)
     requestList     = models.ManyToManyField(RideApplication, related_name="requestList", blank=True)
+    waypointList    = models.ManyToManyField(Location, related_name="waypointList", blank=True)
     min_cost        = models.DecimalField(max_digits=5, decimal_places=2)
     max_cost        = models.DecimalField(max_digits=5, decimal_places=2)
     payment_method  = models.CharField(max_length=100)

@@ -59,6 +59,9 @@
 					<input type="hidden" id="passengerId" name="passengerId" value="{{application.user.id}}">
 					<button type="submit" class="btn btn-outline-success btn-sm float-left" id="accept_request_btn">Approve</button>
 				</form>
+				{% if application.waypoint %}
+					{% include "drives/waypoints/viewWaypoint.html" %}   
+				{% endif %}
 			{% endif %}
 		</td>
 	</tr>
