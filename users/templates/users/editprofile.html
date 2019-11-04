@@ -19,7 +19,7 @@
         <form class="form-group" action="/users/{{customuser.id}}/edit/redirect/" method="POST" id="updateprofile" name="username" value="{{ customuser.username }}" enctype="multipart/form-data">{% csrf_token %}
             <!--{% bootstrap_form form %}-->
             <div class="form-group">
-                {{form.name|as_crispy_field}}
+                {{form.username|as_crispy_field}}
             </div>
             <div class="form-group">
                 {{form.gender|as_crispy_field}}

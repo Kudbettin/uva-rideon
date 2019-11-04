@@ -27,7 +27,7 @@ class ProfileView(generic.DetailView):
 class EditProfileView(generic.UpdateView):
   
     model = CustomUser
-    fields = [ 'name', 'gender', 'phone','home_town', 'about', 'profile_pic']
+    fields = [ 'username', 'gender', 'phone','home_town', 'about', 'profile_pic']
     template_name = 'users/editprofile.html'
     
     def get_friends(self, request):
