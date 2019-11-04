@@ -2,6 +2,10 @@
 {% extends 'RideOn/base.html' %}
 {% block title %}Profile Page{% endblock %}
 {% block content %}
+{% load bootstrap4%}
+{% load static %}
+<link rel="stylesheet" href="{% static 'users/profile.css' %}">
+
 <div class="container">
     <div class="row">
         <div class="col-4">
@@ -18,10 +22,11 @@
         </div>
         <div class="col-6">
             <div class="profile-head" style="vertical-align: middle">
-                <h4>
-                    {{ customuser.username }}
-                </h4>
+                <h1>
+                    {{ customuser.name }}
+                </h1>
             </div>
+            <br>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Personal Information</a>
@@ -33,16 +38,9 @@
                     <a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false">Friends</a>
                 </li>
             </ul>
+            <br>
             <div class="tab-content profile-tab" id="myTabContent">
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <div class="row">
-                        <div class="col-6">
-                            <label>Name</label>
-                        </div>
-                        <div class="col-6">
-                            <p>{{ customuser.name }}</p>
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col-6">
                             <label>Gender</label>
@@ -95,25 +93,25 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
-                  <div class="row">
-                    <div class="col-6">
-                      <label>Friends</label>
-                      <div class="col-6">
-                        {% for friend in friends %}
-                        <p>{{ user.username }}</p>
-                        {% endfor %}
-                        <p>Need to get friends from UserFriends</p>
-                        <p>John Smith</p>
-                        <p>Jon Snow</p>
-                      </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Friends</label>
+                            <div class="col-6">
+                                {% for friend in friends %}
+                                <p>{{ user.username }}</p>
+                                {% endfor %}
+                                <p>Need to get friends from UserFriends</p>
+                                <p>John Smith</p>
+                                <p>Jon Snow</p>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
             </div>
         </div>
         {% if customuser.id == user.id %}
         <div class="col-2">
-            <button onclick="window.location.href = '/users/{{ customuser.id }}/edit/';">Edit Profile </button>
+            <button class="btn btn-default" onclick="window.location.href = '/users/{{ customuser.id }}/edit/';">Edit Profile </button>
         </div>
         {% else %}
         {% endif %}
