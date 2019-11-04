@@ -1,67 +1,45 @@
 from drives.models import Drive
+from django.db.models import Q
 
-def filter_cost_low(value, query):
+def filter_cost(search):
+	costs = {"cost_low" : [0, 6], "cost_mid" : [6, 10], "cost_high" : [10, 25], "cost_extreme" : [25, 100000]}
+	
+	costs_filtered = [key for key, value in search.items() if key in costs.keys() and value]
+	#costs_filtered = set(costs.keys()).intersection(set(search.keys()))
+	
+	sub_queries = []
+	for cost_key in costs_filtered:
+		print(cost_key)
+		print(costs[cost_key])
+		sub_queries.append(Q(min_cost__gte=costs[cost_key][0]) & Q(max_cost__lt=costs[cost_key][1]))
+		
+	if len(sub_queries) == 0:
+		sub_queries.append(Q(id=1) | ~Q(id=1))
+		
+	query = sub_queries.pop()
+	for q in sub_queries:
+		query = query | q
+		
 	return query
-def filter_cost_mid(value, query):
-	return query
-def filter_cost_high(value, query):
-	return query
-def filter_cost_extreme(value, query):
-	return query
-def filter_gender_male(value, query):
-	return query
-def filter_gender_female(value, query):
-	return query
-def filter_gender_other(value, query):
-	return query
-def filter_driver_friend(value, query):
-	return query
-def filter_passegner_friend(value, query):
-	return query
-def filter_rating_5(value, query):
-	return query
-def filter_rating_4(value, query):
-	return query
-def filter_rating_3(value, query):
-	return query
-def filter_rating_2(value, query):
-	return query
-def filter_search_text(value, query):
-	return query
+	
+def filter_gender(search):
+	return Q(id=1) | ~Q(id=1)
+def filter_friends(search):
+	return Q(id=1) | ~Q(id=1)
+def filter_rating(search):
+	return Q(id=1) | ~Q(id=1)
+def filter_search(search):
+	return Q(id=1) | ~Q(id=1)
 
 def search_drives(json_data):
-	query = Drive.objects.all()
+	# Base query is for all objects
+	query = Q(id=1) | ~Q(id=1)
 	
-	for key, value in json_data.items():
-		if key is "cost_low":
-			query = filter_cost_low(value, query)
-		elif key is "cost_mid":
-			query = filter_cost_mid(value, query)
-		elif key is "cost_high":
-			query = filter_cost_high(value, query)
-		elif key is "cost_extreme":
-			query = filter_cost_extreme(value, query)
-		elif key is "gender_male":
-			query = filter_gender_male(value, query)
-		elif key is "gender_female":
-			query = filter_gender_female(value, query)
-		elif key is "gender_other":
-			query = filter_gender_other(value, query)
-		elif key is "driver_friend":
-			query = filter_driver_friend(value, query)
-		elif key is "passegner_friend":
-			query = filter_passegner_friend(value, query)
-		elif key is "rating_5":
-			query = filter_rating_5(value, query)
-		elif key is "rating_4":
-			query = filter_rating_4(value, query)
-		elif key is "rating_3":
-			query = filter_rating_3(value, query)
-		elif key is "rating_2":
-			query = filter_rating_2(value, query)
-		elif key is "search_text":
-			query = filter_search_text(value, query)
-		else:
-			pass
-			
-	return query
+	# Filter with 'AND' for each search category
+	query = query & filter_cost(json_data)
+	query = query & filter_gender(json_data)
+	query = query & filter_friends(json_data)
+	query = query & filter_rating(json_data)
+	query = query & filter_search(json_data)
+	
+	return Drive.objects.filter(query)
