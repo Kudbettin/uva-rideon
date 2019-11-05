@@ -1,16 +1,19 @@
 {% load static %}
 
+<link rel="stylesheet" href="{% static 'drives/waypoint_modals.css' %}">
+
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addWaypointModal">
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editWaypointModal">
   Edit Waypoint
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="addWaypointModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="editWaypointModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addWaypointModalTitle">Edit Waypoint</h5>
+        <h5 class="modal-title" id="editWaypointModalTitle">Edit Waypoint</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -20,13 +23,15 @@
 		<div class="form-group mb-0">
 			<div id="locationField">
 				<label for="autocomplete_waypoint" class="float-left">Old Waypoint Address</label>
-				<input id="autocomplete_waypoint" placeholder="{{ request.waypoint.location }}" onFocus="geolocate_waypoint()" type="text" class="form-control mb-2" readonly />
+				<input id="autocomplete_waypoint_old" placeholder="{{ request.waypoint.location }}" type="text" class="form-control mb-2" readonly />
 			</div>
 		</div>
 		<div class="form-group mb-0">
 			<div id="locationField">
 				<label for="autocomplete_waypoint" class="float-left">New Waypoint Address</label>
-				<input id="autocomplete_waypoint" placeholder="1234 Waypoint Drive" onFocus="geolocate_waypoint()" type="text" class="form-control mb-2" />
+				<input id="autocomplete_waypoint_edit" placeholder="1234 Waypoint Drive" onFocus="geolocate_waypoint_edit()" type="text" class="form-control mb-2" />
+				<input id="autocomplete_location_x" type="hidden" value="" name="location_x" />
+				<input id="autocomplete_location_y" type="hidden" value="" name="location_y" />
 			</div>
 		</div>
       </div>

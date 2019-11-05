@@ -1,5 +1,7 @@
 {% load static %}
 
+<link rel="stylesheet" href="{% static 'drives/waypoint_modals.css' %}">
+
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addWaypointModal">
   Add Waypoint
@@ -20,7 +22,7 @@
 		<div class="form-group mb-0">
 			<div id="locationField">
 				<label for="autocomplete_waypoint" class="float-left">Waypoint Address</label>
-				<input id="autocomplete_waypoint" placeholder="1234 Waypoint Drive" onFocus="geolocate_waypoint()" type="text" class="form-control mb-2" />
+				<input id="autocomplete_waypoint_new" placeholder="1234 Waypoint Drive" onFocus="geolocate_waypoint_new()" type="text" class="form-control mb-2" />
 			</div>
 		</div>
       </div>

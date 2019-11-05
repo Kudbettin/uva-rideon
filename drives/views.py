@@ -105,7 +105,8 @@ def approve_request(request, driveId):
         
         # Add waypoint to drive and remove request from list
         requestList.remove(request)
-        Drive.objects.get(id=driveId).waypointList.add(request.waypoint)
+        if request.waypoint:
+            Drive.objects.get(id=driveId).waypointList.add(request.waypoint)
         request.delete()
         
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
@@ -129,7 +130,9 @@ def reject_request(request, driveId):
         id = request.POST['passengerId']
         requestList = Drive.objects.get(id=driveId).requestList
         request = requestList.get(user__id=id)
-        request.waypoint.delete()
+        
+        if request.waypoint:
+            request.waypoint.delete()
         requestList.remove(request)
         request.delete()
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
