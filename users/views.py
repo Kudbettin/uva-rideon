@@ -19,15 +19,14 @@ class ProfileView(generic.DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #context['avg_rating'] = DriverReview.objects.filter(of=kwargs['object'].id).rating
-        context['driver_avg_rating'] = 3
-        context['rider_avg_rating'] = 4
+        context['driver_avg_rating'] = get_driver_rating(kwargs['object'])
+        context['rider_avg_rating'] = get_rider_rating(kwargs['object'])
         return context
 
 class EditProfileView(generic.UpdateView):
   
     model = CustomUser
-    fields = [ 'name', 'gender', 'phone','home_town', 'about', 'profile_pic']
+    fields = [ 'username', 'gender', 'phone','home_town', 'about', 'profile_pic']
     template_name = 'users/editprofile.html'
     
     def get_friends(self, request):
@@ -85,6 +84,28 @@ class MyRidesView(generic.DetailView):
                 context['drivers_to_review_per_drive'][0]['query'].append(query)
         
         return context
+
+def get_rider_rating(user):
+    score = 0
+    count = 0
+    riderReviews = RiderReview.objects.filter(of=user.id).all()
+    for item in riderReviews:
+        score += item.rating
+        count += 1
+    if count == 0:
+        return "N/A"
+    return "%0.2f" % ((float(score)/count),)
+
+def get_driver_rating(user):
+    score = 0
+    count = 0
+    driverReviews = DriverReview.objects.filter(of=user.id).all()
+    for item in driverReviews:
+        score += item.rating
+        count += 1
+    if count == 0:
+        return "N/A"
+    return "%0.2f" % ((float(score)/count),)
 
 def post_new_review(request, pk):
     if request.method == "POST":
