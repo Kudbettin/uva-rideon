@@ -104,7 +104,7 @@
 						
 					}
 					
-					function initAutocompleteNew() {
+			function initAutocompleteNew() {
 				// Create the autocomplete object, restricting the search predictions to
 				// geographical location types.
 				autocomplete_new = new google.maps.places.Autocomplete(
@@ -125,6 +125,7 @@
 
 				document.getElementById("autocomplete_location_x").value = place.geometry.location.lng();
 				document.getElementById("autocomplete_location_y").value = place.geometry.location.lat();
+				document.getElementById("autocomplete_location").value = document.getElementById("autocomplete_waypoint_new").value;
 			}
 
 			// Bias the autocomplete object to the user's geographical location,
@@ -164,7 +165,8 @@
 			var place = autocomplete_edit.getPlace();
 
             document.getElementById("autocomplete_location_x").value = place.geometry.location.lng();
-            document.getElementById("autocomplete_location_y").value = place.geometry.location.lat();
+			document.getElementById("autocomplete_location_y").value = place.geometry.location.lat();
+			document.getElementById("autocomplete_location").value = document.getElementById("autocomplete_waypoint_edit").value;
 		}
 
 		// Bias the autocomplete object to the user's geographical location,

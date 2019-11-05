@@ -30,18 +30,18 @@
 			<div id="locationField">
 				<label for="autocomplete_waypoint" class="float-left">New Waypoint Address</label>
 				<input id="autocomplete_waypoint_edit" placeholder="1234 Waypoint Drive" onFocus="geolocate_waypoint_edit()" type="text" class="form-control mb-2" />
-				<input id="autocomplete_location_x" type="hidden" value="" name="location_x" />
-				<input id="autocomplete_location_y" type="hidden" value="" name="location_y" />
 			</div>
 		</div>
       </div>
 	  <!-- end modal body -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+		<!-- The form submited when the waypoint is edited -->
 		<form method="post" action="submit_waypoint" id="submit_waypoint_form">
 			{% csrf_token %}
-			<input type="hidden" id="waypoint_x" name="waypoint_x" value="-70">
-			<input type="hidden" id="waypoint_y" name="waypoint_y" value="-70">
+			<input type="hidden" id="autocomplete_location_x" name="waypoint_x" value="-70">
+			<input type="hidden" id="autocomplete_location_y" name="waypoint_y" value="-70">
+			<input type="hidden" id="autocomplete_location" name="location" value="1234 Waypoint Dr.">
 			<input type="hidden" id="application" name="application" value="{{request.id}}">
 			<button type="submit" class="btn btn-primary" id="submit_waypoint_btn">Submit</button>
 		</form>

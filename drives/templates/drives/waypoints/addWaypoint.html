@@ -31,8 +31,9 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 		<form method="post" action="submit_waypoint" id="submit_waypoint_form">
 			{% csrf_token %}
-			<input type="hidden" id="waypoint_x" name="waypoint_x" value="-70">
-			<input type="hidden" id="waypoint_y" name="waypoint_y" value="-70">
+			<input type="hidden" id="autocomplete_location_x" name="waypoint_x" value="-70">
+			<input type="hidden" id="autocomplete_location_y" name="waypoint_y" value="-70">
+			<input type="hidden" id="autocomplete_location" name="location" value="1234 Waypoint Dr.">
 			<input type="hidden" id="application" name="application" value="{{request.id}}">
 			<button type="submit" class="btn btn-primary" id="submit_waypoint_btn">Submit</button>
 		</form>

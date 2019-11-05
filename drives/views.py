@@ -18,10 +18,13 @@ def submit_waypoint(request, driveId):
     if request.method == "POST":
         waypoint_x = request.POST['waypoint_x'] 
         waypoint_y = request.POST['waypoint_y'] 
-        application_id = request.POST['application'] 
+        location_name  = request.POST['location'] 
+        application_id = request.POST['application']
+        
+        print(request.POST)
 
         application = RideApplication.objects.get(id=application_id)
-        application.waypoint = Location.objects.create(location="description2", coordinates_x=waypoint_x, coordinates_y=waypoint_y)
+        application.waypoint = Location.objects.create(location=location_name, coordinates_x=waypoint_x, coordinates_y=waypoint_y)
         application.save()
         
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
