@@ -2,151 +2,120 @@
 {% extends 'RideOn/base.html' %}
 {% block title %}Profile Page{% endblock %}
 {% block content %}
+{% load bootstrap4%}
+{% load static %}
+<link rel="stylesheet" href="{% static 'users/profile.css' %}">
+
 <div class="container">
-	<div class="row">
-		<div class="col-4">
-			<div class="profile-img">
-				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog" alt=""/>
-			</div>
-		</div>
-		<div class="col-6">
-			<div class="profile-head" style="vertical-align: middle">
-				<h4>
-					{{ customuser.username }}
-				</h4>
-			</div>
-		</div>
-		{% if customuser.id == user.id %}
-		<div class="col-2">
-			<button class="btn btn-default" onclick="window.location.href = '/users/{{ customuser.id }}/edit/';">Edit Profile </button>
-		</div>
-		{% else %}
-		<div class="col-2">
-			 <input type="submit" class="add-friend-btn" name="add-friend-btn" value="Add Friend">
-		</div>
-		{% endif %}
-	</div>
-	<br>
-	<div class="row">
-		<div class="col-4">
-			<div class="card" style="width: 18rem;">
-			  <div class="card-body">
-				<h5 class="card-title">About Me</h5>
-				<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-			  </div>
-			</div>
-		</div>
-		<div class="col-8">		
-			<ul class="nav nav-tabs" id="myTab" role="tablist">
-				<li class="nav-item">
-					<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Personal Information</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false">Friends</a>
-				</li>
-			</ul>
-			<div class="tab-content profile-tab" id="myTabContent">
-				<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-					<div class="row">
-						<div class="col-6">
-							<label>User Id</label>
-						</div>
-						<div class="col-6">
-							<p>{{ customuser.id }}</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>Email</label>
-						</div>
-						<div class="col-6">
-							<p>{{ customuser.email }}</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>Driver Rating</label>
-						</div>
-						<div class="col-6">
-							<p>{{ driver_avg_rating }}</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>Rider Rating</label>
-						</div>
-						<div class="col-6">
-							<p>{{ rider_avg_rating }}</p>
-						</div>
-					</div>
-				</div>
-				<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-					<div class="row">
-						<div class="col-md-6">
-							<label>Experience</label>
-						</div>
-						<div class="col-6">
-							<p>Expert</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>Hourly Rate</label>
-						</div>
-						<div class="col-6">
-							<p>10$/hr</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>Total Projects</label>
-						</div>
-						<div class="col-6">
-							<p>230</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>English Level</label>
-						</div>
-						<div class="col-6">
-							<p>Expert</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label>Availability</label>
-						</div>
-						<div class="col-6">
-							<p>6 months</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-12">
-							<label>Your Bio</label><br/>
-							<p>Your detail description</p>
-						</div>
-					</div>
-				</div>
-				<div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
-					<div class="row">
-						<div class="col-6">
-							<h4>Friends</h4>
-							<div class="col-6">
-								<ul>
-									{% for friend in friends %}
-									<li>{{ friend.username }}</li>
-									{% endfor %}
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <div class="profile-img">
+                <img src="{{ customuser.profile_pic.url }}" alt="" style="width: 80%; height: auto;" />
+            </div>
+            <br>
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">About Me</h5>
+                    <p class="card-text">{{customuser.about}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="profile-head" style="vertical-align: middle">
+                <h1>
+                    {{ customuser.username }}
+                </h1>
+            </div>
+            <br>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Personal Information</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Reviews</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false">Friends</a>
+                </li>
+            </ul>
+            <br>
+            <div class="tab-content profile-tab" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Gender</label>
+                        </div>
+                        <div class="col-6">
+                            <p>{{ customuser.gender }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Email</label>
+                        </div>
+                        <div class="col-6">
+                            <p>{{ customuser.email }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Phone Number</label>
+                        </div>
+                        <div class="col-6">
+                            <p>{{ customuser.phone }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Driver Rating</label>
+                        </div>
+                        <div class="col-6">
+                            <p>{{ driver_avg_rating }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Rider Rating</label>
+                        </div>
+                        <div class="col-6">
+                            <p>{{ rider_avg_rating }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Experience</label>
+                        </div>
+                        <div class="col-6">
+                            <p>Expert</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Friends</label>
+                            <div class="col-6">
+                                {% for friend in friends %}
+                                <p>{{ user.username }}</p>
+                                {% endfor %}
+                                <p>Need to get friends from UserFriends</p>
+                                <p>John Smith</p>
+                                <p>Jon Snow</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if customuser.id == user.id %}
+        <div class="col-2">
+            <button class="btn btn-default" onclick="window.location.href = '/users/{{ customuser.id }}/edit/';">Edit Profile </button>
+        </div>
+        {% else %}
+        {% endif %}
+    </div>
+    <br>
 </div>
 {% endblock %}
