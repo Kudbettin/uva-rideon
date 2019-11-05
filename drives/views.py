@@ -12,7 +12,7 @@ from drives.forms import DriveCreationForm
 from users.models import CustomUser
 
 '''
-Called when a waypoint is updated
+Called when a waypoint is updated within a ride application
 '''
 def submit_waypoint(request, driveId):
     if request.method == "POST":

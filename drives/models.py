@@ -87,7 +87,8 @@ def create_drive(username_str, start_location_str="Start Location", end_location
                                         driver=driver, date=timezone.now(), time=timezone.now(), description=description_str, min_cost=2,
                                         max_cost=10, payment_method="payment", max_passengers=4, car_description="mycar")
                                         
-    dropoff = Location.objects.create(location = "dropoff", dropoff_in_drive=drive)
+    dropoff = Location.objects.create(location = "dropoff")
+    drive.waypointList.add(dropoff)
     
     return start_location, end_location, driver, drive, dropoff
 

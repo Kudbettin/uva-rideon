@@ -19,7 +19,7 @@ class DriveModelTester(TestCase):
 	# objects get deleted as well
 	def testDriveDeletionOnLocations(self):	
 		self.drive.delete()
-		self.assertEqual(Location.objects.all().count(), 0)
+		self.assertEqual(Location.objects.all().count(), 1)
 		
 	# Verifies that when the start location is deleted,
 	#  the associated drive is as well deleted
