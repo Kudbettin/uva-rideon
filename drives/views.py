@@ -190,11 +190,13 @@ def post_new(request):
 
             start_location = Location.objects.create(
                 coordinates_x=request.POST["start_coordinates_x"],
-                coordinates_y=request.POST["start_coordinates_y"])
+                coordinates_y=request.POST["start_coordinates_y"], 
+				location=request.POST["start_location"])
 
             end_location = Location.objects.create(
                 coordinates_x=request.POST["end_coordinates_x"],
-                coordinates_y=request.POST["end_coordinates_y"])
+                coordinates_y=request.POST["end_coordinates_y"],
+				location=request.POST["end_location"])
 
             start_location.save()
             end_location.save()
