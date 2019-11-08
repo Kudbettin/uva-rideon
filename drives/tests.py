@@ -19,7 +19,7 @@ class DriveModelTester(TestCase):
 	# objects get deleted as well
 	def testDriveDeletionOnLocations(self):	
 		self.drive.delete()
-		self.assertEqual(Location.objects.all().count(), 0)
+		self.assertEqual(Location.objects.all().count(), 1)
 		
 	# Verifies that when the start location is deleted,
 	#  the associated drive is as well deleted
@@ -168,13 +168,13 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		join_btn.click()
 		
 		# Verify that user1 is now on the request list		
-		self.assertEqual(self.drive2.requestList.all().get(id=self.driver.id).username, self.driver.username)
+		self.assertEqual(self.drive2.requestList.all().get(user=CustomUser.objects.get(id=self.driver.id)).user.username, self.driver.username)
 		
 	# Ensures that if a user is on the request list of a ride
 	# there is a message that tells them this
 	def testWaitlistMessage(self):
 		# Have user1 join ride2's requestlist
-		self.drive2.requestList.add(self.driver)
+		self.drive2.requestList.add(RideApplication.objects.create(user=self.driver))
 		
 		# View the drive as user1
 		self.browser.delete_all_cookies()
@@ -188,7 +188,7 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 	# Ensures that the owner can see requests to join a drive
 	def testRequestAppears(self):
 		# Have user1 join ride2's requestlist
-		self.drive2.requestList.add(self.driver)
+		self.drive2.requestList.add(RideApplication.objects.create(user=self.driver))
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()
@@ -202,7 +202,7 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 	# Ensures that the non-owners can't see requests to join a drive
 	def testRequestDoesntAppear(self):
 		# Have user1 join ride2's requestlist
-		self.drive2.requestList.add(self.driver)
+		self.drive2.requestList.add(RideApplication.objects.create(user=self.driver))
 		
 		# View the ride not as the owner
 		self.browser.delete_all_cookies()
@@ -216,7 +216,7 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 	# Ensures that the button to reject waitlist request works
 	def testRejectRequestBtnWorks(self):
 		# Have user1 join ride2's requestlist
-		self.drive2.requestList.add(self.driver)
+		self.drive2.requestList.add(RideApplication.objects.create(user=self.driver))
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()
@@ -233,7 +233,7 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 	# Ensures that the button to accept waitlist request works
 	def testAcceptRequestBtnWorks(self):
 		# Have user1 join ride2's requestlist
-		self.drive2.requestList.add(self.driver)
+		self.drive2.requestList.add(RideApplication.objects.create(user=self.driver))
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()

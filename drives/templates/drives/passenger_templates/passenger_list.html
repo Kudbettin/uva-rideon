@@ -25,7 +25,17 @@
      or the 'Leave Ride' button -->
 {% if user.id in waitlistIds %}
 <div class="text-center mt-3">
-<h4 id="waitlist_message">You're on the waitlist!</h4>
+	<h4 id="waitlist_message">You're on the waitlist!</h4>
+	<!-- Either display an 'Add Waypoint' modal or an 'Edit Waypoint' modal -->
+	{% for request in requestList %}
+		{% if request.user.id == user.id %}
+			{% if request.waypoint %}
+				{% include "drives/waypoints/editWaypoint.html" %} 
+			{% else %}
+				{% include "drives/waypoints/addWaypoint.html" %}    
+			{% endif %}
+		{% endif %}
+	{% endfor %}
 </div>
 {% elif user.id in passengerIds %}
 <div class="text-center mt-3">

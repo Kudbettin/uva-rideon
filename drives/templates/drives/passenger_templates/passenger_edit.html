@@ -39,26 +39,29 @@
 		<th>Rider Rating</th>
 		<th></th>
 	  </tr>
-	{% for passenger in drive.requestList.all %}
+	{% for application in drive.requestList.all %}
 	<tr>
 		<td>
-			<a href="{% url 'users:profile' passenger.id %}" id="passenger_request">{{ passenger.username }}</a>
+			<a href="{% url 'users:profile' application.user.id %}" id="passenger_request">{{ application.user.username }}</a>
 		</td>
 		<td>
 			3
 		</td>
 		<td>
-		    {% if passenger.id != drive.driver.id %}
+		    {% if application.user.id != drive.driver.id %}
 				<form method="post" action="request_reject" id="reject_request_form">
 					{% csrf_token %}
-					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
+					<input type="hidden" id="passengerId" name="passengerId" value="{{application.user.id}}">
 					<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="reject_request_btn">Reject</button>
 				</form>
 				<form method="post" action="request_approve" id="accept_request_form">
 					{% csrf_token %}
-					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
+					<input type="hidden" id="passengerId" name="passengerId" value="{{application.user.id}}">
 					<button type="submit" class="btn btn-outline-success btn-sm float-left" id="accept_request_btn">Approve</button>
 				</form>
+				{% if application.waypoint %}
+					{% include "drives/waypoints/viewWaypoint.html" %}   
+				{% endif %}
 			{% endif %}
 		</td>
 	</tr>

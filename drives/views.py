@@ -7,13 +7,31 @@ from django.views.generic.list import ListView
 from django.urls import reverse
 from django.utils import timezone
 
-from drives.models import Drive, create_drive, Location
+from drives.models import Drive, create_drive, Location, RideApplication
 from drives.forms import DriveCreationForm
 from drives.search_drives import search_drives
 from users.models import CustomUser
 from django.template.context import make_context
 
 import json
+
+'''
+Called when a waypoint is updated within a ride application
+'''
+def submit_waypoint(request, driveId):
+    if request.method == "POST":
+        waypoint_x = request.POST['waypoint_x'] 
+        waypoint_y = request.POST['waypoint_y'] 
+        location_name  = request.POST['location'] 
+        application_id = request.POST['application']
+        
+        print(request.POST)
+
+        application = RideApplication.objects.get(id=application_id)
+        application.waypoint = Location.objects.create(location=location_name, coordinates_x=waypoint_x, coordinates_y=waypoint_y)
+        application.save()
+        
+        return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
 
 '''
 Called when a user clicks 'Join Ride'
@@ -29,7 +47,7 @@ def passenger_request(request, driveId):
             return HttpResponseRedirect(reverse('insuficient_permission'))
             
         # Make sure the user isn't already on the requestlist or the passenger list
-        if Drive.objects.get(id=driveId).passengers.filter(id=id).count() != 0 or Drive.objects.get(id=driveId).requestList.filter(id=id).count() != 0:
+        if Drive.objects.get(id=driveId).passengers.filter(id=id).count() != 0 or Drive.objects.get(id=driveId).requestList.filter(user__id=id).count() != 0:
             return HttpResponseRedirect(reverse('insuficient_permission'))
 
         Drive.objects.get(id=driveId).add_passenger_to_requestlist(CustomUser.objects.get(id=id))
@@ -89,7 +107,15 @@ def approve_request(request, driveId):
             return HttpResponseRedirect(reverse('insuficient_permission'))
             
         Drive.objects.get(id=driveId).passengers.add(CustomUser.objects.get(id=id))
-        Drive.objects.get(id=driveId).requestList.remove(CustomUser.objects.get(id=id))
+        requestList = Drive.objects.get(id=driveId).requestList
+        request = requestList.get(user__id=id)
+        
+        # Add waypoint to drive and remove request from list
+        requestList.remove(request)
+        if request.waypoint:
+            Drive.objects.get(id=driveId).waypointList.add(request.waypoint)
+        request.delete()
+        
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
         
 '''
@@ -105,11 +131,17 @@ def reject_request(request, driveId):
             return HttpResponseRedirect(reverse('insuficient_permission'))
             
         # Make sure the user is on the requestList
-        if not Drive.objects.get(id=driveId).requestList.get(id=id):
+        if not Drive.objects.get(id=driveId).requestList.get(user=CustomUser.objects.get(id=id)):
             return HttpResponseRedirect(reverse('insuficient_permission'))
             
         id = request.POST['passengerId']
-        Drive.objects.get(id=driveId).requestList.remove(CustomUser.objects.get(id=id))
+        requestList = Drive.objects.get(id=driveId).requestList
+        request = requestList.get(user__id=id)
+        
+        if request.waypoint:
+            request.waypoint.delete()
+        requestList.remove(request)
+        request.delete()
         return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
 
 class DriveView(generic.DetailView):
@@ -126,11 +158,13 @@ class DriveView(generic.DetailView):
             context['empty_passenger_slots'] = True
         
         context['waitlistIds'] = []
-        for passenger in kwargs['object'].requestList.all():
-            context['waitlistIds'].append(passenger.id)
+        for application in kwargs['object'].requestList.all():
+            context['waitlistIds'].append(application.user.id)
         context['passengerIds'] = []
         for passenger in kwargs['object'].passengers.all():
             context['passengerIds'].append(passenger.id)
+            
+        context['requestList'] = kwargs['object'].requestList.all()
         
         return context
 
@@ -162,21 +196,20 @@ def post_new(request):
                 request.POST['time'] = request.POST['time'].replace('pm', '')
                 hours,minutes = request.POST['time'].split(":")
                 request.POST['time'] = str(int(hours) + 12) + ":" + minutes
-                
-        
 
         form = DriveCreationForm(request.POST)
-        print(request.POST)
 
         if form.is_valid():
 
             start_location = Location.objects.create(
                 coordinates_x=request.POST["start_coordinates_x"],
-                coordinates_y=request.POST["start_coordinates_y"])
+                coordinates_y=request.POST["start_coordinates_y"], 
+				location=request.POST["start_location"])
 
             end_location = Location.objects.create(
                 coordinates_x=request.POST["end_coordinates_x"],
-                coordinates_y=request.POST["end_coordinates_y"])
+                coordinates_y=request.POST["end_coordinates_y"],
+				location=request.POST["end_location"])
 
             start_location.save()
             end_location.save()
