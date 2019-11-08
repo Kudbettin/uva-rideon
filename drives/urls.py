@@ -11,6 +11,8 @@ urlpatterns = [
   path('<int:driveId>/leave_ride', leave_ride, name='leave_ride'),
   path('<int:driveId>/submit_waypoint', submit_waypoint, name='submit_waypoint'),
   path('', RideList.as_view(), name='list'),
+  path('', render_ridelist, name='list'),
+  path('search', search_ridelist, name='search'),
   path('<pk>/', DriveView.as_view(), name='post_details'),
   path('new', post_new, name='post_new')  
 ]

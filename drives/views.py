@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 
 from django.views import generic
 from django.views.generic.list import ListView
@@ -9,7 +9,11 @@ from django.utils import timezone
 
 from drives.models import Drive, create_drive, Location, RideApplication
 from drives.forms import DriveCreationForm
+from drives.search_drives import search_drives
 from users.models import CustomUser
+from django.template.context import make_context
+
+import json
 
 '''
 Called when a waypoint is updated within a ride application
@@ -164,13 +168,22 @@ class DriveView(generic.DetailView):
         
         return context
 
+''' 
+Returns an HTML representation of a search over the ridelist.
+Search parameters are passed as POST request parameters.
 '''
-View function for the home page of the drive module
-Shows a summary of all Drives in a convenient list format
-'''
-class RideList(ListView):
-    model = Drive
+def search_ridelist(request):
+    if request.method == "POST":
+        json_data = json.loads(request.body)
+        return render(request, 'drives/drive_list_inner.html', {'drive_list': search_drives(json_data)})
+    return render(request, 'drives/drive_list_inner.html')
 
+'''
+Renders the outer layers of the main drive list page,
+which contain the checkboxes and the search bar.
+'''
+def render_ridelist(request):
+    return render(request, 'drives/drive_list_outer.html')
 
 def post_new(request):
     if request.method == "POST":

@@ -117,15 +117,6 @@ class DriveListingTester(StaticLiveServerTestCase):
 
 		self.assertEqual(self.browser.current_url, self.live_server_url + '/drives/new')
 		
-	# Asserts that the default queryset returns all drives
-	def testDefaultQuery(self):
-		ridelist = RideList()
-		queryset = ridelist.get_queryset()
-		
-		self.assertEqual(queryset.count(), 2)
-		self.assertEqual(queryset[0].driver.username, "Name")
-		self.assertEqual(queryset[1].driver.username, "Name2")
-		
 '''
 Used to test the passenger sub-system from a GUI perspective.
 Verifies underlying models as well.
