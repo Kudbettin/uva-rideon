@@ -1,0 +1,166 @@
+<!-- templates/register.html -->
+{% extends 'RideOn/base.html' %}
+
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
+<link rel="stylesheet" href="{% static 'drives/drive_list.css' %}">
+	
+<!-- Sidebar for search filtering -->
+<div id="sidebar" class="mx-3 mt-5">
+  <ul class="list-unstyled components">
+		<h5>Cost</h5>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="cost_low" />
+			<div class="state">
+				<label>$0 - $5</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="cost_mid" />
+			<div class="state">
+				<label>$6 - $10</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="cost_high" />
+			<div class="state">
+				<label>$11 - $25</label>
+			</div>
+		</div>
+		<div class="pretty p-default">
+			<input type="checkbox" onchange="updateSearch()" id="cost_extreme" />
+			<div class="state">
+				<label>$25+</label>
+			</div>
+		</div>
+		
+		<br>
+		<h5>Driver Gender</h5>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="gender_male" />
+			<div class="state">
+				<label>Male</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="gender_female" />
+			<div class="state">
+				<label>Female</label>
+			</div>
+		</div>
+		<div class="pretty p-default">
+			<input type="checkbox" onchange="updateSearch()" id="gender_other" />
+			<div class="state">
+				<label>Other</label>
+			</div>
+		</div>
+		
+		<br>
+		<h5>Ride with Friends</h5>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="driver_friend" />
+			<div class="state">
+				<label>Driver is Friend</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="passegner_friend" />
+			<div class="state">
+				<label>Friends in Ride</label>
+			</div>
+		</div>
+		
+		<br>
+		<h5>Driver Rating</h5>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="rating_5" />
+			<div class="state">
+				<label>5</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="rating_4" />
+			<div class="state">
+				<label>4+</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="rating_3" />
+			<div class="state">
+				<label>3+</label>
+			</div>
+		</div>
+		<div class="pretty p-default mb-1">
+			<input type="checkbox" onchange="updateSearch()" id="rating_2" />
+			<div class="state">
+				<label>2+</label>
+			</div>
+		</div>
+	</ul>
+</div>
+
+<!-- Main Content -- search results, search bar -->
+<div class="container mt-5">
+	
+	<h1>Drives</h1>
+	
+	<div class="wrapper mb-4">
+		<div class="input-group md-form form-sm form-2 pl-0">
+			<input class="form-control my-0 py-1 red-border" id="search_bar" type="text" onkeypress="updateSearchOnEnter(event)" placeholder="Search" aria-label="Search">
+			<div class="input-group-append">
+				<span class="input-group-btn">
+                    <button class="btn btn-default" type="button" onclick="updateSearch()"><i class="material-icons">search</i></button>
+                </span>
+			</div>
+		</div>
+		<a href="new" class="btn btn-success ml-1" role="button" id="create_drive">Create</a>
+	</div>
+		
+	<div id="searchResults">
+		<!-- An empty div filled in by JavaScript -->
+	</div>
+	
+</div>
+
+<script>
+// Update the search as soon as page is loaded with default values
+updateSearch();
+
+function updateSearchOnEnter(event) {
+	if (event.keyCode == 13) {
+        updateSearch();
+    }
+}
+function updateSearch() {
+	var xhr = new XMLHttpRequest();
+	var url = "search";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+	xhr.onreadystatechange = function () {
+		document.getElementById("searchResults").innerHTML = xhr.responseText;
+	};
+	
+	var data = JSON.stringify({
+		"cost_low": document.getElementById("cost_low").checked,
+		"cost_mid": document.getElementById("cost_mid").checked,
+		"cost_high": document.getElementById("cost_high").checked,
+		"cost_extreme": document.getElementById("cost_extreme").checked,
+		"gender_male": document.getElementById("gender_male").checked,
+		"gender_female": document.getElementById("gender_female").checked,
+		"gender_other": document.getElementById("gender_other").checked,
+		"driver_friend": document.getElementById("driver_friend").checked,
+		"passegner_friend": document.getElementById("passegner_friend").checked,
+		"rating_5": document.getElementById("rating_5").checked,
+		"rating_4": document.getElementById("rating_4").checked,
+		"rating_3": document.getElementById("rating_3").checked,
+		"rating_2": document.getElementById("rating_2").checked,
+		"search_text": document.getElementById("search_bar").value
+	});
+	xhr.send(data);
+}
+</script>
+
+{% endblock %}

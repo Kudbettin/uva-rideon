@@ -17,12 +17,15 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     
-    <link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
-    <script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script>
+	<!-- <link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
+	<script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script> -->
+	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.11.15/jquery.timepicker.css">
+	<script src="https://cdn.jsdelivr.net/npm/timepicker@1.11.15/jquery.timepicker.min.js"></script>
 
     <script>
         $ (function () {
-            $("#id_date").datepicker({format: 'yy-mm-dd'});
+            $("#id_date").datepicker({dateFormat: 'yy-mm-dd'});
         });
     </script>
     <script type="text/javascript">
@@ -81,6 +84,8 @@
 
             document.getElementById("id_start_coordinates_x").value = place.geometry.location.lng();
             document.getElementById("id_start_coordinates_y").value = place.geometry.location.lat();
+			
+			document.getElementById("start_location").value = document.getElementById("autocomplete_start").value
 		}
 
 		function fillInAddress_end() {
@@ -89,6 +94,8 @@
 
             document.getElementById("id_end_coordinates_x").value = place.geometry.location.lng();
             document.getElementById("id_end_coordinates_y").value = place.geometry.location.lat();
+			
+			document.getElementById("end_location").value = document.getElementById("autocomplete_end").value
 		}
 
 
@@ -183,6 +190,8 @@
         <input type="hidden" id="id_end_coordinates_x" name="end_coordinates_x" value="">
         <input type="hidden" id="id_end_coordinates_y" name="end_coordinates_y" value="">
         
+		<input type="hidden" id="start_location" name="start_location" value="">
+		<input type="hidden" id="end_location" name="end_location" value="">
 		
         <input type="hidden" id="driver" name="driver" value="{{user.id}}">
 		

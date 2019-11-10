@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 from django.views import generic
 from django import template
 from drives.models import Drive, DriverReview, RiderReview
-from .models import CustomUser, UserFriends
+from .models import CustomUser
 from .forms import CustomUserCreationForm, CustomUserChangeForm, DriverReviewForm, RiderReviewForm
 
 class RegisterView(CreateView):
@@ -19,31 +19,36 @@ class ProfileView(generic.DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #context['avg_rating'] = DriverReview.objects.filter(of=kwargs['object'].id).rating
-        context['driver_avg_rating'] = 3
-        context['rider_avg_rating'] = 4
+        context['driver_avg_rating'] = get_driver_rating(kwargs['object'])
+        context['rider_avg_rating'] = get_rider_rating(kwargs['object'])
+
+        context['friends'] = kwargs['object'].friends.all()
+
+        context['is_friend'] = False
+        if kwargs['object'] in CustomUser.objects.filter(id=self.request.user.id)[0].friends.all():
+            context['is_friend'] = True
+
         return context
 
 class EditProfileView(generic.UpdateView):
   
     model = CustomUser
-    fields = [ 'name', 'gender', 'phone','home_town', 'about', 'profile_pic']
+    fields = [ 'username', 'gender', 'phone','home_town', 'about', 'profile_pic']
     template_name = 'users/editprofile.html'
     
     def get_friends(self, request):
         users = CustomUser.objects.exclude(id=request.user)
         friend = UserFriends.objects.get(current_user=request.user)
         friends = friend.users.all()
-
  
 def get_fields(request,pk):
-    
+    if int(request.user.id) != int(pk):
+        return redirect('/users/' + str(pk))
     instance = CustomUser.objects.get(id=pk)
     form = CustomUserChangeForm(request.POST or None, request.FILES, instance=instance)
     if form.is_valid():
-        #form.profile_pic = request.FILES.get('profile_pic', None)
         form.save()
-        return redirect('/users/'+ pk + '/edit') # should update these to use reverse
+        return redirect('/users/'+ pk) # should update these to use reverse
     else:
         return redirect('/users/'+ pk + '/edit')
 
@@ -77,14 +82,38 @@ class MyRidesView(generic.DetailView):
 
         context['drivers_to_review_per_drive'] = []
 
+        counter = 0
         for drive in context['completed_rides']:
             query = Drive.objects.filter(id=drive.id)[0].driver
             context['drivers_to_review_per_drive'].append( {"id":drive.id, "query":[]})
-            
+
             if DriverReview.objects.filter(drive=drive.id, by=self.request.user.id).count() == 0:
-                context['drivers_to_review_per_drive'][0]['query'].append(query)
+                context['drivers_to_review_per_drive'][counter]['query'].append(query)
+            counter += 1
         
         return context
+
+def get_rider_rating(user):
+    score = 0
+    count = 0
+    riderReviews = RiderReview.objects.filter(of=user.id).all()
+    for item in riderReviews:
+        score += item.rating
+        count += 1
+    if count == 0:
+        return "N/A"
+    return "%0.2f" % ((float(score)/count),)
+
+def get_driver_rating(user):
+    score = 0
+    count = 0
+    driverReviews = DriverReview.objects.filter(of=user.id).all()
+    for item in driverReviews:
+        score += item.rating
+        count += 1
+    if count == 0:
+        return "N/A"
+    return "%0.2f" % ((float(score)/count),)
 
 def post_new_review(request, pk):
     if request.method == "POST":
@@ -99,7 +128,7 @@ def post_new_review(request, pk):
             if form.is_valid():
                 post = form.save(commit=False)
                 post.save()
-                return HttpResponseRedirect(reverse_lazy('myrides', args=(pk,)))
+                return redirect('/users/' + str(pk) + '/myrides')
             else:
                 print(form.errors)
                 print("error adding review")
@@ -110,19 +139,23 @@ def post_new_review(request, pk):
             if form.is_valid():
                 post = form.save(commit=False)
                 post.save()
-                return HttpResponseRedirect(reverse_lazy('myrides', args=(pk,)))
+                return redirect('/users/' + str(pk) + '/myrides')
             else:
                 print(form.errors)
                 print("error adding review")
     else:
         form = RideReviewForm()
-        
+    
     return render(request, 'users/myrides.html')
 
-def change_friends(request, operation, pk):
-    new_friend = CustomUser.objects.get(pk=pk)
-    if operation == 'add':
-        UserFriends.add_friend(request.user, new_friend)
-    elif operation == 'remove':
-        UserFriends.remove_friend(request.user, new_friend)
-    return redirect()
+def post_add_friend(request, pk):
+    if request.method == "POST":
+        if CustomUser.objects.filter(id=request.POST['tofriend_id']).count() != 0:
+            CustomUser.objects.filter(id=request.user.id)[0].friends.add(CustomUser.objects.filter(id=request.POST['tofriend_id'])[0])
+            return redirect('/users/' + str(pk))
+
+def post_remove_friend(request, pk):
+    if request.method == "POST":
+        if CustomUser.objects.filter(id=request.POST['tofriend_id']).count() != 0:
+            CustomUser.objects.filter(id=request.user.id)[0].friends.remove(CustomUser.objects.filter(id=request.POST['tofriend_id'])[0])
+            return redirect('/users/' + str(pk))
