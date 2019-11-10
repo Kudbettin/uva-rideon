@@ -97,12 +97,11 @@
                         <div class="col-6">
                             <label>Friends</label>
                             <div class="col-6">
-                                {% for friend in friends %}
-                                <p>{{ user.username }}</p>
-                                {% endfor %}
-                                <p>Need to get friends from UserFriends</p>
-                                <p>John Smith</p>
-                                <p>Jon Snow</p>
+			        <ul>
+				    {% for friend in friends %}
+				    <li>{{ friend.username }}</li>
+				    {% endfor %}
+				</ul>
                             </div>
                         </div>
                     </div>
@@ -114,6 +113,23 @@
             <button class="btn btn-default" onclick="window.location.href = '/users/{{ customuser.id }}/edit/';">Edit Profile </button>
         </div>
         {% else %}
+	{% if is_friend == True %}
+        <div class="col-2">
+	    <form method="post" action="remove_friend">
+		{% csrf_token %}
+		<input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
+                <button class="btn btn-default" type="Submit">Remove Friend</button>
+	    </form>
+        </div>
+	{% else %}
+        <div class="col-2">
+	    <form method="post" action="add_friend">
+		{% csrf_token %}
+		<input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
+                <button class="btn btn-default" type="Submit">Add Friend</button>
+	    </form>
+        </div>
+        {% endif %}
         {% endif %}
     </div>
     <br>
