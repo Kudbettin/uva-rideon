@@ -175,21 +175,54 @@ class EditDriveView(generic.UpdateView):
     fields = ["title", "driver", "description", "date", "time", "min_cost",
               "max_cost", "payment_method", "max_passengers", "car_description",
               "luggage_description"]
-    # fields = ["title", "description", "min_cost", "max_cost"]
+
     template_name = "drives/edit_posting.html"
 
 def get_fields(request, pk):
 
     instance = Drive.objects.get(id=pk)
+
+    if request.method == "POST":
+        # re-format time data to use 24 hour scale for Django
+        if request.POST['time']:
+            request.POST = request.POST.copy()
+            if 'am' in request.POST['time']:
+                request.POST['time'] = request.POST['time'].replace('am', '')
+            elif 'pm' in request.POST['time']:
+                request.POST['time'] = request.POST['time'].replace('pm', '')
+                hours, minutes = request.POST['time'].split(":")
+                request.POST['time'] = str(int(hours) + 12) + ":" + minutes
+
     form = DriveChangeForm(request.POST or None, instance=instance)
 
     if form.is_valid():
-        print("hi", request.POST)
-        form.save()
-        return redirect('/drives/' + pk + '/edit')
+        if request.POST["start_location"] != "":
+            start_location = Location.objects.create(
+                coordinates_x=request.POST["start_coordinates_x"],
+                coordinates_y=request.POST["start_coordinates_y"], 
+                location=request.POST["start_location"])
+            start_location.save()
+
+        if request.POST["end_location"] != "":
+            end_location = Location.objects.create(
+                coordinates_x=request.POST["end_coordinates_x"],
+                coordinates_y=request.POST["end_coordinates_y"],
+                location=request.POST["end_location"])
+            end_location.save()
+
+        
+        post = form.save(commit=False)
+        if request.POST["start_location"] != "":
+            post.start_location = start_location
+        if request.POST["end_location"] != "":
+            post.end_location = end_location
+        
+        post.save()
+        return HttpResponseRedirect(reverse('drives:post_details', args=(post.pk,)))
     else:
         print("nope")
-        return redirect('/drives/' + pk + '/edit')
+        print(form.errors)
+        # return redirect('/drives/' + pk + '/edit')
 
     return render(request, '/drives/' + pk + '/edit', {'form': form})
 
