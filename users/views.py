@@ -36,7 +36,8 @@ class EditProfileView(generic.UpdateView):
 
  
 def get_fields(request,pk):
-    
+    if int(request.user.id) != int(pk):
+        return redirect('/users/' + str(pk))
     instance = CustomUser.objects.get(id=pk)
     form = CustomUserChangeForm(request.POST or None, request.FILES, instance=instance)
     if form.is_valid():
