@@ -1,4 +1,10 @@
 {% load static %}
+
+{% if not user.is_authenticated and request.path != '/users/login/' and request.path != '/'%}
+<meta http-equiv="Refresh" content="0; url=/users/login" />
+{% endif %}
+
+
 <html>
 	<head>
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
