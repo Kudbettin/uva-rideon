@@ -22,5 +22,11 @@ class DriveCreationForm(forms.ModelForm):
         self.fields['date'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
         self.fields['time'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
 
-# class DriveChangeForm():
-#     pass
+class DriveChangeForm(forms.ModelForm):
+    
+        class Meta:
+            model = Drive
+            # fields = ( "title", "description", "date", "time", "min_cost",
+            #         "max_cost", "payment_method", "max_passengers", "car_description",
+            #         "luggage_description")
+            fields = ("title", "description", "min_cost", "max_cost")

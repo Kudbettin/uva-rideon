@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 
 from django.views import generic
@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from drives.models import Drive, create_drive, Location, RideApplication
-from drives.forms import DriveCreationForm
+from drives.forms import DriveCreationForm, DriveChangeForm
 from drives.search_drives import search_drives
 from users.models import CustomUser
 from django.template.context import make_context
@@ -167,6 +167,29 @@ class DriveView(generic.DetailView):
         context['requestList'] = kwargs['object'].requestList.all()
         
         return context
+
+
+class EditDriveView(generic.UpdateView):
+    
+    model = Drive
+    # fields = ["title", "description", "date", "time", "min_cost",
+    #                     "max_cost", "payment_method", "max_passengers", "car_description",
+    #                     "luggage_description"]
+    fields = ["title", "description", "min_cost", "max_cost"]
+    template_name = "drives/edit_posting.html"
+
+def get_fields(request, pk):
+
+    instance = Drive.objects.get(id=pk)
+    form = DriveChangeForm(request.POST, instance=instance)
+
+    if form.is_valid():
+        form.save()
+        return redirect('/drives/' + pk + '/edit')
+    else:
+        return redirect('/drives/' + pk + '/edit')
+
+    return render(request, '/drives/' + pk + '/edit', {'form': form})
 
 ''' 
 Returns an HTML representation of a search over the ridelist.
