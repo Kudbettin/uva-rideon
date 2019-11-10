@@ -76,12 +76,14 @@ class MyRidesView(generic.DetailView):
 
         context['drivers_to_review_per_drive'] = []
 
+        counter = 0
         for drive in context['completed_rides']:
             query = Drive.objects.filter(id=drive.id)[0].driver
             context['drivers_to_review_per_drive'].append( {"id":drive.id, "query":[]})
-            
+
             if DriverReview.objects.filter(drive=drive.id, by=self.request.user.id).count() == 0:
-                context['drivers_to_review_per_drive'][0]['query'].append(query)
+                context['drivers_to_review_per_drive'][counter]['query'].append(query)
+            counter += 1
         
         return context
 
@@ -120,7 +122,7 @@ def post_new_review(request, pk):
             if form.is_valid():
                 post = form.save(commit=False)
                 post.save()
-                return HttpResponseRedirect(reverse_lazy('myrides', args=(pk,)))
+                return redirect('/users/' + str(pk) + '/myrides')
             else:
                 print(form.errors)
                 print("error adding review")
@@ -131,13 +133,13 @@ def post_new_review(request, pk):
             if form.is_valid():
                 post = form.save(commit=False)
                 post.save()
-                return HttpResponseRedirect(reverse_lazy('myrides', args=(pk,)))
+                return redirect('/users/' + str(pk) + '/myrides')
             else:
                 print(form.errors)
                 print("error adding review")
     else:
         form = RideReviewForm()
-        
+    
     return render(request, 'users/myrides.html')
 
 def change_friends(request, operation, pk):
