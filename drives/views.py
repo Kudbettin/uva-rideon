@@ -184,9 +184,11 @@ def get_fields(request, pk):
     form = DriveChangeForm(request.POST or None, instance=instance)
 
     if form.is_valid():
+        print("hi", request.POST)
         form.save()
         return redirect('/drives/' + pk + '/edit')
     else:
+        print("nope")
         return redirect('/drives/' + pk + '/edit')
 
     return render(request, '/drives/' + pk + '/edit', {'form': form})

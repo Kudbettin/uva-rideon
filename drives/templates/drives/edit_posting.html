@@ -6,6 +6,10 @@
 {% bootstrap_css %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_field %}
+
+{% if form.driver.id != user.id %}
+<meta http-equiv="Refresh" content="0; url=/drives/{{drive.id}}" />
+{% endif %}
 <br>
 <div class="container">
     <div class="row justify-content-center" style="width: 100%">

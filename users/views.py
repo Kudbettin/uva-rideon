@@ -35,7 +35,7 @@ class EditProfileView(generic.UpdateView):
         friends = friend.users.all()
 
  
-def get_fields(request, pk):
+def get_fields(request,pk):
     
     instance = CustomUser.objects.get(id=pk)
     form = CustomUserChangeForm(request.POST or None, request.FILES, instance=instance)
