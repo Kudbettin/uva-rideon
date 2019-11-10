@@ -179,8 +179,10 @@ class EditDriveView(generic.UpdateView):
     template_name = "drives/edit_posting.html"
 
 def get_fields(request, pk):
-
     instance = Drive.objects.get(id=pk)
+
+    if int(request.user.id) != int(instance.driver.id):
+        return redirect("/drives/" + str(pk))
 
     if request.method == "POST":
         # re-format time data to use 24 hour scale for Django
