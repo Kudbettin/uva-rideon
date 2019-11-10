@@ -26,7 +26,7 @@ class DriveChangeForm(forms.ModelForm):
     
         class Meta:
             model = Drive
-            # fields = ( "title", "description", "date", "time", "min_cost",
-            #         "max_cost", "payment_method", "max_passengers", "car_description",
-            #         "luggage_description")
-            fields = ("title", "description", "min_cost", "max_cost")
+            fields = ( "title", "driver", "description", "date", "time", "min_cost",
+                    "max_cost", "payment_method", "max_passengers", "car_description",
+                    "luggage_description")
+            # fields = ("title", "description", "min_cost", "max_cost")

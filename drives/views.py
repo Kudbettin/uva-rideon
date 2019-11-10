@@ -172,16 +172,16 @@ class DriveView(generic.DetailView):
 class EditDriveView(generic.UpdateView):
     
     model = Drive
-    # fields = ["title", "description", "date", "time", "min_cost",
-    #                     "max_cost", "payment_method", "max_passengers", "car_description",
-    #                     "luggage_description"]
-    fields = ["title", "description", "min_cost", "max_cost"]
+    fields = ["title", "driver", "description", "date", "time", "min_cost",
+              "max_cost", "payment_method", "max_passengers", "car_description",
+              "luggage_description"]
+    # fields = ["title", "description", "min_cost", "max_cost"]
     template_name = "drives/edit_posting.html"
 
 def get_fields(request, pk):
 
     instance = Drive.objects.get(id=pk)
-    form = DriveChangeForm(request.POST, instance=instance)
+    form = DriveChangeForm(request.POST or None, instance=instance)
 
     if form.is_valid():
         form.save()

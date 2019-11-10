@@ -22,7 +22,19 @@
                 name="title" value="{{ drive.title }}" enctype="multipart/form-data">{% csrf_token %}
                 <!--{% bootstrap_form form %}-->
                 <div class="form-group">
+                    {{form.title|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.driver|as_crispy_field}}
+                </div>
+                <div class="form-group">
                     {{form.description|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.date|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.time|as_crispy_field}}
                 </div>
                 <div class="form-group">
                     {{form.min_cost|as_crispy_field}}
@@ -30,6 +42,19 @@
                 <div class="form-group">
                     {{form.max_cost|as_crispy_field}}
                 </div>
+                <div class="form-group">
+                    {{form.payment_method|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.max_passengers|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.car_description|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.luggage_description|as_crispy_field}}
+                </div>
+
                 <br><br>
                 <input class="btn btn-default" type="submit" value="Update">
             </form>

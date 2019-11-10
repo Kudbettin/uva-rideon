@@ -20,5 +20,7 @@ confusing namespace
 - posting/drive/drives/drive posting (kinda my fault)
 - rider/passenger   (drop passenger for character)
 
+Add logic so that only the driver can edit the drive
+check link modification for users
 Meme PR
 - That feeling when someone already implemented user edits
