@@ -7,7 +7,9 @@
 {% load crispy_forms_tags %}
 {% load crispy_forms_field %}
 
-{% if form.driver.id != user.id %}
+
+
+{% if drive.driver.id != user.id %}
 <meta http-equiv="Refresh" content="0; url=/drives/{{drive.id}}" />
 {% endif %}
 <br>
