@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 from django.views import generic
 from django import template
 from drives.models import Drive, DriverReview, RiderReview
-from .models import CustomUser, UserFriends
+from .models import CustomUser
 from .forms import CustomUserCreationForm, CustomUserChangeForm, DriverReviewForm, RiderReviewForm
 
 class RegisterView(CreateView):
@@ -21,6 +21,13 @@ class ProfileView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['driver_avg_rating'] = get_driver_rating(kwargs['object'])
         context['rider_avg_rating'] = get_rider_rating(kwargs['object'])
+
+        context['friends'] = kwargs['object'].friends.all()
+
+        context['is_friend'] = False
+        if kwargs['object'] in CustomUser.objects.filter(id=self.request.user.id)[0].friends.all():
+            context['is_friend'] = True
+
         return context
 
 class EditProfileView(generic.UpdateView):
@@ -33,7 +40,6 @@ class EditProfileView(generic.UpdateView):
         users = CustomUser.objects.exclude(id=request.user)
         friend = UserFriends.objects.get(current_user=request.user)
         friends = friend.users.all()
-
  
 def get_fields(request,pk):
     if int(request.user.id) != int(pk):
@@ -142,10 +148,14 @@ def post_new_review(request, pk):
     
     return render(request, 'users/myrides.html')
 
-def change_friends(request, operation, pk):
-    new_friend = CustomUser.objects.get(pk=pk)
-    if operation == 'add':
-        UserFriends.add_friend(request.user, new_friend)
-    elif operation == 'remove':
-        UserFriends.remove_friend(request.user, new_friend)
-    return redirect()
+def post_add_friend(request, pk):
+    if request.method == "POST":
+        if CustomUser.objects.filter(id=request.POST['tofriend_id']).count() != 0:
+            CustomUser.objects.filter(id=request.user.id)[0].friends.add(CustomUser.objects.filter(id=request.POST['tofriend_id'])[0])
+            return redirect('/users/' + str(pk))
+
+def post_remove_friend(request, pk):
+    if request.method == "POST":
+        if CustomUser.objects.filter(id=request.POST['tofriend_id']).count() != 0:
+            CustomUser.objects.filter(id=request.user.id)[0].friends.remove(CustomUser.objects.filter(id=request.POST['tofriend_id'])[0])
+            return redirect('/users/' + str(pk))
