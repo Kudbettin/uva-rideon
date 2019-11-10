@@ -40,9 +40,8 @@ def get_fields(request,pk):
     instance = CustomUser.objects.get(id=pk)
     form = CustomUserChangeForm(request.POST or None, request.FILES, instance=instance)
     if form.is_valid():
-        #form.profile_pic = request.FILES.get('profile_pic', None)
         form.save()
-        return redirect('/users/'+ pk + '/edit') # should update these to use reverse
+        return redirect('/users/'+ pk) # should update these to use reverse
     else:
         return redirect('/users/'+ pk + '/edit')
 
