@@ -1,0 +1,245 @@
+<!-- templates/profile.html -->
+{% extends 'RideOn/base.html' %}
+{% block title %}Drive Posting{% endblock %}
+{% block content %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+
+{% if drive.driver.id != user.id %}
+<meta http-equiv="Refresh" content="0; url=/drives/{{drive.id}}" />
+{% endif %}
+
+<head>
+    <!-- Style of the date time. We can make our own if needed -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
+    <script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script>
+
+    <script>
+        $(function () {
+            $("#id_date").datepicker({ format: 'yy-mm-dd' });
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#id_time").timepicker();
+        });
+    </script>
+</head>
+
+<script>
+    // This sample uses the Autocomplete widget to help the user select a
+    // place, then it retrieves the address components associated with that
+    // place, and then it populates the form fields with those details.
+    // This sample requires the Places library. Include the libraries=places
+    // parameter when you first load the API. For example:
+    // <script
+    // src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+    var placeSearch, autocomplete;
+
+    var componentForm = {
+        street_number: 'short_name',
+        route: 'long_name',
+        locality: 'long_name',
+        administrative_area_level_1: 'short_name',
+        country: 'long_name',
+        postal_code: 'short_name'
+
+    };
+
+    function initAutocomplete() {
+        // Create the autocomplete object, restricting the search predictions to
+        // geographical location types.
+        autocomplete_start = new google.maps.places.Autocomplete(
+            document.getElementById('autocomplete_start'), { types: ['geocode'] });
+
+        autocomplete_end = new google.maps.places.Autocomplete(
+            document.getElementById('autocomplete_end'), { types: ['geocode'] });
+        // Avoid paying for data that you don't need by restricting the set of
+        // place fields that are returned to just the address components.
+        autocomplete_start.setFields(['address_component', 'geometry']);
+        autocomplete_end.setFields(['address_component', 'geometry']);
+
+        // When the user selects an address from the drop-down, populate the
+        // address fields in the form.
+        autocomplete_start.addListener('place_changed', fillInAddress_start);
+        autocomplete_end.addListener('place_changed', fillInAddress_end);
+    }
+
+    function fillInAddress_start() {
+        // Get the place details from the autocomplete object.
+        var place = autocomplete_start.getPlace();
+
+        document.getElementById("id_start_coordinates_x").value = place.geometry.location.lng();
+        document.getElementById("id_start_coordinates_y").value = place.geometry.location.lat();
+
+        document.getElementById("start_location").value = document.getElementById("autocomplete_start").value
+    }
+
+    function fillInAddress_end() {
+        // Get the place details from the autocomplete object.
+        var place = autocomplete_end.getPlace();
+
+        document.getElementById("id_end_coordinates_x").value = place.geometry.location.lng();
+        document.getElementById("id_end_coordinates_y").value = place.geometry.location.lat();
+
+        document.getElementById("end_location").value = document.getElementById("autocomplete_end").value
+    }
+
+
+
+    // Bias the autocomplete object to the user's geographical location,
+    // as supplied by the browser's 'navigator.geolocation' object.
+    function geolocate_start() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var geolocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                var circle = new google.maps.Circle(
+                    { center: geolocation, radius: position.coords.accuracy });
+                autocomplete_start.setBounds(circle.getBounds());
+            });
+        }
+    }
+
+
+    // Bias the autocomplete object to the user's geographical location,
+    // as supplied by the browser's 'navigator.geolocation' object.
+    function geolocate_end() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var geolocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                var circle = new google.maps.Circle(
+                    { center: geolocation, radius: position.coords.accuracy });
+                autocomplete_end.setBounds(circle.getBounds());
+            });
+        }
+    }
+</script>
+<!-- &location=38.0293, -78.4767 -->
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY7BlSzTYJKwTNrObrU7so714CJgF3Uhc&libraries=places&location=38.0293, -78.4767&callback=initAutocomplete"
+    async defer>
+</script>
+
+
+<br>
+<div class="container">
+    <div class="row justify-content-center" style="width: 100%">
+        <div class="col-sm-3">
+            <!--left col-->
+            <!-- <div class="text-center">
+                <img src="{{ customuser.profile_pic.url }}" style="width: 100%; height: auto;">
+            </div> -->
+            <!-- maybe add map here? -->
+        </div>
+        <!--/col-3-->
+        <div class="col-sm-9">
+            <form class="form-group" action="/drives/{{drive.id}}/edit/redirect/" method="POST" id="updatedrive"
+                name="title" value="{{ drive.title }}" enctype="multipart/form-data">{% csrf_token %}
+                <!--{% bootstrap_form form %}-->
+                <div class="form-group">
+                    {{form.title|as_crispy_field}}
+                </div>
+
+
+                <!-- Render Start and End location selector fields -->
+                <div class="form-row">
+                    <div class="form-group col-md-6 mb-0">
+                        <div id="locationField">
+                            <label for="autocomplete_start">Start Location</label>
+                            <input id="autocomplete_start" placeholder="Enter starting address (optional)" onFocus="geolocate_start()" type="text"
+                                class="form-control mb-2" />
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 mb-0">
+                        <div id="locationField" class="mb-2">
+                            <label for="autocomplete_end">End Location</label>
+                            <input id="autocomplete_end" placeholder="Enter ending address (optional)" onFocus="geolocate_end()" type="text"
+                                class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Render form using django-crispy-forms with Bootstrap -->
+                <div class="form-row">
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.date|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.time|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.min_cost|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.max_cost|as_crispy_field }}
+                    </div>
+                </div>
+
+
+                <!-- <div class="form-group">
+                    {{form.driver|as_crispy_field}}
+                </div> -->
+                <div class="form-group">
+                    {{form.description|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.date|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.time|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.min_cost|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.max_cost|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.payment_method|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.max_passengers|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.car_description|as_crispy_field}}
+                </div>
+                <div class="form-group">
+                    {{form.luggage_description|as_crispy_field}}
+                </div>
+
+                <br><br>
+
+                <input type="hidden" id="id_start_coordinates_x" name="start_coordinates_x" value="">
+                <input type="hidden" id="id_start_coordinates_y" name="start_coordinates_y" value="">
+                
+                <input type="hidden" id="id_end_coordinates_x" name="end_coordinates_x" value="">
+                <input type="hidden" id="id_end_coordinates_y" name="end_coordinates_y" value="">
+                
+                <input type="hidden" id="start_location" name="start_location" value="">
+                <input type="hidden" id="end_location" name="end_location" value="">
+                
+                <input type="hidden" id="driver" name="driver" value="{{user.id}}">
+
+                <input class="btn btn-default" type="submit" value="Update">
+            </form>
+        </div>
+        <!--/col-9-->
+    </div>
+    <!--/row-->
+</div>
+{% endblock %}

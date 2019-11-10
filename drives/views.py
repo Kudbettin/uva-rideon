@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 
 from django.views import generic
@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from drives.models import Drive, create_drive, Location, RideApplication
-from drives.forms import DriveCreationForm
+from drives.forms import DriveCreationForm, DriveChangeForm
 from drives.search_drives import search_drives
 from users.models import CustomUser
 from django.template.context import make_context
@@ -167,6 +167,64 @@ class DriveView(generic.DetailView):
         context['requestList'] = kwargs['object'].requestList.all()
         
         return context
+
+
+class EditDriveView(generic.UpdateView):
+    
+    model = Drive
+    fields = ["title", "driver", "description", "date", "time", "min_cost",
+              "max_cost", "payment_method", "max_passengers", "car_description",
+              "luggage_description"]
+
+    template_name = "drives/edit_posting.html"
+
+def get_fields(request, pk):
+
+    instance = Drive.objects.get(id=pk)
+
+    if request.method == "POST":
+        # re-format time data to use 24 hour scale for Django
+        if request.POST['time']:
+            request.POST = request.POST.copy()
+            if 'am' in request.POST['time']:
+                request.POST['time'] = request.POST['time'].replace('am', '')
+            elif 'pm' in request.POST['time']:
+                request.POST['time'] = request.POST['time'].replace('pm', '')
+                hours, minutes = request.POST['time'].split(":")
+                request.POST['time'] = str(int(hours) + 12) + ":" + minutes
+
+    form = DriveChangeForm(request.POST or None, instance=instance)
+
+    if form.is_valid():
+        if request.POST["start_location"] != "":
+            start_location = Location.objects.create(
+                coordinates_x=request.POST["start_coordinates_x"],
+                coordinates_y=request.POST["start_coordinates_y"], 
+                location=request.POST["start_location"])
+            start_location.save()
+
+        if request.POST["end_location"] != "":
+            end_location = Location.objects.create(
+                coordinates_x=request.POST["end_coordinates_x"],
+                coordinates_y=request.POST["end_coordinates_y"],
+                location=request.POST["end_location"])
+            end_location.save()
+
+        
+        post = form.save(commit=False)
+        if request.POST["start_location"] != "":
+            post.start_location = start_location
+        if request.POST["end_location"] != "":
+            post.end_location = end_location
+        
+        post.save()
+        return HttpResponseRedirect(reverse('drives:post_details', args=(post.pk,)))
+    else:
+        print("nope")
+        print(form.errors)
+        # return redirect('/drives/' + pk + '/edit')
+
+    return render(request, '/drives/' + pk + '/edit', {'form': form})
 
 ''' 
 Returns an HTML representation of a search over the ridelist.
