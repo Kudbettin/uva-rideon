@@ -18,7 +18,7 @@
 			3
 		</td>
 		<td>
-		    {% if passenger.id != drive.driver.id %}
+		    {% if passenger.id != drive.driver.id and drive.status == "Listed" %}
 				<form method="post" action="passenger_remove" id="passenger_remove_form">
 					{% csrf_token %}
 					<input type="hidden" id="passengerId" name="passengerId" value="{{passenger.id}}">
@@ -31,6 +31,8 @@
 </table>
 
 <br>
+
+{% if drive.status == "Listed" %}
 <h4>Rider Requests:</h4>
 
 <table id="passenger_requestlist">
@@ -67,3 +69,4 @@
 	</tr>
 	{% endfor %}
 </table>
+{% endif %}
