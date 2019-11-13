@@ -17,6 +17,8 @@ class CustomUser(AbstractUser):
     about = models.TextField(max_length=1000, default = 'Write a bio to let people know about you!')
     profile_pic = models.ImageField(upload_to=user_directory_path, default='default/default_profile_pic.jpg')
     home_town = models.CharField(max_length=20, default = '')
+    driver_rating = models.FloatField(null=True)
+    rider_rating = models.FloatField(null=True)
 
     friends = models.ManyToManyField("self", symmetrical=False)
 

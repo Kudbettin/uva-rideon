@@ -262,7 +262,7 @@ Search parameters are passed as POST request parameters.
 def search_ridelist(request):
     if request.method == "POST":
         json_data = json.loads(request.body)
-        return render(request, 'drives/drive_list_inner.html', {'drive_list': search_drives(json_data)})
+        return render(request, 'drives/drive_list_inner.html', {'drive_list': search_drives(request, json_data)})
     return render(request, 'drives/drive_list_inner.html')
 
 '''

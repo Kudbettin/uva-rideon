@@ -25,7 +25,7 @@ class ProfileView(generic.DetailView):
         context['friends'] = kwargs['object'].friends.all()
 
         context['is_friend'] = False
-        if kwargs['object'] in CustomUser.objects.filter(id=self.request.user.id)[0].friends.all():
+        if CustomUser.objects.filter(id=self.request.user.id)[0].friends.filter(id=kwargs['object'].id).exists():
             context['is_friend'] = True
 
         return context
