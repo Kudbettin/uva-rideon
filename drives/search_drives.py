@@ -58,6 +58,7 @@ def filter_search(search):
 
 def search_drives(json_data):
 	# Base query is for all objects
+	query = Q(status="Listed")
 	query = Q(id=1) | ~Q(id=1)
 	
 	# Filter with 'AND' for each search category

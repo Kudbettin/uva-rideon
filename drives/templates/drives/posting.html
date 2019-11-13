@@ -6,6 +6,20 @@
 {% block content %}
     <div class="container">
         <h1>{{drive.title}}</h1>
+		{% if drive.status == "Cancelled" %}
+			<div class="row">
+				<div class="col-6">
+					<h3 class="text-danger"> Drive Cancelled </h3>
+				</div>
+			</div>
+		{%  elif drive.status == "Completed" %}
+			<div class="col-6">
+				<div class="row">
+					<h3 class="text-success"> Drive Completed </h3>
+				</div>
+			</div>
+		{% endif %}
+		
         <div class="row">
             <div class="col-6">
                 <p>Route {{drive.start_location}} {{drive.end_location}}</p>
@@ -241,6 +255,21 @@
 				{% endif %}
             </div>
             <div class="col-6">
+				{% if drive.driver.id == user.id and drive.status == "Listed" %}
+					<div class="col-2">
+						<button class="btn btn-default" onclick="window.location.href = '/drives/{{ drive.id }}/edit/';">Edit Drive</button>
+					</div>
+					<div>
+						<form method="post" action="drive_cancel" id="drive_cancel_form">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="drive_cancel_btn">Cancel Ride</button>
+						</form>
+						<form method="post" action="drive_complete" id="drive_complete_form">
+							{% csrf_token %}
+							<button type="submit" class="btn btn-outline-success btn-sm float-right" id="drive_cancel_btn">Complete Ride</button>
+						</form>
+					</div>
+				{% endif %}
                 <p>Driver: <a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a></p>
                 <p>Date: {{drive.date_time}}</p>
                 <p>Cost: {{drive.min_cost}}$ - {{drive.max_cost}}$</p>
@@ -264,11 +293,5 @@
 	{% endfor %}
 
 	</div>
-	{% if drive.driver.id == user.id %}
-	<div class="col-2">
-		<button class="btn btn-default" onclick="window.location.href = '/drives/{{ drive.id }}/edit/';">Edit Drive
-		</button>
-	</div>
-	{% endif %}
 
 {% endblock %}
