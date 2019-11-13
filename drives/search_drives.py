@@ -46,8 +46,25 @@ def filter_gender(search):
 		
 	return query
 	
-def filter_friends(search):
-	return Q(status="Listed")
+def filter_friends(request, search):
+	if not search["driver_friend"] and not search["passegner_friend"]:
+		return Q(status="Listed")
+		
+	queries = []
+	for friend in request.user.friends.all():
+		if search["driver_friend"]:
+			queries.append(Q(driver__id=friend.id))
+		if search["passegner_friend"]:
+			queries.append(Q(passengers__id=friend.id))
+			
+	if len(queries) == 0:
+		return Q(id=-1)
+			
+	main_query = queries.pop()
+	for query in queries:
+		main_query = main_query | query
+		
+	return main_query
 	
 def filter_rating(search):
 	query = Q(status="Listed")
@@ -75,14 +92,14 @@ def filter_search(search):
 	search_text = search["search_text"]
 	return Q(description__icontains=search_text) | Q(title__icontains=search_text) | Q(payment_method__icontains=search_text) | Q(driver__username__icontains=search_text)
 
-def search_drives(json_data):
+def search_drives(request, json_data):
 	# Base query is for all objects
 	query = Q(status="Listed")
 	
 	# Filter with 'AND' for each search category
 	query = query & filter_cost(json_data)
 	query = query & filter_gender(json_data)
-	query = query & filter_friends(json_data)
+	query = query & filter_friends(request, json_data)
 	query = query & filter_rating(json_data)
 	query = query & filter_search(json_data)
 	
