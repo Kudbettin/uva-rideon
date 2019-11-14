@@ -16,7 +16,6 @@ class CustomUser(AbstractUser):
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True)
     about = models.TextField(max_length=1000, default = 'Write a bio to let people know about you!')
     profile_pic = models.ImageField(upload_to=user_directory_path, default='default/default_profile_pic.jpg')
-    home_town = models.CharField(max_length=20, default = '')
     driver_rating = models.FloatField(null=True)
     rider_rating = models.FloatField(null=True)
 
@@ -24,7 +23,7 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
          #get_fields gets stuff from AbstractUser that we don't want
-        local_fields = ['username', 'gender', 'phone', 'about', 'home_town']
+        local_fields = ['username', 'gender', 'phone', 'about']
         field_values = []
         for field in local_fields:
             field_values.append(getattr(self, field, ''))
