@@ -1,0 +1,27 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'drives/passenger_list.css' %}">
+
+{% if drive.status == "Listed" %}
+<h4>Waypoints:</h4>
+
+<table id="passenger_requestlist">
+	<tr>
+		<th>Waypoint</th>
+		<th></th>
+	  </tr>
+	{% for waypoint in drive.waypointList.all %}
+	<tr>
+		<td>
+			{{ waypoint.location }}
+		</td>
+		<td>
+			<form method="post" action="waypoint_remove" id="remove_waypoint_form">
+				{% csrf_token %}
+				<input type="hidden" id="waypointId" name="waypointId" value="{{waypoint.id}}">
+				<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="remove_waypoint_btn">Remove</button>
+			</form>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+{% endif %}

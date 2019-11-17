@@ -8,6 +8,7 @@ urlpatterns = [
 	path('<int:driveId>/drive_cancel', drive_cancel, name='drive_cancel'),
     path('<int:driveId>/passenger_request', passenger_request, name='passenger_request'),
     path('<int:driveId>/passenger_remove', passenger_remove, name='passenger_remove'),
+	path('<int:driveId>/waypoint_remove', waypoint_remove, name='waypoint_remove'),
     path('<int:driveId>/request_reject', reject_request, name='reject_request'),
     path('<int:driveId>/request_approve', approve_request, name='approve_request'),
     path('<int:driveId>/leave_ride', leave_ride, name='leave_ride'),
