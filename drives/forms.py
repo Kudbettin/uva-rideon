@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 from django.utils import timezone
 
@@ -11,6 +13,7 @@ class DriveCreationForm(forms.ModelForm):
         fields = ( "title", "driver", "description", "date", "time", "min_cost",
                     "max_cost", "payment_method", "max_passengers", "car_description",
                     "luggage_description")
+    
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
 
@@ -21,11 +24,24 @@ class DriveCreationForm(forms.ModelForm):
         self.fields['luggage_description'].widget = forms.Textarea(attrs={'rows': 2, 'placeholder': 'Space for 1 small suitcase per person'})
         self.fields['date'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
         self.fields['time'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
+    
+    
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date < datetime.date.today():
+            raise forms.ValidationError("Interdimentional Time Laws forbid creating meetups on local past")
+        return date
 
 class DriveChangeForm(forms.ModelForm):
     
-        class Meta:
-            model = Drive
-            fields = ( "title", "driver", "description", "date", "time", "min_cost",
-                    "max_cost", "payment_method", "max_passengers", "car_description",
-                    "luggage_description")
+    class Meta:
+        model = Drive
+        fields = ( "title", "driver", "description", "date", "time", "min_cost",
+                "max_cost", "payment_method", "max_passengers", "car_description",
+                "luggage_description")
+    
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date < datetime.date.today():
+            raise forms.ValidationError("Interdimentional Time Laws forbid creating meetups on local past")
+        return date
