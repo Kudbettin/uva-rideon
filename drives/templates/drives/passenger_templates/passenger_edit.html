@@ -3,7 +3,7 @@
 
 <h4>Passengers:</h4>
 
-<table id="current_passengers">
+<table id="current_passengers" class="mb-3">
 	<tr>
 		<th>Name</th>
 		<th>Rider Rating</th>
@@ -29,8 +29,6 @@
 	</tr>
 	{% endfor %}
 </table>
-
-<br>
 
 {% if drive.status == "Listed" %}
 <h4>Rider Requests:</h4>
