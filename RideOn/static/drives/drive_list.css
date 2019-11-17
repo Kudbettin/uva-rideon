@@ -42,4 +42,8 @@ position: relative;
     overflow: scroll; */
     margin-left:22%;
     margin-right: 40%;
-    }
+}
+
+.dateSelector {
+	width: 25%;
+}
