@@ -8,27 +8,15 @@
 <link rel="stylesheet" href="{% static 'drives/drive_list.css' %}">
 	
 <head>
-    <!-- Style of the date time. We can make our own if needed -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    
-	<!-- <link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
-	<script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script> -->
-	
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.11.15/jquery.timepicker.css">
-	<script src="https://cdn.jsdelivr.net/npm/timepicker@1.11.15/jquery.timepicker.min.js"></script>
+    <!--  jQuery -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 
-    <script>
-        $ (function () {
-            $("#id_date2").datepicker({dateFormat: 'yy-mm-dd'});
-        });
-    </script>
-    <script type="text/javascript">
-        $(function () {
-                $("#id_time").timepicker();
-            });
-    </script>
+	<!-- Isolated Version of Bootstrap, not needed if your site already uses Bootstrap -->
+	<link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
+
+	<!-- Bootstrap Date-Picker Plugin -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 </head>	
 
 <!-- Sidebar for search filtering -->
@@ -62,19 +50,37 @@
 		
 		<br>
 		<h5>Date</h5>
-		<div class="pretty p-default">
-			<input type="checkbox" onchange="updateSearch()" id="cost_extreme" />
-			<div class="state">
-				<label>$25+</label>
+		<div class="input-group md-form form-sm form-2 pl-0">
+			<div class="d-flex flex-column">
+				<label for="date_start" class="control-label">
+					Start Date
+				</label>
+			
+				<div class="d-flex flex-row">
+				<input class="form-control my-0 py-1 red-border" id="date_start" type="text" onkeydown="return false" placeholder="" name="date_start">
+				<div class="input-group-append">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button" onclick="openStartDate()"><i class="material-icons">calendar_today</i></button>
+					</span>
+				</div>
+				</div>
 			</div>
 		</div>
-		<div id="div_id_date" class="form-group">
-        
-            <label for="id_date" class=" requiredField">
-                Date<span class="asteriskField">*</span>
-            </label>
-			<div class="">
-				<input type="text" name="date" autocomplete="off" class="textinput textInput form-control hasDatepicker" required="" id="id_date2">
+		
+		<div class="input-group md-form form-sm form-2 pl-0 mt-2">
+			<div class="d-flex flex-column">
+				<label for="date_end" class="control-label">
+					End Date
+				</label>
+			
+				<div class="d-flex flex-row">
+				<input class="form-control my-0 py-1 red-border" id="date_end" type="text" onkeydown="return false" placeholder="" name="date_end">
+				<div class="input-group-append">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button" onclick="openEndDate()"><i class="material-icons">calendar_today</i></button>
+					</span>
+				</div>
+				</div>
 			</div>
 		</div>
 		
@@ -199,10 +205,26 @@ function updateSearch() {
 		"rating_4": document.getElementById("rating_4").checked,
 		"rating_3": document.getElementById("rating_3").checked,
 		"rating_2": document.getElementById("rating_2").checked,
-		"search_text": document.getElementById("search_bar").value
+		"search_text": document.getElementById("search_bar").value,
+		"date_start": document.getElementById("date_start").value,
+		"date_end": document.getElementById("date_end").value
 	});
 	xhr.send(data);
 }
+</script>
+
+<script>
+	$ (function () {
+		$("#date_start").datepicker({dateFormat: 'yy-mm-dd'});
+		$("#date_end").datepicker({dateFormat: 'yy-mm-dd'});
+	});
+	
+	function openStartDate() {
+		$("#date_start").datepicker({dateFormat: 'yy-mm-dd'}).focus();
+	}
+	function openEndDate() {
+		$("#date_end").datepicker({dateFormat: 'yy-mm-dd'}).focus();
+	}
 </script>
 
 {% endblock %}
