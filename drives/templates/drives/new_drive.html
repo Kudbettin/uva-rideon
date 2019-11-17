@@ -159,6 +159,8 @@
 					<input id="autocomplete_end" placeholder="Enter ending address" onFocus="geolocate_end()" type="text" class="form-control" />
 				</div>
 			</div>
+			{{form.non_field_errors}}
+			<p class="invalid-feedback"><strong>{{form.non_field_errors}}</strong></p>
 		</div>
 		
 		<!-- Render form using django-crispy-forms with Bootstrap -->

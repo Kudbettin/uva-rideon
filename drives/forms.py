@@ -22,6 +22,19 @@ class DriveCreationForm(forms.ModelForm):
         self.fields['date'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
         self.fields['time'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
 
+    
+    def clean(self):
+        if self.data['start_coordinates_x'] == "":
+            # raise forms.ValidationError("Start address bad format")
+            self.add_error(None, forms.ValidationError("Start address bad format"))
+
+        if self.data['end_coordinates_x'] == "":
+            # raise forms.ValidationError("End address bad format")
+            self.add_error(None, forms.ValidationError("End address bad format"))
+        
+        return self.cleaned_data
+
+
 class DriveChangeForm(forms.ModelForm):
     
         class Meta:
