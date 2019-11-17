@@ -26,19 +26,30 @@ class DriveCreationForm(forms.ModelForm):
     def clean(self):
         if self.data['start_coordinates_x'] == "":
             # raise forms.ValidationError("Start address bad format")
-            self.add_error(None, forms.ValidationError("Start address bad format"))
+            self.add_error(None, forms.ValidationError("Start address bad format, make sure to pick a valid address from dropdown!"))
 
         if self.data['end_coordinates_x'] == "":
             # raise forms.ValidationError("End address bad format")
-            self.add_error(None, forms.ValidationError("End address bad format"))
+            self.add_error(None, forms.ValidationError("End address bad format, make sure to pick a valid address from dropdown!"))
         
         return self.cleaned_data
 
 
 class DriveChangeForm(forms.ModelForm):
     
-        class Meta:
-            model = Drive
-            fields = ( "title", "driver", "description", "date", "time", "min_cost",
-                    "max_cost", "payment_method", "max_passengers", "car_description",
-                    "luggage_description")
+    class Meta:
+        model = Drive
+        fields = ( "title", "driver", "description", "date", "time", "min_cost",
+                "max_cost", "payment_method", "max_passengers", "car_description",
+                "luggage_description")
+
+    def clean(self):
+    if self.data['start_coordinates_x'] == "":
+        # raise forms.ValidationError("Start address bad format")
+        self.add_error(None, forms.ValidationError("Start address bad format, make sure to pick a valid address from dropdown!"))
+
+    if self.data['end_coordinates_x'] == "":
+        # raise forms.ValidationError("End address bad format")
+        self.add_error(None, forms.ValidationError("End address bad format, make sure to pick a valid address from dropdown!"))
+    
+    return self.cleaned_data
