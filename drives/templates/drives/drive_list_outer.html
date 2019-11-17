@@ -7,6 +7,30 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
 <link rel="stylesheet" href="{% static 'drives/drive_list.css' %}">
 	
+<head>
+    <!-- Style of the date time. We can make our own if needed -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
+	<!-- <link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
+	<script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script> -->
+	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.11.15/jquery.timepicker.css">
+	<script src="https://cdn.jsdelivr.net/npm/timepicker@1.11.15/jquery.timepicker.min.js"></script>
+
+    <script>
+        $ (function () {
+            $("#id_date2").datepicker({dateFormat: 'yy-mm-dd'});
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+                $("#id_time").timepicker();
+            });
+    </script>
+</head>	
+
 <!-- Sidebar for search filtering -->
 <div id="sidebar" class="mx-3 mt-5">
   <ul class="list-unstyled components">
@@ -33,6 +57,24 @@
 			<input type="checkbox" onchange="updateSearch()" id="cost_extreme" />
 			<div class="state">
 				<label>$25+</label>
+			</div>
+		</div>
+		
+		<br>
+		<h5>Date</h5>
+		<div class="pretty p-default">
+			<input type="checkbox" onchange="updateSearch()" id="cost_extreme" />
+			<div class="state">
+				<label>$25+</label>
+			</div>
+		</div>
+		<div id="div_id_date" class="form-group">
+        
+            <label for="id_date" class=" requiredField">
+                Date<span class="asteriskField">*</span>
+            </label>
+			<div class="">
+				<input type="text" name="date" autocomplete="off" class="textinput textInput form-control hasDatepicker" required="" id="id_date2">
 			</div>
 		</div>
 		
