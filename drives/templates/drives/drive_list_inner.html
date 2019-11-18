@@ -3,7 +3,6 @@
 {% block content %}
 
 {% load static %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
 <link rel="stylesheet" href="{% static 'drives/drive_list.css' %}">
 
 		
@@ -13,7 +12,7 @@
 			<a href="{% url 'drives:post_details' drive.id %}" id="drive-title">{{ drive.title }}</a>
 			<a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a>
 			<br>
-			{{ drive.description }}
+			<p style="word-break: break-all;">{{ drive.description }}</p>
 		</div>
 	{% endfor %}
 {% else %}

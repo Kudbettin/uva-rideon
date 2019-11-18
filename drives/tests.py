@@ -104,12 +104,15 @@ class DriveListingTester(StaticLiveServerTestCase):
 			title_str = "Drive Title2", description_str = "Drive Description2")
 			
 		self.browser = selenium_tester.create_chrome_driver()
+		self.browser.get(self.live_server_url)
 		
 	def tearDown(self):
 		self.browser.close()
 		
 	# Ensures that the create button brings us to the create drive page
 	def testCreateButton(self):
+		self.browser.delete_all_cookies()
+		selenium_tester.login_as(self.browser, self.driver)
 		self.browser.get(self.live_server_url + '/drives/')
 		
 		create_button = self.browser.find_element_by_id('create_drive')
@@ -136,6 +139,7 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 			title_str = "Drive Title2", description_str = "Drive Description2")
 			
 		self.browser = selenium_tester.create_chrome_driver()
+		self.browser.get(self.live_server_url)
 		
 	def tearDown(self):
 		self.browser.close()
@@ -149,8 +153,8 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 	def testJoinRideButtonExists(self):
 		# View the drive as an unaffiliated user
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		
 		join_btn = self.browser.find_element_by_id('join_ride_btn')
 		self.assertEqual(join_btn.text, "Join Ride")
@@ -160,8 +164,8 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 	def testJoinRideButtonWorks(self):
 		# View the drive as an unaffiliated user
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		
 		# Click 'Join Ride'
 		join_btn = self.browser.find_element_by_id('join_ride_btn')
@@ -178,8 +182,8 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the drive as user1
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		
 		# Verify that there's a message about being on the waitlist	
 		waitlist_message = self.browser.find_element_by_id('waitlist_message')
@@ -192,9 +196,16 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver2)
-
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
+		
 		# Ensure user1's request is visible
 		request_entry = self.browser.find_element_by_id('passenger_request')
 		self.assertEqual(request_entry.text, self.driver.username)
@@ -206,8 +217,8 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride not as the owner
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 
 		# Ensure user1's request is not visible
 		request_entry = selenium_tester.safe_find_element_by_id(self.browser, 'passenger_request')
@@ -220,11 +231,19 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver2)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
 
 		# Reject the request
 		reject_button = self.browser.find_element_by_id('reject_request_btn')
+		
 		reject_button.click()
 		
 		# Ensure user1 is no longer on the waitlist
@@ -237,8 +256,15 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver2)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
 
 		# Reject the request
 		accept_button = self.browser.find_element_by_id('accept_request_btn')
@@ -257,9 +283,16 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver2)
-
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
+		
 		# Ensure user1 shows in the passenger table
 		passenger_entry = self.browser.find_element_by_id("passenger_entry")
 		self.assertEqual(passenger_entry.text, self.driver.username)
@@ -271,8 +304,8 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 
 		# Ensure user1 shows in the passenger table
 		passenger_entry = self.browser.find_element_by_id("passenger_entry")
@@ -285,8 +318,15 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver2)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
 
 		# Remove the passenger
 		remove_button = self.browser.find_element_by_id('passenger_remove_btn')
@@ -303,8 +343,8 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride as a non-owner
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 
 		# Ensure the remove button doesn't exist
 		remove_button = selenium_tester.safe_find_element_by_id(self.browser, 'passenger_remove_btn')
@@ -317,8 +357,8 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride as the passenger
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 
 		# Remove the passenger
 		leave_button = self.browser.find_element_by_id('leave_ride_btn')
@@ -337,8 +377,8 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		
 		# View the ride as the owner
 		self.browser.delete_all_cookies()
-		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 		selenium_tester.login_as(self.browser, self.driver2)
+		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
 
 		# Ensure the leave button doesn't exist
 		leave_button = selenium_tester.safe_find_element_by_id(self.browser, 'leave_ride_btn')

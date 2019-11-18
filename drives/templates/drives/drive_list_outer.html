@@ -7,6 +7,18 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
 <link rel="stylesheet" href="{% static 'drives/drive_list.css' %}">
 	
+<head>
+    <!--  jQuery -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+	<!-- Isolated Version of Bootstrap, not needed if your site already uses Bootstrap -->
+	<link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
+
+	<!-- Bootstrap Date-Picker Plugin -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+</head>	
+
 <!-- Sidebar for search filtering -->
 <div id="sidebar" class="mx-3 mt-5">
   <ul class="list-unstyled components">
@@ -33,6 +45,42 @@
 			<input type="checkbox" onchange="updateSearch()" id="cost_extreme" />
 			<div class="state">
 				<label>$25+</label>
+			</div>
+		</div>
+		
+		<br>
+		<h5>Date</h5>
+		<div class="input-group md-form form-sm form-2 pl-0" id="dateSelector">
+			<div class="d-flex flex-column">
+				<label for="date_start" class="control-label">
+					Start Date
+				</label>
+			
+				<div class="d-flex flex-row">
+				<input class="form-control my-0 py-1 red-border" id="date_start" type="text" onkeydown="return false" placeholder="" name="date_start">
+				<div class="input-group-append">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button" onclick="openStartDate()"><i class="material-icons">calendar_today</i></button>
+					</span>
+				</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="input-group md-form form-sm form-2 pl-0 mt-2" id="dateSelector">
+			<div class="d-flex flex-column">
+				<label for="date_end" class="control-label">
+					End Date
+				</label>
+			
+				<div class="d-flex flex-row">
+				<input class="form-control my-0 py-1 red-border" id="date_end" type="text" onkeydown="return false" placeholder="" name="date_end">
+				<div class="input-group-append">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button" onclick="openEndDate()"><i class="material-icons">calendar_today</i></button>
+					</span>
+				</div>
+				</div>
 			</div>
 		</div>
 		
@@ -102,7 +150,7 @@
 </div>
 
 <!-- Main Content -- search results, search bar -->
-<div class="container mt-5">
+<div class="container mt-5" id="search_bar_div">
 	
 	<h1>Drives</h1>
 	
@@ -157,10 +205,26 @@ function updateSearch() {
 		"rating_4": document.getElementById("rating_4").checked,
 		"rating_3": document.getElementById("rating_3").checked,
 		"rating_2": document.getElementById("rating_2").checked,
-		"search_text": document.getElementById("search_bar").value
+		"search_text": document.getElementById("search_bar").value,
+		"date_start": document.getElementById("date_start").value,
+		"date_end": document.getElementById("date_end").value
 	});
 	xhr.send(data);
 }
+</script>
+
+<script>
+	$ (function () {
+		$("#date_start").datepicker({dateFormat: 'yy-mm-dd'});
+		$("#date_end").datepicker({dateFormat: 'yy-mm-dd'});
+	});
+	
+	function openStartDate() {
+		$("#date_start").datepicker({dateFormat: 'yy-mm-dd'}).focus();
+	}
+	function openEndDate() {
+		$("#date_end").datepicker({dateFormat: 'yy-mm-dd'}).focus();
+	}
 </script>
 
 {% endblock %}

@@ -12,8 +12,51 @@ from drives.forms import DriveCreationForm, DriveChangeForm
 from drives.search_drives import search_drives
 from users.models import CustomUser
 from django.template.context import make_context
+from django.db import models
 
 import json
+
+'''
+Called when a Driver removes a waypoint
+'''
+def waypoint_remove(request, driveId):
+    if request.method == "POST":
+        # Make sure the logged in user is the drive owner
+        owner_id = Drive.objects.get(id=driveId).driver.id        
+        logged_in_user = request.user.id
+        if int(owner_id) != int(logged_in_user):
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+    
+        Drive.objects.get(id=driveId).waypointList.remove(Location.objects.get(id=request.POST['waypointId']))
+        return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
+
+'''
+Called when a drive is completed
+'''
+def drive_complete(request, driveId):
+    # Make sure the logged in user is the drive owner
+    owner_id = Drive.objects.get(id=driveId).driver.id        
+    logged_in_user = request.user.id
+    if int(owner_id) != int(logged_in_user):
+        return HttpResponseRedirect(reverse('insuficient_permission'))
+        
+    Drive.objects.filter(id=driveId).update(status="Completed")
+    
+    return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
+    
+'''
+Called when a drive is canceled
+'''
+def drive_cancel(request, driveId):
+    # Make sure the logged in user is the drive owner
+    owner_id = Drive.objects.get(id=driveId).driver.id        
+    logged_in_user = request.user.id
+    if int(owner_id) != int(logged_in_user):
+        return HttpResponseRedirect(reverse('insuficient_permission'))
+        
+    Drive.objects.filter(id=driveId).update(status="Cancelled")
+    
+    return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
 
 '''
 Called when a waypoint is updated within a ride application
@@ -25,8 +68,6 @@ def submit_waypoint(request, driveId):
         location_name  = request.POST['location'] 
         application_id = request.POST['application']
         
-        print(request.POST)
-
         application = RideApplication.objects.get(id=application_id)
         application.waypoint = Location.objects.create(location=location_name, coordinates_x=waypoint_x, coordinates_y=waypoint_y)
         application.save()
@@ -235,7 +276,7 @@ Search parameters are passed as POST request parameters.
 def search_ridelist(request):
     if request.method == "POST":
         json_data = json.loads(request.body)
-        return render(request, 'drives/drive_list_inner.html', {'drive_list': search_drives(json_data)})
+        return render(request, 'drives/drive_list_inner.html', {'drive_list': search_drives(request, json_data)})
     return render(request, 'drives/drive_list_inner.html')
 
 '''
@@ -264,12 +305,12 @@ def post_new(request):
             start_location = Location.objects.create(
                 coordinates_x=request.POST["start_coordinates_x"],
                 coordinates_y=request.POST["start_coordinates_y"], 
-				location=request.POST["start_location"])
+                location=request.POST["start_location"])
 
             end_location = Location.objects.create(
                 coordinates_x=request.POST["end_coordinates_x"],
                 coordinates_y=request.POST["end_coordinates_y"],
-				location=request.POST["end_location"])
+                location=request.POST["end_location"])
 
             start_location.save()
             end_location.save()

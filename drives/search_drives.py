@@ -1,6 +1,10 @@
 from drives.models import Drive
+from users.models import CustomUser
 from django.db.models import Q
+from users.views import get_rider_rating, get_driver_rating
+import datetime
 
+# TODO: make it work when cost range in drive is larger than any individual cost range
 def filter_cost(search):
 	costs = {"cost_low" : [0, 6], "cost_mid" : [6, 10], "cost_high" : [10, 25], "cost_extreme" : [25, 100000]}
 	
@@ -8,8 +12,6 @@ def filter_cost(search):
 	
 	sub_queries = []
 	for cost_key in costs_filtered:
-		print(cost_key)
-		print(costs[cost_key])
 		sub_queries.append(Q(min_cost__gte=costs[cost_key][0]) & Q(max_cost__lt=costs[cost_key][1]))
 		
 	if len(sub_queries) == 0:
@@ -22,7 +24,7 @@ def filter_cost(search):
 	return query
 	
 def filter_gender(search):
-	query = Q(id=1) | ~Q(id=1)
+	query = Q(status="Listed")
 	
 	# Unless filtering by male or female, return all drives
 	if not search.get("gender_male", False) and not search.get("gender_female", False):
@@ -45,26 +47,79 @@ def filter_gender(search):
 		
 	return query
 	
-def filter_friends(search):
-	return Q(id=1) | ~Q(id=1)
+def filter_friends(request, search):
+	if not search["driver_friend"] and not search["passegner_friend"]:
+		return Q(status="Listed")
+		
+	queries = []
+	for friend in request.user.friends.all():
+		if search["driver_friend"]:
+			queries.append(Q(driver__id=friend.id))
+		if search["passegner_friend"]:
+			queries.append(Q(passengers__id=friend.id))
+			
+	if len(queries) == 0:
+		return Q(id=-1)
+			
+	main_query = queries.pop()
+	for query in queries:
+		main_query = main_query | query
+		
+	return main_query
+	
 def filter_rating(search):
-	return Q(id=1) | ~Q(id=1)
+	query = Q(status="Listed")
+
+	rating_options = {"rating_2", "rating_3", "rating_4", "rating_5"}
+	ratings = [key for key, value in search.items() if key in rating_options and value]
+	if len(ratings) == 0:
+		return query
+
+	# Make a base query from one of the ratings in the list
+	value = int(ratings.pop().split("_")[1])
+	query = Q(driver__driver_rating__gte=value)
+	
+	# Add the other ratings
+	for rating in ratings:
+		value = int(rating.split("_")[1])
+		query = query | Q(driver__driver_rating__gte=value)
+	
+	return query
+	
 def filter_search(search):
 	if not search.get("search_text", False):
-		return Q(id=1) | ~Q(id=1)
+		return Q(status="Listed")
 		
 	search_text = search["search_text"]
 	return Q(description__icontains=search_text) | Q(title__icontains=search_text) | Q(payment_method__icontains=search_text) | Q(driver__username__icontains=search_text)
+	
+def filter_date(search):
+	query = Q(status="Listed")
+		
+	if search["date_start"] is not "":
+		# format mm/dd/yyyy
+		start_date = [ int(elem) for elem in search["date_start"].split("/")]
+		query = query & Q(date__gte=datetime.date(start_date[2], start_date[0], start_date[1]))
+		
+	if search["date_end"] is not "":
+		# format mm/dd/yyyy
+		end_date = [ int(elem) for elem in search["date_end"].split("/")]
+		query = query & Q(date__lte=datetime.date(end_date[2], end_date[0], end_date[1]))
+		
+	return query
 
-def search_drives(json_data):
+def search_drives(request, json_data):
+	print(json_data)
+
 	# Base query is for all objects
-	query = Q(id=1) | ~Q(id=1)
+	query = Q(status="Listed")
 	
 	# Filter with 'AND' for each search category
 	query = query & filter_cost(json_data)
 	query = query & filter_gender(json_data)
-	query = query & filter_friends(json_data)
+	query = query & filter_friends(request, json_data)
 	query = query & filter_rating(json_data)
 	query = query & filter_search(json_data)
+	query = query & filter_date(json_data)
 	
 	return Drive.objects.filter(query)

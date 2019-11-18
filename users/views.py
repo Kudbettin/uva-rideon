@@ -25,7 +25,7 @@ class ProfileView(generic.DetailView):
         context['friends'] = kwargs['object'].friends.all()
 
         context['is_friend'] = False
-        if kwargs['object'] in CustomUser.objects.filter(id=self.request.user.id)[0].friends.all():
+        if CustomUser.objects.filter(id=self.request.user.id)[0].friends.filter(id=kwargs['object'].id).exists():
             context['is_friend'] = True
 
         return context
@@ -33,9 +33,14 @@ class ProfileView(generic.DetailView):
 class EditProfileView(generic.UpdateView):
   
     model = CustomUser
-    fields = [ 'username', 'gender', 'phone','home_town', 'about', 'profile_pic']
+    fields = [ 'username', 'gender', 'phone', 'about', 'profile_pic']
     template_name = 'users/editprofile.html'
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
     def get_friends(self, request):
         users = CustomUser.objects.exclude(id=request.user)
         friend = UserFriends.objects.get(current_user=request.user)
@@ -44,15 +49,23 @@ class EditProfileView(generic.UpdateView):
 def get_fields(request,pk):
     if int(request.user.id) != int(pk):
         return redirect('/users/' + str(pk))
+    try:
+        if request.POST['valid'] == False:
+            return redirect('/users/'+ pk)
+    except:
+        pass
     instance = CustomUser.objects.get(id=pk)
     form = CustomUserChangeForm(request.POST or None, request.FILES, instance=instance)
     if form.is_valid():
         form.save()
         return redirect('/users/'+ pk) # should update these to use reverse
     else:
+        request.POST = request.POST.copy()
+        request.POST['valid'] = False
+        #form = CustomUserChangeForm(instance=instance)
         return redirect('/users/'+ pk + '/edit')
 
-    return render(request, '/users/'+ pk + '/edit', {'form': form})  
+    return render(request, 'users/editprofile.html', {'form': form, 'pk' : pk})  
 
 class MyRidesView(generic.DetailView):
     model = CustomUser

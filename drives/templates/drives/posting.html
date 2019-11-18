@@ -6,17 +6,37 @@
 {% block content %}
     <div class="container">
         <h1>{{drive.title}}</h1>
+		{% if drive.status == "Cancelled" %}
+			<div class="row">
+				<div class="col-6">
+					<h3 class="text-danger"> Drive Cancelled </h3>
+				</div>
+			</div>
+		{%  elif drive.status == "Completed" %}
+			<div class="col-6">
+				<div class="row">
+					<h3 class="text-success"> Drive Completed </h3>
+				</div>
+			</div>
+		{% endif %}
+		
         <div class="row">
             <div class="col-6">
-                <p>Route {{drive.start_location}} {{drive.end_location}}</p>
                 <div id="map" style="height: 25vw; width: 100%;"></div>
+				<div class="card mt-2" style="width: 100%;">
+					<div class="card-body">
+						<h5 class="card-title">Description</h5>
+						<p class="card-text">{{drive.description}}</p>
+					</div>
+				</div>
+				
+				<!-- Hidden fields for the map to work -->
                 <div id="startx" style="display: none;">{{drive.start_location.coordinates_x}}</div>
                 <div id="starty" style="display: none;">{{drive.start_location.coordinates_y}}</div>
                 <div id="endx" style="display: none;">{{drive.end_location.coordinates_x}}</div>
                 <div id="endy" style="display: none;">{{drive.end_location.coordinates_y}}</div>
                 <div id="travel_time" style="display: none;">{{drive.time}}</div>
                 <script>
-
 					function getWaypoints() {
 						var requestWaypoints = document.getElementsByClassName("waypointData");
 						
@@ -227,30 +247,138 @@
                 </script>
                 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY7BlSzTYJKwTNrObrU7so714CJgF3Uhc&libraries=places&callback=initMap">
                 </script>
-
-				<!-- Show the passenger edit templat if the driver is viewing this -->
-				<!-- Otherwise just show a list of passengers -->
-				{% if user.username == drive.driver.username %}
-					<div class="basic">
-						{% include "drives/passenger_templates/passenger_edit.html" %}    
-					</div>
-				{% else %}
-					<div class="basic">
-						{% include "drives/passenger_templates/passenger_list.html" %}    
-					</div>
-				{% endif %}
             </div>
+			
             <div class="col-6">
-                <p>Driver: <a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a></p>
-                <p>Date: {{drive.date_time}}</p>
-                <p>Cost: {{drive.min_cost}}$ - {{drive.max_cost}}$</p>
-                <p>Payment: {{drive.payment_method}}</p>
-                <p>Max Passengers: {{drive.max_passengers}}</p>
-                <p>Vehicle: {{drive.car_description}}</p>
-                <p>Luggage Capacity: {{drive.luggage_description}}</p>
-                <p>Description: {{drive.description}}</p>
-                <p>Location: {{drive.start_location.coordinates_x}}</p>
-
+				
+				<!-- Render tabs if the drive is listed and user is driver -->
+				{% if drive.driver.id == user.id %}
+				<ul class="nav nav-tabs mb-2" id="myTabs" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Drive Information</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="manage-tab" data-toggle="tab" href="#manage" role="tab" aria-controls="profile" aria-selected="false">Manage Drive</a>
+					</li>
+				</ul>
+				<div class="tab-content profile-tab" id="myTabContent">
+					<div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+				{% endif %}
+						<div class="row mt">
+							<div class="col-6">
+								<label>Driver</label>
+							</div>
+							<div class="col-6">
+								<a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Date</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.date}} at {{drive.time}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Cost</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.min_cost}}$ - {{drive.max_cost}}$</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Payment</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.payment_method}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Max Passengers</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.max_passengers}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Vehicle</label>
+							</div>
+							<div class="col-6">
+								<p style="word-break: break-all;">{{drive.car_description}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Pickup Point</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.start_location.location}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Destination</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.end_location.location}}</p>
+							</div>
+						</div>
+						{% if drive.luggage_description != "" %}
+							<div class="row">
+								<div class="col-6">
+									<label>Luggage Capacity</label>
+								</div>
+								<div class="col-6">
+									<p style="word-break: break-all;">{{drive.luggage_description}}</p>
+								</div>
+							</div>
+						{% endif %}
+						{% if user.username != drive.driver.username %}
+							<div class="row">
+							{% include "drives/passenger_templates/passenger_list.html" %} 
+							</div>
+						{% endif %}
+				{% if drive.driver.id == user.id %}
+					</div>
+					<div class="tab-pane fade" id="manage" role="tabpanel" aria-labelledby="management-tab">
+						{% if drive.status == "Listed" %}
+						<div class="row mt-2">
+							<div class="col-sm">
+								<button class="btn btn-default" onclick="window.location.href = '/drives/{{ drive.id }}/edit/';">Edit Drive</button>
+							</div>
+							<div class="col-sm">
+								<form method="post" action="drive_complete" id="drive_complete_form">
+									{% csrf_token %}
+									<button type="submit" class="btn btn-outline-success btn-sm float-right" id="drive_cancel_btn">Complete Ride</button>
+								</form>
+							</div>
+							<div class="col-sm">
+								<form method="post" action="drive_cancel" id="drive_cancel_form">
+									{% csrf_token %}
+									<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="drive_cancel_btn">Cancel Ride</button>
+								</form>
+							</div>
+						</div>
+							
+						{% endif %}
+						<div class="row mt-3">
+							<div class="col-sm">
+								{% include "drives/passenger_templates/passenger_edit.html" %} 
+							</div>
+						</div>
+						<div class="row mt-3">
+							<div class="col-sm">
+								{% include "drives/waypoints/removeDriveWaypoints.html" %} 
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
             </div>
         </div>
     </div>
@@ -264,11 +392,5 @@
 	{% endfor %}
 
 	</div>
-	{% if drive.driver.id == user.id %}
-	<div class="col-2">
-		<button class="btn btn-default" onclick="window.location.href = '/drives/{{ drive.id }}/edit/';">Edit Drive
-		</button>
-	</div>
-	{% endif %}
 
 {% endblock %}

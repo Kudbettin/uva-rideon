@@ -23,6 +23,7 @@
 
 <!-- Render either the 'Join Ride' button, 'You're on the waitlist!' message,
      or the 'Leave Ride' button -->
+{% if drive.status == "Listed" %}
 {% if user.id in waitlistIds %}
 <div class="text-center mt-3">
 	<h4 id="waitlist_message">You're on the waitlist!</h4>
@@ -53,4 +54,5 @@
 		<button type="submit" class="btn btn-success ml-1" id="join_ride_btn">Join Ride</button>
 	</form>
 </div>
+{% endif %}
 {% endif %}

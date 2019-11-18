@@ -1,5 +1,12 @@
+html {
+min-width: 650px;
+position: relative;
+}
+
 #sidebar {
     position: absolute;
+    width:20%;
+    /* overflow: scroll; */
 }
 
 .wrapper {
@@ -28,4 +35,15 @@
 
 .pretty {
 	display: block;
+}
+
+#search_bar_div {
+    /* min-width: 300px;
+    overflow: scroll; */
+    margin-left:22%;
+    margin-right: 40%;
+}
+
+.dateSelector {
+	width: 25%;
 }
