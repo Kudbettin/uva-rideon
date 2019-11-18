@@ -81,7 +81,8 @@
 		function fillInAddress_start() {
 			// Get the place details from the autocomplete object.
 			var place = autocomplete_start.getPlace();
-
+			console.log("place start")
+			console.log(place)
             document.getElementById("id_start_coordinates_x").value = place.geometry.location.lng();
             document.getElementById("id_start_coordinates_y").value = place.geometry.location.lat();
 			
@@ -159,6 +160,7 @@
 					<input id="autocomplete_end" placeholder="Enter ending address" onFocus="geolocate_end()" type="text" class="form-control" />
 				</div>
 			</div>
+			{{form.non_field_errors}}
 		</div>
 		
 		<!-- Render form using django-crispy-forms with Bootstrap -->
@@ -197,6 +199,7 @@
 		
 		<button type="submit" class="btn btn-primary">Save</button>
 	</form>
+
 </div>
 
 
