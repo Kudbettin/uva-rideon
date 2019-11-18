@@ -253,12 +253,12 @@
 				
 				<!-- Render tabs if the drive is listed and user is driver -->
 				{% if drive.driver.id == user.id %}
-				<ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+				<ul class="nav nav-tabs mb-2" id="myTabs" role="tablist">
 					<li class="nav-item">
 						<a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Drive Information</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Manage Drive</a>
+						<a class="nav-link" id="manage-tab" data-toggle="tab" href="#manage" role="tab" aria-controls="profile" aria-selected="false">Manage Drive</a>
 					</li>
 				</ul>
 				<div class="tab-content profile-tab" id="myTabContent">
@@ -345,7 +345,7 @@
 						{% endif %}
 				{% if drive.driver.id == user.id %}
 					</div>
-					<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+					<div class="tab-pane fade" id="manage" role="tabpanel" aria-labelledby="management-tab">
 						{% if drive.status == "Listed" %}
 						<div class="row mt-2">
 							<div class="col-sm">
