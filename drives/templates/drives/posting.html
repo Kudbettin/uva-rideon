@@ -349,18 +349,18 @@
 						{% if drive.status == "Listed" %}
 						<div class="row mt-2">
 							<div class="col-sm">
-								<button class="btn btn-default" onclick="window.location.href = '/drives/{{ drive.id }}/edit/';">Edit Drive</button>
+								<button class="btn btn-default" onclick="window.location.href = '/drives/{{ drive.id }}/edit/';"><i class="fas fa-pencil-alt"></i>&nbsp;Edit Drive</button>
 							</div>
 							<div class="col-sm">
 								<form method="post" action="drive_complete" id="drive_complete_form">
 									{% csrf_token %}
-									<button type="submit" class="btn btn-outline-success btn-sm float-right" id="drive_cancel_btn">Complete Ride</button>
+									<button type="submit" class="btn btn-success float-right" id="drive_cancel_btn"><i class="fas fa-check"></i>&nbsp;Complete Ride</button>
 								</form>
 							</div>
 							<div class="col-sm">
 								<form method="post" action="drive_cancel" id="drive_cancel_form">
 									{% csrf_token %}
-									<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="drive_cancel_btn">Cancel Ride</button>
+									<button type="submit" class="btn btn-danger float-right" id="drive_cancel_btn"><i class="fas fa-times"></i>&nbsp;Cancel Ride</button>
 								</form>
 							</div>
 						</div>
