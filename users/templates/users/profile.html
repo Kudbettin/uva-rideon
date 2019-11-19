@@ -28,13 +28,13 @@
             <br>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Personal Information</a>
+			<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="fas fa-info-circle"></i>&nbsp;Personal Information</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Reviews</a>
+			<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false"><i class="fas fa-sticky-note"></i>&nbsp;Reviews</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false">Friends</a>
+			<a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false"><i class="fas fa-user-friends"></i>&nbsp;Friends</a>
                 </li>
             </ul>
             <br>
@@ -69,7 +69,7 @@
                             <label>Driver Rating</label>
                         </div>
                         <div class="col-6">
-                            <p>{{ driver_avg_rating }}</p>
+				<p>{{ driver_avg_rating }}&nbsp;<i class="fas fa-star"></i></p>
                         </div>
                     </div>
                     <div class="row">
@@ -77,7 +77,7 @@
                             <label>Rider Rating</label>
                         </div>
                         <div class="col-6">
-                            <p>{{ rider_avg_rating }}</p>
+				<p>{{ rider_avg_rating }}&nbsp;<i class="fas fa-star"></i></p>
                         </div>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
         </div>
         {% if customuser.id == user.id %}
         <div class="col-2">
-            <button class="btn btn-default" onclick="window.location.href = '/users/{{ customuser.id }}/edit/';">Edit Profile </button>
+		<button class="btn btn-default" onclick="window.location.href = '/users/{{ customuser.id }}/edit/';"><i class="fas fa-pencil-alt"></i>&nbsp;Edit Profile </button>
         </div>
         {% else %}
         {% if is_friend == True %}
@@ -117,7 +117,7 @@
             <form method="post" action="remove_friend">
                 {% csrf_token %}
                 <input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
-                <button class="btn btn-default" type="Submit">Remove Friend</button>
+		<button class="btn btn-danger" type="Submit"><i class="fas fa-user-minus"></i>&nbsp;Remove Friend</button>
             </form>
         </div>
         {% else %}
@@ -125,7 +125,7 @@
             <form method="post" action="add_friend">
                 {% csrf_token %}
                 <input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
-                <button class="btn btn-default" type="Submit">Add Friend</button>
+		<button class="btn btn-success" type="Submit"><i class="fas fa-user-plus"></i>&nbsp;Add Friend</button>
             </form>
         </div>
         {% endif %}
