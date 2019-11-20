@@ -128,6 +128,17 @@ def get_driver_rating(user):
         return "N/A"
     return "%0.2f" % ((float(score)/count),)
 
+def update_ratings():
+    for user in CustomUser.objects.all():
+        if get_driver_rating(user) != "N/A":
+            CustomUser.objects.filter(id=user.id).update(driver_rating=float(get_driver_rating(user)))
+        else:
+            CustomUser.objects.filter(id=user.id).update(driver_rating=None)
+        if get_rider_rating(user) != "N/A":
+            CustomUser.objects.filter(id=user.id).update(rider_rating=float(get_rider_rating(user)))
+        else:
+            CustomUser.objects.filter(id=user.id).update(rider_rating=None)
+
 def post_new_review(request, pk):
     if request.method == "POST":
         request.POST = request.POST.copy()
@@ -142,11 +153,7 @@ def post_new_review(request, pk):
                 post = form.save(commit=False)
                 post.save()
                 
-                for user in CustomUser.objects.all():
-                    if get_driver_rating(user) != "N/A":
-                        CustomUser.objects.filter(id=user.id).update(driver_rating=float(get_driver_rating(user)))
-                    if get_rider_rating(user) != "N/A":
-                        CustomUser.objects.filter(id=user.id).update(rider_rating=float(get_rider_rating(user)))
+                update_ratings()
         
                 return redirect('/users/' + str(pk) + '/myrides')
             else:
@@ -160,11 +167,7 @@ def post_new_review(request, pk):
                 post = form.save(commit=False)
                 post.save()
                 
-                for user in CustomUser.objects.all():
-                    if get_driver_rating(user) != "N/A":
-                        CustomUser.objects.filter(id=user.id).update(driver_rating=float(get_driver_rating(user)))
-                    if get_rider_rating(user) != "N/A":
-                        CustomUser.objects.filter(id=user.id).update(rider_rating=float(get_rider_rating(user)))
+                update_ratings()
                     
                 return redirect('/users/' + str(pk) + '/myrides')
             else:
@@ -173,11 +176,7 @@ def post_new_review(request, pk):
     else:
         form = RideReviewForm()
         
-    for user in CustomUser.objects.all():
-        if get_driver_rating(user) != "N/A":
-            CustomUser.objects.filter(id=user.id).update(driver_rating=float(get_driver_rating(user)))
-        if get_rider_rating(user) != "N/A":
-            CustomUser.objects.filter(id=user.id).update(rider_rating=float(get_rider_rating(user)))
+    update_ratings()
     
     return render(request, 'users/myrides.html')
 
