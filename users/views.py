@@ -22,6 +22,9 @@ class ProfileView(generic.DetailView):
         context['driver_avg_rating'] = get_driver_rating(kwargs['object'])
         context['rider_avg_rating'] = get_rider_rating(kwargs['object'])
 
+        context['driver_reviews'] = DriverReview.objects.filter(of=kwargs['object'])
+        context['rider_reviews'] = RiderReview.objects.filter(of=kwargs['object'])
+        
         context['friends'] = kwargs['object'].friends.all()
 
         context['is_friend'] = False
