@@ -82,44 +82,105 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>Experience</label>
-                        </div>
-                        <div class="col-6">
-                            <p>Expert</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
-					{% for friend in friends %}
-					<div class="row">
-						<div class="card mt-2" style="width: 100%;">
-							<div class="card-body">
-								<div class="row">
-									<div class="col-sm">
-										<h5 class="card-title"><a href="{% url 'users:profile' friend.id %}">{{ friend.username }}</a></h5>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-2">
-										<img src="{{ friend.profile_pic.url }}" alt="" style="width: 50px; height: auto;" /></li>
-									</div>
-									<div class="col-6">
-										<p>{{friend.about}}</p>
-									</div>
-									<div class="col-2">
-										<form method="post" action="remove_friend">
-											{% csrf_token %}
-											<input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
-											<button class="btn btn-danger" type="Submit">Remove Friend</button>
-										</form>
-									</div>
-								</div>
+			<div class="row">
+				<h3>Reviews of {{ customuser.username }} as a Driver</h3>
+			</div>
+			{% for review in driver_reviews %}
+			<div class="row">
+				<div class="card mt-2" style="width: 100%;">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-3">
+								<h5 class="card-title"><a href="{% url 'users:profile' review.by.id %}">{{ review.by.username }}</a></h5>
+							</div>
+							<div class="col-9">
+								<h5 class="card-title"><b>{{ review.title }}</b></h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-3">
+								<img src="{{ review.by.profile_pic.url }}" alt="" style="width: 50px; height: auto;" /></li>
+							</div>
+							<div class="col-9">
+								<small>Rating:&nbsp; 
+									{% with ''|center:review.rating as range %}
+									{% for _ in range %}
+										<i class="fas fa-star" aria-hidden="true"></i>
+									{% endfor %}
+									{% endwith %}
+								</small>
+								<p>{{ review.description }}</p>
 							</div>
 						</div>
 					</div>
-					{% endfor %}
+				</div>
+			</div>
+			{% endfor %}
+			<hr>
+			<div class="row">
+				<h3>Reviews of {{ customuser.username }} as a Rider</h3>
+			</div>
+			{% for review in rider_reviews %}
+			<div class="row">
+				<div class="card mt-2" style="width: 100%;">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-3">
+								<h5 class="card-title"><a href="{% url 'users:profile' review.by.id %}">{{ review.by.username }}</a></h5>
+							</div>
+							<div class="col-9">
+								<h5 class="card-title"><b>{{ review.title }}</b></h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-3">
+								<img src="{{ review.by.profile_pic.url }}" alt="" style="width: 50px; height: auto;" /></li>
+							</div>
+							<div class="col-9">
+								<small>Rating:&nbsp; 
+									{% with ''|center:review.rating as range %}
+									{% for _ in range %}
+										<i class="fas fa-star" aria-hidden="true"></i>
+									{% endfor %}
+									{% endwith %}
+								</small>
+								<p>{{ review.description }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+                </div>
+                <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+			{% for friend in friends %}
+			<div class="row">
+				<div class="card mt-2" style="width: 100%;">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm">
+								<h5 class="card-title"><a href="{% url 'users:profile' friend.id %}">{{ friend.username }}</a></h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-2">
+								<img src="{{ friend.profile_pic.url }}" alt="" style="width: 50px; height: auto;" /></li>
+							</div>
+							<div class="col-6">
+								<p>{{friend.about}}</p>
+							</div>
+							<div class="col-2">
+								<form method="post" action="remove_friend">
+									{% csrf_token %}
+									<input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
+									<button class="btn btn-danger" type="Submit">Remove Friend</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
                 </div>
             </div>
         </div>
