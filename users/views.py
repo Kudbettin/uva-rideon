@@ -178,6 +178,7 @@ def post_new_review(request, pk):
             else:
                 print(form.errors)
                 print("error adding review")
+                return redirect('/users/' + str(pk) + '/myrides?error=review')
         else:
             # Rider reviewing driver
 
@@ -192,6 +193,7 @@ def post_new_review(request, pk):
             else:
                 print(form.errors)
                 print("error adding review")
+                return redirect('/users/' + str(pk) + '/myrides?error=review')
     else:
         form = RideReviewForm()
         

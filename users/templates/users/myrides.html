@@ -59,6 +59,11 @@
 		</div>
 	</div>
 	<br>
+	
+	{% if request.GET.error == 'review' %}
+	<div class="alert alert-danger" role="alert"><b>Error!</b> Unable to leave review.</div>
+	{% endif %}
+	
 	<div class="row">
 		<div class="col-12">
 			<h2>Upcoming Rides</h2>
