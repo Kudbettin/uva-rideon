@@ -20,7 +20,7 @@
 					<input type="hidden" type="number" name="drive" />
 					<div class="form-group">
 						<label for="of" class="col-form-label">Reviewing:</label>
-						<input type="text" class="form-control reviewee_email" name="of" disabled>
+						<input type="text" class="form-control reviewee_username" name="of" disabled>
 					</div>
 					<input class="reviewee_id" type="hidden" type="number" name="of" />
 					<div class="form-group">
@@ -108,7 +108,7 @@
 							{% if user.id != person.id %}
 						<!-- Riders reviewing driver -->
 							<span>
-								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}" data-email="{{ person.email }}">Review {{ ride.driver.email }}</button>
+								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}" data-username="{{ person.username }}">Review {{ ride.driver.username }}</button>
 							</span>
 						{% endif %}
 						{% endfor %}
@@ -122,7 +122,7 @@
 						{% for person in entry.query %}
 							{% if user.id != person.id %}
 								<span>
-									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}" data-email="{{ person.email }}">Review {{ person.email }}</button>
+									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}" data-username="{{ person.username }}">Review {{ person.username }}</button>
 								</span>
 							{% endif %}
 						{% endfor %}
@@ -162,12 +162,12 @@
 					  var title = button.data('title');
 					  var drive_id = button.data('id');
 					  var reviewee_id = button.data('userid');
-					  var reviewee_email = button.data('email');
+					  var reviewee_username = button.data('username');
 					  var modal = $(this);
 					  modal.find('.modal-title').text('Review your trip "' + title + '"');
 					  $('input[name="drive"]').val(drive_id);
 					  $('input.reviewee_id[name="of"]').val(reviewee_id);
-					  $('input.reviewee_email[name="of"]').val(reviewee_email);
+					  $('input.reviewee_username[name="of"]').val(reviewee_username);
 					  
 					});
 					</script>
