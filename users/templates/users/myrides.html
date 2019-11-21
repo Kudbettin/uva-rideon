@@ -20,7 +20,7 @@
 					<input type="hidden" type="number" name="drive" />
 					<div class="form-group">
 						<label for="of" class="col-form-label">Reviewing:</label>
-						<input type="text" class="form-control reviewee_email" name="of" disabled>
+						<input type="text" class="form-control reviewee_username" name="of" disabled>
 					</div>
 					<input class="reviewee_id" type="hidden" type="number" name="of" />
 					<div class="form-group">
@@ -59,6 +59,11 @@
 		</div>
 	</div>
 	<br>
+	
+	{% if request.GET.error == 'review' %}
+	<div class="alert alert-danger" role="alert"><b>Error!</b> Unable to leave review.</div>
+	{% endif %}
+	
 	<div class="row">
 		<div class="col-12">
 			<h2>Upcoming Rides</h2>
@@ -67,10 +72,9 @@
 				<a href="#" class="list-group-item list-group-item-action">
 					<div class="d-flex w-100 justify-content-between">
 						<h5 class="mb-1">{{ ride.title }}</h5>
-						<small>3 days ago</small>
+						<small>{{ ride.date }} at {{ ride.time }}</small>
 					</div>
-					<p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-					<small>Donec id elit non mi porta.</small>
+					<p class="mb-1">{{ ride.description }}</p>
 				</a>
 			{% endfor %}
 			</div>
@@ -83,17 +87,11 @@
 			<div class="list-group">
 			{% for ride in completed_rides %}
 				<a href="#" class="list-group-item list-group-item-action">
-					<div class="d-flex">
-						<div class="p-2">
-							<h5 class="mb-1">{{ ride.title }}</h5>
-							<p>
-								<small>3 days ago</small>
-							</p>
-						</div>
-						<div class="ml-auto p-2">
-						</div>
+					<div class="d-flex w-100 justify-content-between">
+						<h5 class="mb-1">{{ ride.title }}</h5>
+						<small>{{ ride.date }} at {{ ride.time }}</small>
 					</div>
-					<p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+					<p class="mb-1">{{ ride.description }}</p>
 					<div>
 					{% if user.id != ride.driver.id %}
 						{% for entry in drivers_to_review_per_drive %}
@@ -103,7 +101,7 @@
 							{% if user.id != person.id %}
 						<!-- Riders reviewing driver -->
 							<span>
-								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}" data-email="{{ person.email }}">Review {{ ride.driver.email }}</button>
+								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}" data-username="{{ person.username }}">Review {{ ride.driver.username }}</button>
 							</span>
 						{% endif %}
 						{% endfor %}
@@ -117,7 +115,7 @@
 						{% for person in entry.query %}
 							{% if user.id != person.id %}
 								<span>
-									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}" data-email="{{ person.email }}">Review {{ person.email }}</button>
+									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}" data-username="{{ person.username }}">Review {{ person.username }}</button>
 								</span>
 							{% endif %}
 						{% endfor %}
@@ -139,10 +137,9 @@
 					<a href="#" class="list-group-item list-group-item-action">
 						<div class="d-flex w-100 justify-content-between">
 							<h5 class="mb-1">{{ ride.title }}</h5>
-							<small>3 days ago</small>
+							<small>{{ ride.date }} at {{ ride.time }}</small>
 						</div>
-						<p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-						<small>Donec id elit non mi porta.</small>
+						<p class="mb-1">{{ ride.description }}</p>
 					</a>
 				{% endfor %}
 				</div>
@@ -157,12 +154,12 @@
 					  var title = button.data('title');
 					  var drive_id = button.data('id');
 					  var reviewee_id = button.data('userid');
-					  var reviewee_email = button.data('email');
+					  var reviewee_username = button.data('username');
 					  var modal = $(this);
 					  modal.find('.modal-title').text('Review your trip "' + title + '"');
 					  $('input[name="drive"]').val(drive_id);
 					  $('input.reviewee_id[name="of"]').val(reviewee_id);
-					  $('input.reviewee_email[name="of"]').val(reviewee_email);
+					  $('input.reviewee_username[name="of"]').val(reviewee_username);
 					  
 					});
 					</script>
