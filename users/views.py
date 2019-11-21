@@ -73,9 +73,28 @@ class MyRidesView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['upcoming_rides'] = Drive.objects.filter(status="Listed")
-        context['cancelled_rides'] = Drive.objects.filter(status="Cancelled")
-        context['completed_rides'] = Drive.objects.filter(status="Completed")
+        
+        context['upcoming_rides'] = []
+        upcoming_rides = Drive.objects.filter(status="Listed")
+
+        for item in upcoming_rides:
+            if item.driver == self.request.user or self.request.user in item.passengers.all():
+                context['upcoming_rides'].append(item)
+
+        context['cancelled_rides'] = []
+        cancelled_rides = Drive.objects.filter(status="Cancelled")
+
+        for item in cancelled_rides:
+            if item.driver == self.request.user or self.request.user in item.passengers.all():
+                context['cancelled_rides'].append(item)
+
+        context['completed_rides'] = []
+        completed_rides = Drive.objects.filter(status="Completed")
+
+        for item in completed_rides:
+            if item.driver == self.request.user or self.request.user in item.passengers.all():
+                context['completed_rides'].append(item)
+        
         context['riders_to_review_per_drive'] = []
         
         for drive in context['completed_rides']:
