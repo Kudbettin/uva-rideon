@@ -6,25 +6,50 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'users/profile.css' %}">
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-4">
+    <div class="row">
+        <div class="col-12 col-md-4 text-center mb-3">
             <div class="profile-img">
-                <img src="{{ customuser.profile_pic.url }}" alt="" style="width: 80%; height: auto;" />
+                <img src="{{ customuser.profile_pic.url }}" alt="" style="width: 50%; height: auto;" />
             </div>
             <br>
-            <div class="card" style="width: 18rem;">
+            <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">About Me</h5>
                     <p class="card-text">{{customuser.about}}</p>
                 </div>
             </div>
         </div>
-        <div class="col-6">
-            <div class="profile-head" style="vertical-align: middle">
-                <h1>
-                    {{ customuser.username }}
-                </h1>
-            </div>
+        <div class="col-12 col-md-8 mb-3">
+			<div class="row">
+				<div class="col-12 col-md-8">
+					<div class="profile-head" style="vertical-align: middle">
+						<h2>
+							{{ customuser.username }}
+						</h2>
+					</div>
+				</div>
+				<div class="col-12 col-md-4">
+					{% if customuser.id == user.id %}
+						<button class="btn btn-default" onclick="window.location.href = '/users/{{ customuser.id }}/edit/';"><i class="fas fa-pencil-alt"></i>&nbsp;Edit Profile </button>
+					{% else %}
+						{% if is_friend == True %}
+						<form method="post" action="remove_friend">
+							{% csrf_token %}
+							<input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
+							<button class="btn btn-danger" type="Submit"><i class="fas fa-user-minus"></i>&nbsp;Remove Friend</button>
+						</form>
+						{% else %}
+						<form method="post" action="add_friend">
+							{% csrf_token %}
+							<input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
+							<button class="btn btn-success" type="Submit"><i class="fas fa-user-plus"></i>&nbsp;Add Friend</button>
+						</form>
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+			
+
             <br>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
@@ -186,29 +211,6 @@
                 </div>
             </div>
         </div>
-        {% if customuser.id == user.id %}
-        <div class="col-2">
-		<button class="btn btn-default" onclick="window.location.href = '/users/{{ customuser.id }}/edit/';"><i class="fas fa-pencil-alt"></i>&nbsp;Edit Profile </button>
-        </div>
-        {% else %}
-        {% if is_friend == True %}
-        <div class="col-2">
-            <form method="post" action="remove_friend">
-                {% csrf_token %}
-                <input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
-		<button class="btn btn-danger" type="Submit"><i class="fas fa-user-minus"></i>&nbsp;Remove Friend</button>
-            </form>
-        </div>
-        {% else %}
-        <div class="col-2">
-            <form method="post" action="add_friend">
-                {% csrf_token %}
-                <input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
-		<button class="btn btn-success" type="Submit"><i class="fas fa-user-plus"></i>&nbsp;Add Friend</button>
-            </form>
-        </div>
-        {% endif %}
-        {% endif %}
     </div>
     <br>
 </div>
