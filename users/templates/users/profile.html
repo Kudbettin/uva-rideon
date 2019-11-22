@@ -169,6 +169,7 @@
 							<div class="col-6">
 								<p>{{friend.about}}</p>
 							</div>
+							{% if customuser.id == user.id %}
 							<div class="col-2">
 								<form method="post" action="remove_friend">
 									{% csrf_token %}
@@ -176,6 +177,7 @@
 									<button class="btn btn-danger" type="Submit">Remove Friend</button>
 								</form>
 							</div>
+							{% endif %}
 						</div>
 					</div>
 				</div>
