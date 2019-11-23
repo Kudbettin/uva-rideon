@@ -32,6 +32,19 @@ class DriveCreationForm(forms.ModelForm):
             raise forms.ValidationError("Interdimentional Time Laws forbid creating meetups on local past")
         return date
 
+    
+    def clean(self):
+        if self.data['start_coordinates_x'] == "":
+            # raise forms.ValidationError("Start address bad format")
+            self.add_error(None, forms.ValidationError("Start address bad format, make sure to pick a valid address from dropdown!"))
+
+        if self.data['end_coordinates_x'] == "":
+            # raise forms.ValidationError("End address bad format")
+            self.add_error(None, forms.ValidationError("End address bad format, make sure to pick a valid address from dropdown!"))
+        
+        return self.cleaned_data
+
+
 class DriveChangeForm(forms.ModelForm):
     
     class Meta:
@@ -45,3 +58,15 @@ class DriveChangeForm(forms.ModelForm):
         if date < datetime.date.today():
             raise forms.ValidationError("Interdimentional Time Laws forbid creating meetups on local past")
         return date
+
+
+    # def clean(self):
+    #     if self.data['start_coordinates_x'] == "":
+    #         # raise forms.ValidationError("Start address bad format")
+    #         self.add_error(None, forms.ValidationError("Start address bad format, make sure to pick a valid address from dropdown!"))
+
+    #     if self.data['end_coordinates_x'] == "":
+    #         # raise forms.ValidationError("End address bad format")
+    #         self.add_error(None, forms.ValidationError("End address bad format, make sure to pick a valid address from dropdown!"))
+        
+    #     return self.cleaned_data

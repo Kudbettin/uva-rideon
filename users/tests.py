@@ -36,17 +36,17 @@ class UserEditsTester(TestCase):
         self.user = CustomUser.objects.create_user(username='hacker@virginia.edu', email='hacker@virginia.edu', password='12345')
 
     def testFormEditAllFieldsValid(self):
-        form = CustomUserChangeForm(data={'username':'John_Doe' , 'gender':'Apache', 'phone':'+17037561234', 'home_town':'Cville', 'about':'Some About'})
+        form = CustomUserChangeForm(data={'username':'John_Doe' , 'gender':'Male', 'phone':'+17037561234', 'about':'Some About'})
         self.assertTrue(form.is_valid())
 
     def testFormEditInvalidPhone(self):
-        form = CustomUserChangeForm(data={'username':'John_Doe' , 'gender':'Apache', 'phone':'+1703756123w', 'home_town':'Cville', 'about':'Some About'})
+        form = CustomUserChangeForm(data={'username':'John_Doe' , 'gender':'Male', 'phone':'+1703756123w', 'about':'Some About'})
         self.assertFalse(form.is_valid())
 
     def testProfileEditAllFieldsValid(self):
-        local_fields = ['username', 'gender', 'phone', 'about', 'home_town']
-        correct_data = {'username':'John_Doe' , 'gender':'Apache', 'phone':'+17037561234', 'home_town':'Cville', 'about':'Some About'}
-        self.form = CustomUserChangeForm(data={'username':'John_Doe' , 'gender':'Apache', 'phone':'+17037561234', 'home_town':'Cville', 'about':'Some About'}, instance=self.user)
+        local_fields = ['username', 'gender', 'phone', 'about']
+        correct_data = {'username':'striker417' , 'gender':'Male', 'phone':'+17037561234', 'about':'I am a god at soccer'}
+        self.form = CustomUserChangeForm(data={'username':'striker417' , 'gender':'Male', 'phone':'+17037561234', 'about':'I am a god at soccer'}, instance=self.user)
         if self.form.is_valid():
             self.form.save()
 

@@ -3,7 +3,7 @@
 
 <h4>Passengers:</h4>
 
-<table id="current_passengers">
+<table id="current_passengers" class="mb-3">
 	<tr>
 		<th>Name</th>
 		<th>Rider Rating</th>
@@ -15,7 +15,7 @@
 			<a href="{% url 'users:profile' passenger.id %}" id="passenger_entry">{{ passenger.username }}</a>
 		</td>
 		<td>
-			3
+			<p>{{ passenger.rider_rating }}&nbsp;<i class="fas fa-star"></i></p>
 		</td>
 		<td>
 		    {% if passenger.id != drive.driver.id and drive.status == "Listed" %}
@@ -29,8 +29,6 @@
 	</tr>
 	{% endfor %}
 </table>
-
-<br>
 
 {% if drive.status == "Listed" %}
 <h4>Rider Requests:</h4>
@@ -47,23 +45,29 @@
 			<a href="{% url 'users:profile' application.user.id %}" id="passenger_request">{{ application.user.username }}</a>
 		</td>
 		<td>
-			3
+			<p>{{ application.user.rider_rating }}&nbsp;<i class="fas fa-star"></i></p>
 		</td>
 		<td>
-		    {% if application.user.id != drive.driver.id %}
-				<form method="post" action="request_reject" id="reject_request_form">
-					{% csrf_token %}
-					<input type="hidden" id="passengerId" name="passengerId" value="{{application.user.id}}">
-					<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="reject_request_btn">Reject</button>
-				</form>
-				<form method="post" action="request_approve" id="accept_request_form">
-					{% csrf_token %}
-					<input type="hidden" id="passengerId" name="passengerId" value="{{application.user.id}}">
-					<button type="submit" class="btn btn-outline-success btn-sm float-left" id="accept_request_btn">Approve</button>
-				</form>
+		{% if application.user.id != drive.driver.id %}
+			<div class="row">
+				<div class="col-sm">
+					<form method="post" action="request_approve" id="accept_request_form">
+						{% csrf_token %}
+						<input type="hidden" id="passengerId" name="passengerId" value="{{application.user.id}}">
+						<button type="submit" class="btn btn-outline-success btn-sm" id="accept_request_btn">Approve</button>
+					</form>
+				</div>
+				<div class="col-sm">
+					<form method="post" action="request_reject" id="reject_request_form">
+						{% csrf_token %}
+						<input type="hidden" id="passengerId" name="passengerId" value="{{application.user.id}}">
+						<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="reject_request_btn">Reject</button>
+					</form>
+				</div>
 				{% if application.waypoint %}
 					{% include "drives/waypoints/viewWaypoint.html" %}   
 				{% endif %}
+			</div>
 			{% endif %}
 		</td>
 	</tr>

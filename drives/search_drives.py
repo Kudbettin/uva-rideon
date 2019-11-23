@@ -2,6 +2,7 @@ from drives.models import Drive
 from users.models import CustomUser
 from django.db.models import Q
 from users.views import get_rider_rating, get_driver_rating
+import datetime
 
 # TODO: make it work when cost range in drive is larger than any individual cost range
 def filter_cost(search):
@@ -90,9 +91,26 @@ def filter_search(search):
 		return Q(status="Listed")
 		
 	search_text = search["search_text"]
-	return Q(description__icontains=search_text) | Q(title__icontains=search_text) | Q(payment_method__icontains=search_text) | Q(driver__username__icontains=search_text)
+	return Q(description__icontains=search_text) | Q(title__icontains=search_text) | Q(payment_method__icontains=search_text) | Q(driver__username__icontains=search_text) | Q(end_location__location__icontains=search_text) | Q(start_location__location__icontains=search_text)
+	
+def filter_date(search):
+	query = Q(status="Listed")
+		
+	if search["date_start"] is not "":
+		# format mm/dd/yyyy
+		start_date = [ int(elem) for elem in search["date_start"].split("/")]
+		query = query & Q(date__gte=datetime.date(start_date[2], start_date[0], start_date[1]))
+		
+	if search["date_end"] is not "":
+		# format mm/dd/yyyy
+		end_date = [ int(elem) for elem in search["date_end"].split("/")]
+		query = query & Q(date__lte=datetime.date(end_date[2], end_date[0], end_date[1]))
+		
+	return query
 
 def search_drives(request, json_data):
+	print(json_data)
+
 	# Base query is for all objects
 	query = Q(status="Listed")
 	
@@ -102,5 +120,6 @@ def search_drives(request, json_data):
 	query = query & filter_friends(request, json_data)
 	query = query & filter_rating(json_data)
 	query = query & filter_search(json_data)
+	query = query & filter_date(json_data)
 	
 	return Drive.objects.filter(query)

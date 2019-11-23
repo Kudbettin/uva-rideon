@@ -198,7 +198,14 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		self.browser.delete_all_cookies()
 		selenium_tester.login_as(self.browser, self.driver2)
 		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
-
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
+		
 		# Ensure user1's request is visible
 		request_entry = self.browser.find_element_by_id('passenger_request')
 		self.assertEqual(request_entry.text, self.driver.username)
@@ -226,9 +233,17 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		self.browser.delete_all_cookies()
 		selenium_tester.login_as(self.browser, self.driver2)
 		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
 
 		# Reject the request
 		reject_button = self.browser.find_element_by_id('reject_request_btn')
+		
 		reject_button.click()
 		
 		# Ensure user1 is no longer on the waitlist
@@ -243,6 +258,13 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		self.browser.delete_all_cookies()
 		selenium_tester.login_as(self.browser, self.driver2)
 		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
 
 		# Reject the request
 		accept_button = self.browser.find_element_by_id('accept_request_btn')
@@ -263,6 +285,13 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		self.browser.delete_all_cookies()
 		selenium_tester.login_as(self.browser, self.driver2)
 		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
 		
 		# Ensure user1 shows in the passenger table
 		passenger_entry = self.browser.find_element_by_id("passenger_entry")
@@ -291,6 +320,13 @@ class PassengerSystemGUITester(StaticLiveServerTestCase):
 		self.browser.delete_all_cookies()
 		selenium_tester.login_as(self.browser, self.driver2)
 		self.browser.get(self.live_server_url + '/drives/' + str(self.drive2.id))
+		
+		# Open the management table
+		manage_tab = self.browser.find_element_by_id('manage-tab')
+		manage_tab.click()
+		# Sleep to make sure the tab loads properly
+		import time
+		time.sleep(5)
 
 		# Remove the passenger
 		remove_button = self.browser.find_element_by_id('passenger_remove_btn')

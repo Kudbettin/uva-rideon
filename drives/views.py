@@ -17,6 +17,20 @@ from django.db import models
 import json
 
 '''
+Called when a Driver removes a waypoint
+'''
+def waypoint_remove(request, driveId):
+    if request.method == "POST":
+        # Make sure the logged in user is the drive owner
+        owner_id = Drive.objects.get(id=driveId).driver.id        
+        logged_in_user = request.user.id
+        if int(owner_id) != int(logged_in_user):
+            return HttpResponseRedirect(reverse('insuficient_permission'))
+    
+        Drive.objects.get(id=driveId).waypointList.remove(Location.objects.get(id=request.POST['waypointId']))
+        return HttpResponseRedirect(reverse('drives:post_details', args=(driveId,)))
+
+'''
 Called when a drive is completed
 '''
 def drive_complete(request, driveId):
@@ -190,6 +204,7 @@ class DriveView(generic.DetailView):
         context['passengerIds'] = []
         for passenger in kwargs['object'].passengers.all():
             context['passengerIds'].append(passenger.id)
+			
             
         context['requestList'] = kwargs['object'].requestList.all()
         
