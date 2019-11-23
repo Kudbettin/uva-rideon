@@ -33,6 +33,15 @@ class DriveCreationForm(forms.ModelForm):
             self.add_error(None, forms.ValidationError("End address bad format, make sure to pick a valid address from dropdown!"))
         
         return self.cleaned_data
+    
+    def clean_min_cost(self):
+        min_cost = float(self.data['min_cost'])
+        max_cost = float(self.data['max_cost'])
+        
+        if min_cost > max_cost:
+            raise forms.ValidationError("Min cost can't be greater than Max cost")
+
+        return min_cost
 
 
 class DriveChangeForm(forms.ModelForm):
@@ -53,3 +62,12 @@ class DriveChangeForm(forms.ModelForm):
     #         self.add_error(None, forms.ValidationError("End address bad format, make sure to pick a valid address from dropdown!"))
         
     #     return self.cleaned_data
+
+    def clean_min_cost(self):
+        min_cost = float(self.data['min_cost'])
+        max_cost = float(self.data['max_cost'])
+        
+        if min_cost > max_cost:
+            raise forms.ValidationError("Min cost can't be greater than Max cost")
+
+        return min_cost
