@@ -29,7 +29,7 @@ class DriveCreationForm(forms.ModelForm):
     def clean_date(self):
         date = self.cleaned_data['date']
         if date < datetime.date.today():
-            raise forms.ValidationError("Interdimentional Time Laws forbid creating meetups on local past")
+            raise forms.ValidationError("You cannot create a drive in the past")
         return date
 
     
@@ -56,7 +56,7 @@ class DriveChangeForm(forms.ModelForm):
     def clean_date(self):
         date = self.cleaned_data['date']
         if date < datetime.date.today():
-            raise forms.ValidationError("Interdimentional Time Laws forbid creating meetups on local past")
+            raise forms.ValidationError("You cannot change a drive to start in the past")
         return date
 
 
