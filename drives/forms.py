@@ -40,6 +40,8 @@ class DriveCreationForm(forms.ModelForm):
         
         if min_cost > max_cost:
             raise forms.ValidationError("Min cost can't be greater than Max cost")
+        if min_cost < 0:
+            raise forms.ValidationError("Cannot set minimum cost to be less than 0")
 
         return min_cost
 
@@ -69,5 +71,7 @@ class DriveChangeForm(forms.ModelForm):
         
         if min_cost > max_cost:
             raise forms.ValidationError("Min cost can't be greater than Max cost")
+        if min_cost < 0:
+            raise forms.ValidationError("Cannot set minimum cost to be less than 0")
 
         return min_cost
