@@ -150,13 +150,13 @@
 		<div class="form-row">
 			<div class="form-group col-md-6 mb-0">
 				<div id="locationField">
-					<label for="autocomplete_start">Start Location</label>
+					<label for="autocomplete_start">Start Location*</label>
 					<input id="autocomplete_start" placeholder="Enter starting address" onFocus="geolocate_start()" type="text" class="form-control mb-2" />
 				</div>
 			</div>
 			<div class="form-group col-md-6 mb-0">
 				<div id="locationField" class="mb-2">
-					<label for="autocomplete_end">End Location</label>
+					<label for="autocomplete_end">End Location*</label>
 					<input id="autocomplete_end" placeholder="Enter ending address" onFocus="geolocate_end()" type="text" class="form-control" />
 				</div>
 			</div>
@@ -197,7 +197,9 @@
 		
         <input type="hidden" id="driver" name="driver" value="{{user.id}}">
 		
-		<button type="submit" class="btn btn-primary">Save</button>
+		<button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>&nbsp;Save</button>
+		<a href="\drives\" class="btn btn-danger"><i class="fas fa-times"></i>&nbsp;Cancel</a>
+
 	</form>
 
 </div>

@@ -91,7 +91,7 @@ def filter_search(search):
 		return Q(status="Listed")
 		
 	search_text = search["search_text"]
-	return Q(description__icontains=search_text) | Q(title__icontains=search_text) | Q(payment_method__icontains=search_text) | Q(driver__username__icontains=search_text)
+	return Q(description__icontains=search_text) | Q(title__icontains=search_text) | Q(payment_method__icontains=search_text) | Q(driver__username__icontains=search_text) | Q(end_location__location__icontains=search_text) | Q(start_location__location__icontains=search_text)
 	
 def filter_date(search):
 	query = Q(status="Listed")

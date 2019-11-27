@@ -22,7 +22,7 @@
 
     <script>
         $(function () {
-            $("#id_date").datepicker({ format: 'yy-mm-dd' });
+            $("#id_date").datepicker({ dateFormat: 'yy-mm-dd' });
         });
     </script>
     <script type="text/javascript">
@@ -235,7 +235,10 @@
                 
                 <input type="hidden" id="driver" name="driver" value="{{user.id}}">
 
-                <input class="btn btn-default" type="submit" value="Update">
+                
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>&nbsp;Save</button>
+                <a href="\drives\{{drive.id}}" class="btn btn-danger"><i class="fas fa-times"></i>&nbsp;Cancel</a>
+
             </form>
         </div>
         <!--/col-9-->

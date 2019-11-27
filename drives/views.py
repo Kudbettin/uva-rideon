@@ -204,6 +204,7 @@ class DriveView(generic.DetailView):
         context['passengerIds'] = []
         for passenger in kwargs['object'].passengers.all():
             context['passengerIds'].append(passenger.id)
+			
             
         context['requestList'] = kwargs['object'].requestList.all()
         
@@ -236,36 +237,38 @@ def get_fields(request, pk):
                 hours, minutes = request.POST['time'].split(":")
                 request.POST['time'] = str(int(hours) + 12) + ":" + minutes
 
-    form = DriveChangeForm(request.POST or None, instance=instance)
+        form = DriveChangeForm(request.POST or None, instance=instance)
 
-    if form.is_valid():
-        if request.POST["start_location"] != "":
-            start_location = Location.objects.create(
-                coordinates_x=request.POST["start_coordinates_x"],
-                coordinates_y=request.POST["start_coordinates_y"], 
-                location=request.POST["start_location"])
-            start_location.save()
+        if form.is_valid():
+            if request.POST["start_location"] != "":
+                start_location = Location.objects.create(
+                    coordinates_x=request.POST["start_coordinates_x"],
+                    coordinates_y=request.POST["start_coordinates_y"], 
+                    location=request.POST["start_location"])
+                start_location.save()
 
-        if request.POST["end_location"] != "":
-            end_location = Location.objects.create(
-                coordinates_x=request.POST["end_coordinates_x"],
-                coordinates_y=request.POST["end_coordinates_y"],
-                location=request.POST["end_location"])
-            end_location.save()
+            if request.POST["end_location"] != "":
+                end_location = Location.objects.create(
+                    coordinates_x=request.POST["end_coordinates_x"],
+                    coordinates_y=request.POST["end_coordinates_y"],
+                    location=request.POST["end_location"])
+                end_location.save()
 
-        
-        post = form.save(commit=False)
-        if request.POST["start_location"] != "":
-            post.start_location = start_location
-        if request.POST["end_location"] != "":
-            post.end_location = end_location
-        
-        post.save()
-        return HttpResponseRedirect(reverse('drives:post_details', args=(post.pk,)))
+            
+            post = form.save(commit=False)
+            if request.POST["start_location"] != "":
+                post.start_location = start_location
+            if request.POST["end_location"] != "":
+                post.end_location = end_location
+            
+            post.save()
+            return HttpResponseRedirect(reverse('drives:post_details', args=(post.pk,)))
+        else:
+            print("nope")
+            print(form.errors)
+            return redirect('/drives/' + pk + '/edit')
     else:
-        print("nope")
-        print(form.errors)
-        # return redirect('/drives/' + pk + '/edit')
+        form = DriveChangeForm()
 
     return render(request, '/drives/' + pk + '/edit', {'form': form})
 

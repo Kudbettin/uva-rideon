@@ -8,15 +8,20 @@
 		
 {% if drive_list %}
 	{% for drive in drive_list %}
-		<div class="container mt-2 border rounded" id="drive-listing">
+		<div class="card mt-2">
+		  <div class="card-body">
+		<div id="drive-listing">
 			<a href="{% url 'drives:post_details' drive.id %}" id="drive-title">{{ drive.title }}</a>
 			<a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a>
-			<br>
+			<p>{{ drive.start_location.location }} &nbsp;<i class="fas fa-arrow-right"></i> {{ drive.end_location.location }} <br>
+			{{ drive.date }} at  {{ drive.time }}</p>
 			<p style="word-break: break-all;">{{ drive.description }}</p>
+		</div>
+		</div>
 		</div>
 	{% endfor %}
 {% else %}
-	<p>There are no drives currently listed.</p>
+	<h3>There are no drives that match your search.</h3>
 {% endif %} 
 
 
