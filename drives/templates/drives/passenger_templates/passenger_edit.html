@@ -64,9 +64,11 @@
 						<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="reject_request_btn">Reject</button>
 					</form>
 				</div>
+				<div>
 				{% if application.waypoint %}
 					{% include "drives/waypoints/viewWaypoint.html" %}   
 				{% endif %}
+				</div>
 			</div>
 			{% endif %}
 		</td>
