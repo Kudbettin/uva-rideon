@@ -17,6 +17,5 @@ urlpatterns = [
     path('search', search_ridelist, name='search'),
     path('<pk>/', DriveView.as_view(), name='post_details'),
     path('new', post_new, name='post_new'),
-    path('<pk>/edit/', EditDriveView.as_view()),
-    path('<pk>/edit/redirect/', get_fields),
+    path('<pk>/edit/', edit_drive, name='post_edit'),
 ]
