@@ -8,6 +8,8 @@ A ride sharing app developed as part of the UVA CS3240 curriculum
 **Develop**
 ![Develop Build Status](https://travis-ci.com/uva-cs3240-f19/project-102-rideon.svg?token=6qzs2Kors1PzmyQsy5PA&branch=develop)
 
+App hosted at `https://uva-ride-on.herokuapp.com/`
+
 ## Features
 
 1. Creating rides
@@ -19,7 +21,7 @@ A ride sharing app developed as part of the UVA CS3240 curriculum
 4. Searching
 	* There are powerful searching tools that can be used to find useful drives. They allow for searching by date, rating, cost, description, etc
 5. Reviews
-	* When a drive is completed, everyone in the drive has the opportunity to review eachother. This is found in the "My Rides" option of the profile menu dropdown. These reviews are then used to create the "Driver Rating" and "Rider Rating" on the Profile Page
+	* When a drive is completed through the 'Drive Management' tab, everyone in the drive has the opportunity to review each other. This is found in the "My Rides" option of the profile menu dropdown. These reviews are then used to create the "Driver Rating" and "Rider Rating" on the Profile Page
 6. Custom Profiles
 	* Users can customize their profiles with usernames, descriptions, profile images, etc
 7. Friends
