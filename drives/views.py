@@ -211,16 +211,7 @@ class DriveView(generic.DetailView):
         return context
 
 
-class EditDriveView(generic.UpdateView):
-    
-    model = Drive
-    fields = ["title", "driver", "description", "date", "time", "min_cost",
-              "max_cost", "payment_method", "max_passengers", "car_description",
-              "luggage_description"]
-
-    template_name = "drives/edit_posting.html"
-
-def get_fields(request, pk):
+def edit_drive(request, pk):
     instance = Drive.objects.get(id=pk)
 
     if int(request.user.id) != int(instance.driver.id):
@@ -265,12 +256,14 @@ def get_fields(request, pk):
             return HttpResponseRedirect(reverse('drives:post_details', args=(post.pk,)))
         else:
             print("nope")
-            print(form.errors)
-            return redirect('/drives/' + pk + '/edit')
+            # print(form.errors)
+            # return redirect('/drives/' + pk + '/edit')
     else:
-        form = DriveChangeForm()
+        form = DriveChangeForm(instance=instance)
 
-    return render(request, '/drives/' + pk + '/edit', {'form': form})
+    # return render(request, '/drives/' + pk + '/edit', {'form': form})
+    # return HttpResponseRedirect(reverse('drives:post_edit', args=(pk,)))
+    return render(request, 'drives/edit_posting.html', {'form': form, 'drive': instance})
 
 ''' 
 Returns an HTML representation of a search over the ridelist.

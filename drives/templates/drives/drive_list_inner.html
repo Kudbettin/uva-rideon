@@ -15,7 +15,7 @@
 			<a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a>
 			<p>{{ drive.start_location.location }} &nbsp;<i class="fas fa-arrow-right"></i> {{ drive.end_location.location }} <br>
 			{{ drive.date }} at  {{ drive.time }}</p>
-			<p style="word-break: break-all;">{{ drive.description }}</p>
+			<p style="word-break: break-all;">{{ drive.description | truncatechars:200 }}</p>
 		</div>
 		</div>
 		</div>

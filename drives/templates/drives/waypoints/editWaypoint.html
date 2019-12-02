@@ -35,7 +35,6 @@
       </div>
 	  <!-- end modal body -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 		<!-- The form submited when the waypoint is edited -->
 		<form method="post" action="submit_waypoint" id="submit_waypoint_form">
 			{% csrf_token %}
@@ -44,6 +43,7 @@
 			<input type="hidden" id="autocomplete_location" name="location" value="1234 Waypoint Dr.">
 			<input type="hidden" id="application" name="application" value="{{request.id}}">
 			<button type="submit" class="btn btn-primary" id="submit_waypoint_btn">Submit</button>
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 		</form>
       </div>
     </div>

@@ -50,23 +50,25 @@
 		<td>
 		{% if application.user.id != drive.driver.id %}
 			<div class="row">
-				<div class="col-sm">
-					<form method="post" action="request_approve" id="accept_request_form">
+				<div>
+					<form style="display: inline-block;" method="post" action="request_approve" id="accept_request_form">
 						{% csrf_token %}
 						<input type="hidden" id="passengerId" name="passengerId" value="{{application.user.id}}">
 						<button type="submit" class="btn btn-outline-success btn-sm" id="accept_request_btn">Approve</button>
 					</form>
-				</div>
-				<div class="col-sm">
-					<form method="post" action="request_reject" id="reject_request_form">
+				<!-- </div>
+				<div class="col-sm"> -->
+					<form style="display: inline-block;" method="post" action="request_reject" id="reject_request_form">
 						{% csrf_token %}
 						<input type="hidden" id="passengerId" name="passengerId" value="{{application.user.id}}">
-						<button type="submit" class="btn btn-outline-danger btn-sm float-right" id="reject_request_btn">Reject</button>
+						<button type="submit" class="btn btn-outline-danger btn-sm" id="reject_request_btn">Reject</button>
 					</form>
 				</div>
+				<div class="col-sm">
 				{% if application.waypoint %}
 					{% include "drives/waypoints/viewWaypoint.html" %}   
 				{% endif %}
+				</div>
 			</div>
 			{% endif %}
 		</td>
