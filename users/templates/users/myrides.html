@@ -25,20 +25,20 @@
 					<input class="reviewee_id" type="hidden" type="number" name="of" />
 					<div class="form-group">
 						<label for="title" class="col-form-label">Title:</label>
-						<input type="text" class="form-control" name="title">
+						<input type="text" class="form-control" name="title" id="reviewTitle" >
 					</div>
 					<div class="form-group">
 						<label for="rating" class="col-form-label">Rating:</label>
-						<input type="number" class="form-control" name="rating" min="1" max="5">
+						<input type="number" class="form-control" name="rating" min="1" max="5" id="reviewRating">
 						</div>
 					<div class="form-group">
 						<label for="review_description" class="col-form-label">Description:</label>
-						<textarea class="form-control" name="description"></textarea>
+						<textarea class="form-control" name="description" id="reviewDescription"></textarea>
 					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-					<button type="submit" class="btn btn-primary">Submit Review</button>
+					<button type="submit" class="btn btn-primary" id="reviewSubmitBtn">Submit Review</button>
 				</div>
 			</form>
 		</div>
@@ -101,7 +101,7 @@
 							{% if user.id != person.id %}
 						<!-- Riders reviewing driver -->
 							<span>
-								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}" data-username="{{ person.username }}">Review {{ ride.driver.username }}</button>
+								<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ ride.driver.id }}" data-username="{{ person.username }}" id="driverReviewBtn" >Review {{ ride.driver.username }}</button>
 							</span>
 						{% endif %}
 						{% endfor %}
@@ -115,7 +115,7 @@
 						{% for person in entry.query %}
 							{% if user.id != person.id %}
 								<span>
-									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}" data-username="{{ person.username }}">Review {{ person.username }}</button>
+									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#reviewModal" data-title="{{ ride.title }}" data-id="{{ ride.id }}" data-userid="{{ person.id }}" data-username="{{ person.username }}" id="passengerReviewBtn">Review {{ person.username }}</button>
 								</span>
 							{% endif %}
 						{% endfor %}
