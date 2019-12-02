@@ -1,0 +1,43 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'drives/waypoint_modals.css' %}">
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addWaypointModal">
+  Add Waypoint
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="addWaypointModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addWaypointModalTitle">Add Waypoint</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+		<!-- Modal body -->
+		<div class="form-group mb-0">
+			<div id="locationField">
+				<label for="autocomplete_waypoint" class="float-left">Waypoint Address</label>
+				<input id="autocomplete_waypoint_new" placeholder="1234 Waypoint Drive" onFocus="geolocate_waypoint_new()" type="text" class="form-control mb-2" />
+			</div>
+		</div>
+      </div>
+	  <!-- end modal body -->
+      <div class="modal-footer">
+		<form method="post" action="submit_waypoint" id="submit_waypoint_form">
+			{% csrf_token %}
+			<input type="hidden" id="autocomplete_location_x" name="waypoint_x" value="-70">
+			<input type="hidden" id="autocomplete_location_y" name="waypoint_y" value="-70">
+			<input type="hidden" id="autocomplete_location" name="location" value="1234 Waypoint Dr.">
+			<input type="hidden" id="application" name="application" value="{{request.id}}">
+      <button type="submit" class="btn btn-primary" id="submit_waypoint_btn">Submit</button>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>

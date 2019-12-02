@@ -2,45 +2,75 @@
 {% extends 'RideOn/base.html' %}
 {% block title %}Profile Page{% endblock %}
 {% block content %}
+{% load bootstrap4%}
+{% load static %}
+<link rel="stylesheet" href="{% static 'users/profile.css' %}">
 <div class="container">
     <div class="row">
-        <div class="col-4">
+        <div class="col-12 col-md-4 text-center mb-3">
             <div class="profile-img">
-                <img src="{{ customuser.profile_pic.url }}" alt="" style="width: 80%; height: auto;" />
+                <img src="{{ customuser.profile_pic.url }}" alt="" style="width: 50%; height: auto;" />
             </div>
             <br>
-            <div class="card" style="width: 18rem;">
+            <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">About Me</h5>
                     <p class="card-text">{{customuser.about}}</p>
                 </div>
             </div>
         </div>
-        <div class="col-6">
-            <div class="profile-head" style="vertical-align: middle">
-                <h4>
-                    {{ customuser.username }}
-                </h4>
-            </div>
+        <div class="col-12 col-md-8 mb-3">
+			<div class="row">
+				<div class="col-12 col-md-8">
+					<div class="profile-head" style="vertical-align: middle">
+						<h2>
+							{{ customuser.username }}
+						</h2>
+					</div>
+				</div>
+				<div class="col-12 col-md-4">
+					{% if customuser.id == user.id %}
+						<button class="btn btn-default" onclick="window.location.href = '/users/{{ customuser.id }}/edit/';"><i class="fas fa-pencil-alt"></i>&nbsp;Edit Profile </button>
+					{% else %}
+						{% if is_friend == True %}
+						<form method="post" action="remove_friend">
+							{% csrf_token %}
+							<input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
+							<button class="btn btn-danger" type="Submit"><i class="fas fa-user-minus"></i>&nbsp;Remove Friend</button>
+						</form>
+						{% else %}
+						<form method="post" action="add_friend">
+							{% csrf_token %}
+							<input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
+							<button class="btn btn-success" type="Submit"><i class="fas fa-user-plus"></i>&nbsp;Add Friend</button>
+						</form>
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+			
+
+            <br>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Personal Information</a>
+			<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="fas fa-info-circle"></i>&nbsp;Personal Information</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>
+			<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false"><i class="fas fa-sticky-note"></i>&nbsp;Reviews</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false">Friends</a>
+			<a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false"><i class="fas fa-user-friends"></i>&nbsp;Friends</a>
                 </li>
             </ul>
+            <br>
             <div class="tab-content profile-tab" id="myTabContent">
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <div class="row">
                         <div class="col-6">
-                            <label>Name</label>
+                            <label>Email</label>
                         </div>
                         <div class="col-6">
-                            <p>{{ customuser.name }}</p>
+                            <p>{{ customuser.email }}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -49,14 +79,6 @@
                         </div>
                         <div class="col-6">
                             <p>{{ customuser.gender }}</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <label>Email</label>
-                        </div>
-                        <div class="col-6">
-                            <p>{{ customuser.username }}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -72,7 +94,7 @@
                             <label>Driver Rating</label>
                         </div>
                         <div class="col-6">
-                            <p>{{ driver_avg_rating }}</p>
+				<p id="driverRating">{{ driver_avg_rating }}&nbsp;<i class="fas fa-star"></i></p>
                         </div>
                     </div>
                     <div class="row">
@@ -80,43 +102,115 @@
                             <label>Rider Rating</label>
                         </div>
                         <div class="col-6">
-                            <p>{{ rider_avg_rating }}</p>
+				<p id="riderRating">{{ rider_avg_rating }}&nbsp;<i class="fas fa-star"></i></p>
                         </div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>Experience</label>
-                        </div>
-                        <div class="col-6">
-                            <p>Expert</p>
-                        </div>
-                    </div>
+			<div class="row">
+				<h3>Reviews of {{ customuser.username }} as a Driver</h3>
+			</div>
+			{% for review in driver_reviews %}
+			<div class="row">
+				<div class="card mt-2" style="width: 100%;">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-3">
+								<h5 class="card-title"><a href="{% url 'users:profile' review.by.id %}">{{ review.by.username }}</a></h5>
+							</div>
+							<div class="col-9">
+								<h5 class="card-title"><b>{{ review.title }}</b></h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-3">
+								<img src="{{ review.by.profile_pic.url }}" alt="" style="width: 50px; height: auto;" /></li>
+							</div>
+							<div class="col-9">
+								<small>Rating:&nbsp; 
+									{% with ''|center:review.rating as range %}
+									{% for _ in range %}
+										<i class="fas fa-star" aria-hidden="true"></i>
+									{% endfor %}
+									{% endwith %}
+								</small>
+								<p>{{ review.description }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+			<hr>
+			<div class="row">
+				<h3>Reviews of {{ customuser.username }} as a Rider</h3>
+			</div>
+			{% for review in rider_reviews %}
+			<div class="row">
+				<div class="card mt-2" style="width: 100%;">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-3">
+								<h5 class="card-title"><a href="{% url 'users:profile' review.by.id %}">{{ review.by.username }}</a></h5>
+							</div>
+							<div class="col-9">
+								<h5 class="card-title"><b>{{ review.title }}</b></h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-3">
+								<img src="{{ review.by.profile_pic.url }}" alt="" style="width: 50px; height: auto;" /></li>
+							</div>
+							<div class="col-9">
+								<small>Rating:&nbsp; 
+									{% with ''|center:review.rating as range %}
+									{% for _ in range %}
+										<i class="fas fa-star" aria-hidden="true"></i>
+									{% endfor %}
+									{% endwith %}
+								</small>
+								<p>{{ review.description }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
                 </div>
                 <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
-                  <div class="row">
-                    <div class="col-6">
-                      <label>Friends</label>
-                      <div class="col-6">
-                        {% for friend in friends %}
-                        <p>{{ user.username }}</p>
-                        {% endfor %}
-                        <p>Need to get friends from UserFriends</p>
-                        <p>John Smith</p>
-                        <p>Jon Snow</p>
-                      </div>
-                    </div>
-                  </div>
+			{% for friend in friends %}
+			<div class="row">
+				<div class="card mt-2" style="width: 100%;">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm">
+								<h5 class="card-title"><a href="{% url 'users:profile' friend.id %}">{{ friend.username }}</a></h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-2">
+								<img src="{{ friend.profile_pic.url }}" alt="" style="width: 50px; height: auto;" /></li>
+							</div>
+							<div class="col-6">
+								<p>{{friend.about}}</p>
+							</div>
+							{% if customuser.id == user.id %}
+							<div class="col-2">
+								<form method="post" action="remove_friend">
+									{% csrf_token %}
+									<input type="hidden" name="tofriend_id" value="{{ customuser.id }}">
+									<button class="btn btn-danger" type="Submit">Remove Friend</button>
+								</form>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
                 </div>
             </div>
         </div>
-        {% if customuser.id == user.id %}
-        <div class="col-2">
-            <button onclick="window.location.href = '/users/{{ customuser.id }}/edit/';">Edit Profile </button>
-        </div>
-        {% else %}
-        {% endif %}
     </div>
     <br>
 </div>

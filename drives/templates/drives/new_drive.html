@@ -17,12 +17,15 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     
-    <link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
-    <script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script>
+	<!-- <link rel="stylesheet" href="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.css">
+	<script src="//jonthornton.github.io/jquery-timepicker/jquery.timepicker.js"></script> -->
+	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.11.15/jquery.timepicker.css">
+	<script src="https://cdn.jsdelivr.net/npm/timepicker@1.11.15/jquery.timepicker.min.js"></script>
 
     <script>
         $ (function () {
-            $("#id_date").datepicker({format: 'yy-mm-dd'});
+            $("#id_date").datepicker({dateFormat: 'yy-mm-dd'});
         });
     </script>
     <script type="text/javascript">
@@ -78,9 +81,12 @@
 		function fillInAddress_start() {
 			// Get the place details from the autocomplete object.
 			var place = autocomplete_start.getPlace();
-
+			console.log("place start")
+			console.log(place)
             document.getElementById("id_start_coordinates_x").value = place.geometry.location.lng();
             document.getElementById("id_start_coordinates_y").value = place.geometry.location.lat();
+			
+			document.getElementById("start_location").value = document.getElementById("autocomplete_start").value
 		}
 
 		function fillInAddress_end() {
@@ -89,6 +95,8 @@
 
             document.getElementById("id_end_coordinates_x").value = place.geometry.location.lng();
             document.getElementById("id_end_coordinates_y").value = place.geometry.location.lat();
+			
+			document.getElementById("end_location").value = document.getElementById("autocomplete_end").value
 		}
 
 
@@ -142,16 +150,17 @@
 		<div class="form-row">
 			<div class="form-group col-md-6 mb-0">
 				<div id="locationField">
-					<label for="autocomplete_start">Start Location</label>
+					<label for="autocomplete_start">Start Location*</label>
 					<input id="autocomplete_start" placeholder="Enter starting address" onFocus="geolocate_start()" type="text" class="form-control mb-2" />
 				</div>
 			</div>
 			<div class="form-group col-md-6 mb-0">
 				<div id="locationField" class="mb-2">
-					<label for="autocomplete_end">End Location</label>
+					<label for="autocomplete_end">End Location*</label>
 					<input id="autocomplete_end" placeholder="Enter ending address" onFocus="geolocate_end()" type="text" class="form-control" />
 				</div>
 			</div>
+			{{form.non_field_errors}}
 		</div>
 		
 		<!-- Render form using django-crispy-forms with Bootstrap -->
@@ -183,11 +192,16 @@
         <input type="hidden" id="id_end_coordinates_x" name="end_coordinates_x" value="">
         <input type="hidden" id="id_end_coordinates_y" name="end_coordinates_y" value="">
         
+		<input type="hidden" id="start_location" name="start_location" value="">
+		<input type="hidden" id="end_location" name="end_location" value="">
 		
         <input type="hidden" id="driver" name="driver" value="{{user.id}}">
 		
-		<button type="submit" class="btn btn-primary">Save</button>
+		<button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>&nbsp;Save</button>
+		<a href="/drives/" class="btn btn-danger"><i class="fas fa-times"></i>&nbsp;Cancel</a>
+
 	</form>
+
 </div>
 
 

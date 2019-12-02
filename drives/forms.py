@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 from django.utils import timezone
 
@@ -11,6 +13,7 @@ class DriveCreationForm(forms.ModelForm):
         fields = ( "title", "driver", "description", "date", "time", "min_cost",
                     "max_cost", "payment_method", "max_passengers", "car_description",
                     "luggage_description")
+    
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
 
@@ -21,6 +24,71 @@ class DriveCreationForm(forms.ModelForm):
         self.fields['luggage_description'].widget = forms.Textarea(attrs={'rows': 2, 'placeholder': 'Space for 1 small suitcase per person'})
         self.fields['date'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
         self.fields['time'].widget = forms.TextInput(attrs={'autocomplete': 'off'})
+    
+    
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date < datetime.date.today():
+            raise forms.ValidationError("You cannot create a drive in the past")
+        return date
 
-# class DriveChangeForm():
-#     pass
+    
+    def clean(self):
+        if self.data['start_coordinates_x'] == "":
+            # raise forms.ValidationError("Start address bad format")
+            self.add_error(None, forms.ValidationError("Start address bad format, make sure to pick a valid address from dropdown!"))
+
+        if self.data['end_coordinates_x'] == "":
+            # raise forms.ValidationError("End address bad format")
+            self.add_error(None, forms.ValidationError("End address bad format, make sure to pick a valid address from dropdown!"))
+        
+        return self.cleaned_data
+    
+    def clean_min_cost(self):
+        min_cost = float(self.data['min_cost'])
+        max_cost = float(self.data['max_cost'])
+        
+        if min_cost > max_cost:
+            raise forms.ValidationError("Min cost can't be greater than Max cost")
+        if min_cost < 0:
+            raise forms.ValidationError("Cannot set minimum cost to be less than 0")
+
+        return min_cost
+
+
+class DriveChangeForm(forms.ModelForm):
+    
+    class Meta:
+        model = Drive
+        fields = ( "title", "driver", "description", "date", "time", "min_cost",
+                "max_cost", "payment_method", "max_passengers", "car_description",
+                "luggage_description")
+    
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date < datetime.date.today():
+            raise forms.ValidationError("You cannot change a drive to start in the past")
+        return date
+
+
+    # def clean(self):
+    #     if self.data['start_coordinates_x'] == "":
+    #         # raise forms.ValidationError("Start address bad format")
+    #         self.add_error(None, forms.ValidationError("Start address bad format, make sure to pick a valid address from dropdown!"))
+
+    #     if self.data['end_coordinates_x'] == "":
+    #         # raise forms.ValidationError("End address bad format")
+    #         self.add_error(None, forms.ValidationError("End address bad format, make sure to pick a valid address from dropdown!"))
+        
+    #     return self.cleaned_data
+
+    def clean_min_cost(self):
+        min_cost = float(self.data['min_cost'])
+        max_cost = float(self.data['max_cost'])
+        
+        if min_cost > max_cost:
+            raise forms.ValidationError("Min cost can't be greater than Max cost")
+        if min_cost < 0:
+            raise forms.ValidationError("Cannot set minimum cost to be less than 0")
+
+        return min_cost

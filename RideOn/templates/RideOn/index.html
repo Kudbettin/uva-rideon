@@ -2,22 +2,59 @@
 {% block content %}
 {% load static %}
 
-<section class="jumbotron text-center jumbotron-fluid h-100 bg-white" style="background-image: url({% static 'RideOn/bg.jpg' %}); background-repeat: no-repeat; background-size: cover; background-position: center center;">
-<div class="container">
+<section class="jumbotron text-center jumbotron-fluid h-100 bg-white" style="background-image: url({% static 'RideOn/uva.jpg' %}); background-repeat: no-repeat; background-size: cover; background-position: center center;">
+<div class="container" id="hometext">
 
-	<h1 class="jumbotron-heading">Travel Efficiently</h1>
-	<p class="lead text-muted">RideOn brings together the entire UVA community into a single ride-sharing platform. We make it easier than ever to find other Hoos traveling home for the holidays, or perhaps taking a weekend trip to visit friends at another school. Use RideOn to travel more efficiently, and with more friends.</p>
-	<p>
-	<a href="#" class="btn btn-lg btn-secondary">Get Started</a>
+	<h1 class="jumbotron-heading" style="color:white">Travel Efficiently</h1>
+	<p class="" style="color:white">RideOn brings together the entire UVA community into a single ride-sharing platform. We make it easier than ever to find other Hoos traveling home for the holidays, or perhaps taking a weekend trip to visit friends at another school. Use RideOn to travel more efficiently, and with more friends.</p>
+	<p class="pb-2">
+	{% if user.is_authenticated %}
+	<a href="/drives" class="btn btn-lg btn-secondary">Get Started</a>
+	{% else %}
+	<a href="/users/login" class="btn btn-lg btn-secondary">Get Started</a>
+	{% endif %}
 	</p>
-
+	
 </div>
 </section>
 
 <section class="py-5">
-  <div class="container">
-    <h2 class="font-weight-light">Page Content</h2>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus ab nulla dolorum autem nisi officiis blanditiis voluptatem hic, assumenda aspernatur facere ipsam nemo ratione cumque magnam enim fugiat reprehenderit expedita.</p>
+    <div class="container">
+<div class="row">
+	<div class="col-12">
+		<h2 class="font-weight-light">Why RideOn?</h2>
+	</div>
+</div>
+<br>
+    <div class="row">
+	<div class="col-4">
+		<div class="card border-0 text-center" style="width: 18rem;">
+		  <i class="fa fa-users fa-5x"></i>
+		  <h3>Community</h3>
+		    <div class="card-body">
+			    <p class="card-text">Find rides with your fellow students at UVA - only others with <code>@virginia.edu</code> emails can sign up</p>
+		    </div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="card border-0 text-center" style="width: 18rem;">
+		  <i class="fa fa-map-marker fa-5x"></i>
+		  <h3>Convenient</h3>
+		    <div class="card-body">
+			    <p class="card-text">With our large network work of users, there's always someone headed to where you want to go</p>
+		    </div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="card border-0 text-center" style="width: 18rem;">
+		  <i class="fa fa-dollar fa-5x"></i>
+		  <h3>Cheap</h3>
+		    <div class="card-body">
+			    <p class="card-text">By carpooling with others already headed the same way, you can save a lot of money</p>
+		    </div>
+		</div>
+	</div>
+    </div>
   </div>
 </section>
 

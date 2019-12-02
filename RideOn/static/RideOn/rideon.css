@@ -5,3 +5,7 @@ main.pt-3 {
 .container {
 	padding-top: 1em;
 }
+
+#hometext {
+	background-color:rgba(52,58,64,0.6);
+}

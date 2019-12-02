@@ -1,0 +1,28 @@
+<!-- templates/register.html -->
+
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'drives/drive_list.css' %}">
+
+		
+{% if drive_list %}
+	{% for drive in drive_list %}
+		<div class="card mt-2">
+		  <div class="card-body">
+		<div id="drive-listing">
+			<a href="{% url 'drives:post_details' drive.id %}" id="drive-title">{{ drive.title }}</a>
+			<a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a>
+			<p>{{ drive.start_location.location }} &nbsp;<i class="fas fa-arrow-right"></i> {{ drive.end_location.location }} <br>
+			{{ drive.date }} at  {{ drive.time }}</p>
+			<p style="word-break: break-all;">{{ drive.description | truncatechars:200 }}</p>
+		</div>
+		</div>
+		</div>
+	{% endfor %}
+{% else %}
+	<h3>There are no drives that match your search.</h3>
+{% endif %} 
+
+
+{% endblock %}

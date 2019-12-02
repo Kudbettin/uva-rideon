@@ -26,6 +26,8 @@ SECRET_KEY = 'du97*h%*@#7r!jkw%4o2!c^4gxcd%)!)_)t^$7uguj5+4ub&)='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+if os.environ.get('DEBUG') == 'False':
+    DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -43,7 +45,6 @@ INSTALLED_APPS = [
 	'RideOn',
 	'users',
 	'drives',
-	'rides',
 	'bootstrap4',
 	'crispy_forms'
 ]
@@ -159,13 +160,39 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+
 STATIC_URL = '/static/'
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+
+
+if os.environ.get('S3_ACCESS_KEY_ID') is not None and os.environ.get('S3_SECRET_ACCESS_KEY') is not None:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIAFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    # Used to authenticate with S3
+    AWS_ACCESS_KEY_ID = os.environ.get('S3_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('S3_SECRET_ACCESS_KEY')
+
+    # Configure which endpoint to send files to, and retrieve files from.
+    AWS_STORAGE_BUCKET_NAME = 'uva-ride-on'
+    AWS_S3_REGION_NAME = 'us-east-1'
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_LOCATION = 'media'
+
+    AWS_IS_GZIPPED = True
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+
+else:
+    MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'

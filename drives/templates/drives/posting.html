@@ -4,19 +4,76 @@
 {% block title %} Ride Posting {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container mb-4">
         <h1>{{drive.title}}</h1>
+		{% if drive.status == "Cancelled" %}
+			<div class="row">
+				<div class="col-6">
+					<h3 class="text-danger"> Drive Cancelled </h3>
+				</div>
+			</div>
+		{%  elif drive.status == "Completed" %}
+			<div class="col-6">
+				<div class="row">
+					<h3 class="text-success"> Drive Completed </h3>
+				</div>
+			</div>
+		{% endif %}
+		
         <div class="row">
             <div class="col-6">
-                <p>Route {{drive.start_location}} {{drive.end_location}}</p>
                 <div id="map" style="height: 25vw; width: 100%;"></div>
+				<div class="card mt-2" style="width: 100%;">
+					<div class="card-body">
+						<h5 class="card-title">Description</h5>
+						<p class="card-text">{{drive.description}}</p>
+					</div>
+				</div>
+				
+				<!-- Hidden fields for the map to work -->
                 <div id="startx" style="display: none;">{{drive.start_location.coordinates_x}}</div>
                 <div id="starty" style="display: none;">{{drive.start_location.coordinates_y}}</div>
                 <div id="endx" style="display: none;">{{drive.end_location.coordinates_x}}</div>
                 <div id="endy" style="display: none;">{{drive.end_location.coordinates_y}}</div>
                 <div id="travel_time" style="display: none;">{{drive.time}}</div>
                 <script>
-
+					function getWaypoints() {
+						var requestWaypoints = document.getElementsByClassName("waypointData");
+						
+						var waypoints = [];
+						
+						for (var i=0; i < requestWaypoints.length; i++) {
+							var parameters = requestWaypoints[i].value.split(":");
+							console.log(parameters);
+							var lng = parseFloat(parameters[0]);
+							var lat = parseFloat(parameters[1]);
+							waypoints.push( {
+								location:new google.maps.LatLng(lat, lng),
+								stopover:true
+							});
+						}
+						
+						return waypoints;
+					}
+					
+					function getRequestWaypoints() {
+						var requestWaypoints = document.getElementsByClassName("requestWaypointData");
+						
+						var waypoints = [];
+						
+						for (var i=0; i < requestWaypoints.length; i++) {
+							var parameters = requestWaypoints[i].value.split(":");
+							console.log(parameters);
+							var lng = parseFloat(parameters[0]);
+							var lat = parseFloat(parameters[1]);
+							waypoints.push( {
+								location:new google.maps.LatLng(lat, lng),
+								stopover:true
+							});
+						}
+						return waypoints;
+					}
+					
                     function initMap() {
                         var start_coordinates = { lat: parseFloat(document.getElementById('starty').innerText), lng: parseFloat(document.getElementById('startx').innerText) };
                         var end_coordinates = { lat: parseFloat(document.getElementById('endy').innerText), lng: parseFloat(document.getElementById('endx').innerText) };
@@ -46,6 +103,7 @@
                         // can also add duration information if add the travel time. but it sounds boring atm.
                         var request = {
                             origin: start_coordinates,
+							waypoints: getWaypoints(),
                             destination: end_coordinates,
                             travelMode: 'DRIVING'
                         };
@@ -57,35 +115,282 @@
                         });
                         
                     }
-                </script>
-                <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY7BlSzTYJKwTNrObrU7so714CJgF3Uhc&callback=initMap">
-                </script>
+					
+					$(document).ready(function(){
+						$( "#viewWaypointModal" ).on('shown.bs.modal', function(){
+							initialize_direction();
+						});
+					});
+					
+					$(document).ready(function(){
+						$( "#addWaypointModal" ).on('shown.bs.modal', function(){
+							initAutocompleteNew();
+						});
+					});
+					
+					$(document).ready(function(){
+						$( "#editWaypointModal" ).on('shown.bs.modal', function(){
+							initAutocompleteEdit();
+						});
+					});
+					
+					function initialize_direction() {
+						var directionDisplay;
+						var directionsService = new google.maps.DirectionsService();
+						var direction_map;
 
-				<!-- Show the passenger edit templat if the driver is viewing this -->
-				<!-- Otherwise just show a list of passengers -->
-				{% if user.username == drive.driver.username %}
-					<div class="basic">
-						{% include "drives/passenger_templates/passenger_edit.html" %}    
-					</div>
-				{% else %}
-					<div class="basic">
-						{% include "drives/passenger_templates/passenger_list.html" %}    
-					</div>
-				{% endif %}
+						directionDisplay = new google.maps.DirectionsRenderer();
+						var myOptions = {
+							mapTypeId: google.maps.MapTypeId.ROADMAP,
+						}
+						direction_map = new google.maps.Map(document.getElementById("map2"), myOptions);
+						directionDisplay.setMap(direction_map);
+
+						var start_coordinates = { lat: parseFloat(document.getElementById('starty').innerText), lng: parseFloat(document.getElementById('startx').innerText) };
+                        var end_coordinates = { lat: parseFloat(document.getElementById('endy').innerText), lng: parseFloat(document.getElementById('endx').innerText) };
+						
+						waypointList = getWaypoints();
+						waypointList.push.apply(waypointList, getRequestWaypoints());
+						var request = {
+							origin:start_coordinates,
+							waypoints: waypointList,
+							destination:end_coordinates,
+							travelMode: google.maps.DirectionsTravelMode.DRIVING
+						};
+						directionsService.route(request, function(response, status) {
+							if (status == google.maps.DirectionsStatus.OK) {
+								directionDisplay.setDirections(response);
+							}
+						});
+						
+					}
+					
+					function initAutocompleteNew() {
+						// Create the autocomplete object, restricting the search predictions to
+						// geographical location types.
+						autocomplete_new = new google.maps.places.Autocomplete(
+							document.getElementById('autocomplete_waypoint_new'), { types: ['geocode'] });
+
+						// Avoid paying for data that you don't need by restricting the set of
+						// place fields that are returned to just the address components.
+						autocomplete_new.setFields(['address_component', 'geometry']);
+
+						// When the user selects an address from the drop-down, populate the
+						// address fields in the form.
+						autocomplete_new.addListener('place_changed', fillInAddress_waypoint_new);
+					}
+
+					function fillInAddress_waypoint_new() {
+						// Get the place details from the autocomplete object.
+						var place = autocomplete_new.getPlace();
+
+						document.getElementById("autocomplete_location_x").value = place.geometry.location.lng();
+						document.getElementById("autocomplete_location_y").value = place.geometry.location.lat();
+						document.getElementById("autocomplete_location").value = document.getElementById("autocomplete_waypoint_new").value;
+					}
+
+					// Bias the autocomplete object to the user's geographical location,
+					// as supplied by the browser's 'navigator.geolocation' object.
+					function geolocate_waypoint_new() {
+						if (navigator.geolocation) {
+							navigator.geolocation.getCurrentPosition(function (position) {
+								var geolocation = {
+									lat: position.coords.latitude,
+									lng: position.coords.longitude
+								};
+								var circle = new google.maps.Circle(
+									{ center: geolocation, radius: position.coords.accuracy });
+								autocomplete_new.setBounds(circle.getBounds());
+							});
+						}
+					}
+			
+					function initAutocompleteEdit() {
+						// Create the autocomplete object, restricting the search predictions to
+						// geographical location types.
+						autocomplete_edit = new google.maps.places.Autocomplete(
+							document.getElementById('autocomplete_waypoint_edit'), { types: ['geocode'] });
+
+						// Avoid paying for data that you don't need by restricting the set of
+						// place fields that are returned to just the address components.
+						autocomplete_edit.setFields(['address_component', 'geometry']);
+
+						// When the user selects an address from the drop-down, populate the
+						// address fields in the form.
+						autocomplete_edit.addListener('place_changed', fillInAddress_waypoint_edit);
+					}
+
+					function fillInAddress_waypoint_edit() {
+						// Get the place details from the autocomplete object.
+						var place = autocomplete_edit.getPlace();
+
+						document.getElementById("autocomplete_location_x").value = place.geometry.location.lng();
+						document.getElementById("autocomplete_location_y").value = place.geometry.location.lat();
+						document.getElementById("autocomplete_location").value = document.getElementById("autocomplete_waypoint_edit").value;
+					}
+
+					// Bias the autocomplete object to the user's geographical location,
+					// as supplied by the browser's 'navigator.geolocation' object.
+					function geolocate_waypoint_edit() {
+						if (navigator.geolocation) {
+							navigator.geolocation.getCurrentPosition(function (position) {
+								var geolocation = {
+									lat: position.coords.latitude,
+									lng: position.coords.longitude
+								};
+								var circle = new google.maps.Circle(
+									{ center: geolocation, radius: position.coords.accuracy });
+								autocomplete_edit.setBounds(circle.getBounds());
+							});
+						}
+					}
+                </script>
+                <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY7BlSzTYJKwTNrObrU7so714CJgF3Uhc&libraries=places&callback=initMap">
+                </script>
             </div>
+			
             <div class="col-6">
-                <p>Driver: <a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a></p>
-                <p>Date: {{drive.date_time}}</p>
-                <p>Cost: {{drive.min_cost}}$ - {{drive.max_cost}}$</p>
-                <p>Payment: {{drive.payment_method}}</p>
-                <p>Max Passengers: {{drive.max_passengers}}</p>
-                <p>Vehicle: {{drive.car_description}}</p>
-                <p>Luggage Capacity: {{drive.luggage_description}}</p>
-                <p>Description: {{drive.description}}</p>
-                <p>Location: {{drive.start_location.coordinates_x}}</p>
-
+				
+				<!-- Render tabs if the drive is listed and user is driver -->
+				{% if drive.driver.id == user.id %}
+				<ul class="nav nav-tabs mb-2" id="myTabs" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Drive Information</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="manage-tab" data-toggle="tab" href="#manage" role="tab" aria-controls="profile" aria-selected="false">Manage Drive</a>
+					</li>
+				</ul>
+				<div class="tab-content profile-tab" id="myTabContent">
+					<div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+				{% endif %}
+						<div class="row mt">
+							<div class="col-6">
+								<label>Driver</label>
+							</div>
+							<div class="col-6">
+								<a href="{% url 'users:profile' drive.driver.id %}">{{ drive.driver.username }}</a>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Date</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.date}} at {{drive.time}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Cost</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.min_cost}}$ - {{drive.max_cost}}$</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Payment</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.payment_method}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Max Passengers</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.max_passengers}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Vehicle</label>
+							</div>
+							<div class="col-6">
+								<p style="word-break: break-all;">{{drive.car_description}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Pickup Point</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.start_location.location}}</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6">
+								<label>Destination</label>
+							</div>
+							<div class="col-6">
+								<p>{{drive.end_location.location}}</p>
+							</div>
+						</div>
+						{% if drive.luggage_description != "" %}
+							<div class="row">
+								<div class="col-6">
+									<label>Luggage Capacity</label>
+								</div>
+								<div class="col-6">
+									<p style="word-break: break-all;">{{drive.luggage_description}}</p>
+								</div>
+							</div>
+						{% endif %}
+						{% if user.username != drive.driver.username %}
+							<div class="row">
+							{% include "drives/passenger_templates/passenger_list.html" %} 
+							</div>
+						{% endif %}
+				{% if drive.driver.id == user.id %}
+					</div>
+					<div class="tab-pane fade" id="manage" role="tabpanel" aria-labelledby="management-tab">
+						{% if drive.status == "Listed" %}
+						<div class="row mt-2">
+							<div class="col-sm">
+								<button class="btn btn-default" onclick="window.location.href = '/drives/{{ drive.id }}/edit/';"><i class="fas fa-pencil-alt"></i>&nbsp;Edit Drive</button>
+							</div>
+							<div class="col-sm">
+								<form method="post" action="drive_complete" id="drive_complete_form">
+									{% csrf_token %}
+									<button type="submit" class="btn btn-success float-right" id="drive_cancel_btn"><i class="fas fa-check"></i>&nbsp;Complete Ride</button>
+								</form>
+							</div>
+							<div class="col-sm">
+								<form method="post" action="drive_cancel" id="drive_cancel_form">
+									{% csrf_token %}
+									<button type="submit" class="btn btn-danger float-right" id="drive_cancel_btn"><i class="fas fa-times"></i>&nbsp;Cancel Ride</button>
+								</form>
+							</div>
+						</div>
+							
+						{% endif %}
+						<div class="row mt-3">
+							<div class="col-sm">
+								{% include "drives/passenger_templates/passenger_edit.html" %} 
+							</div>
+						</div>
+						<div class="row mt-3">
+							<div class="col-sm">
+								{% include "drives/waypoints/removeDriveWaypoints.html" %} 
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
             </div>
         </div>
     </div>
+	
+	<!-- Load waypoint data into hidden elements so JavaScript can access it -->
+	{% for request in drive.requestList.all %}
+		<input type="hidden" class="requestWaypointData" value="{{ request.waypoint.coordinates_x }}:{{ request.waypoint.coordinates_y }}:{{ request.waypoint.location }}" >
+	{% endfor %}
+	{% for waypoint in drive.waypointList.all %}
+		<input type="hidden" class="waypointData" value="{{ waypoint.coordinates_x }}:{{ waypoint.coordinates_y }}:{{ waypoint.location }}" >
+	{% endfor %}
+
+	</div>
 
 {% endblock %}
